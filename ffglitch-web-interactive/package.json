@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "panzoom": "^9.4.3",
+    "react-zoom-pan-pinch": "^3.1.0"
+  }
+}

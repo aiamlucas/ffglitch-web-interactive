@@ -1,0 +1,21 @@
+{
+    "name": "server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "nodemon index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "nodemon": "^2.0.22",
+        "osc-js": "^2.4.0",
+        "socket.io": "^4.6.2",
+        "socket.io-client": "^4.6.2",
+        "zeromq": "^6.0.0-beta.20"
+    }
+}
