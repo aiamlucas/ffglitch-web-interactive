@@ -6,33 +6,23 @@ import Draggable from "react-draggable";
 
 const socket = io.connect("http://localhost:3001");
 
-const FadersDictionary = [
-  { name: "fader1", value: 0 },
-  { name: "fader2", value: 0 },
-  { name: "fader3", value: 0 },
-  { name: "fader4", value: 0 },
-  { name: "fader5", value: 0 },
-  { name: "fader6", value: 0 },
-  { name: "fader7", value: 0 },
-  { name: "fader8", value: 0 },
-  { name: "fader9", value: 0 },
-  { name: "fader10", value: 0 },
-  { name: "fader11", value: 0 },
-  { name: "fader12", value: 0 },
-  { name: "fader13", value: 0 },
-  { name: "fader14", value: 0 },
-  { name: "fader15", value: 0 },
-  { name: "fader16", value: 0 },
-  { name: "fader17", value: 0 },
-  { name: "fader18", value: 0 },
-  { name: "fader19", value: 0 },
-  { name: "fader20", value: 0 },
-  { name: "fader21", value: 0 },
-  { name: "fader22", value: 0 },
-  { name: "fader23", value: 0 },
-  { name: "fader24", value: 0 },
-  { name: "fader25", value: 0 },
-];
+const generateFadersDictionary = (numFaders) => {
+  const faders = [];
+  for (let i = 1; i <= numFaders; i++) {
+    faders.push({ name: `fader${i}`, value: 0 });
+  }
+  return faders;
+};
+const FadersDictionary = generateFadersDictionary(25);
+
+const generatePansDictionary = (numPans) => {
+  const pans = [];
+  for (let i = 1; i <= numPans; i++) {
+    pans.push({ name: `pan${i}`, value: 0 });
+  }
+  return pans;
+};
+const PansDictionary = generatePansDictionary(2);
 
 export default function App() {
   const [message, setMessage] = useState("");
@@ -42,6 +32,9 @@ export default function App() {
   const [mouseCoordinates, setMouseCoordinates] = useState({ x: 0, y: 0 });
   const [faderValues, setFaderValues] = useState(
     Array(FadersDictionary.length).fill(0)
+  );
+  const [panValues, setPanValues] = useState(
+    Array(PansDictionary.length).fill(0)
   );
 
   const messageInputRef = useRef(null);
@@ -158,6 +151,23 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    socket.on("initial_pan_values", (data) => {
+      const initialValues = data.map((panValue) => panValue.value);
+      setPanValues(initialValues);
+    });
+
+    socket.on("updated_pan_values", (data) => {
+      const updatedValues = data.map((panValue) => panValue.value);
+      setPanValues(updatedValues);
+    });
+
+    return () => {
+      socket.off("initial_pan_values");
+      socket.off("updated_pan_values");
+    };
+  }, []);
+
   const handleFaderChange = (index, value) => {
     const faderName = `fader${index + 1}`;
 
@@ -169,6 +179,21 @@ export default function App() {
 
     socket.emit("send_message", {
       fader: faderName,
+      message: parseFloat(value),
+    });
+  };
+
+  const handlePanChange = (index, value) => {
+    const panName = `pan${index + 1}`;
+
+    setPanValues((prevValues) => {
+      const newValues = [...prevValues];
+      newValues[index] = parseFloat(value);
+      return newValues;
+    });
+
+    socket.emit("send_message", {
+      fader: panName,
       message: parseFloat(value),
     });
   };
@@ -286,6 +311,10 @@ export default function App() {
   const recSoundContainerClass = toggleValues.button5
     ? "rec-sound rec-sound-extra-red"
     : "rec-sound";
+
+  const panContainerClass = toggleValues.button1
+    ? "pan-container active"
+    : "pan-container";
 
   let intervalId;
 
@@ -445,6 +474,26 @@ export default function App() {
           onMouseMove={handleMouseMovement}
         ></div>
       </Draggable>
+      <div
+        onDoubleClick={() => handleToggle("button2")}
+        className={panContainerClass}
+        onMouseDown={handleMouseAltKey}
+      >
+        {PansDictionary.map((pan, index) => (
+          <div key={`pan${index}`}>
+            <div className="fader-label-div">{pan.name}</div>
+            <input
+              type="range"
+              min={-1}
+              max={1}
+              step={0.01}
+              value={panValues[index]}
+              className="fader-range"
+              onChange={(event) => handlePanChange(index, event.target.value)}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

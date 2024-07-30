@@ -107,6 +107,13 @@ io.on("connection", (socket) => {
       let oscValue = message;
       let oscMessage = new OSC.Message(oscAddress, oscValue);
       osc.send(oscMessage);
+
+      // Send message via ZeroMQ for specific faders
+      if (fader === "fader1") {
+        const msg = JSON.stringify({ cmd: "pan", x: message, y: message });
+        zmqSocket.send(msg);
+        console.log("Sent message via ZeroMQ:", msg);
+      }
     }
   });
 
@@ -128,7 +135,14 @@ io.on("connection", (socket) => {
 
       // Send message via ZeroMQ when button1 is toggled
       if (toggle === "button1") {
-        const msg = JSON.stringify({ pict_type: "I" });
+        const msg = JSON.stringify({ cmd: "keyframe" });
+        zmqSocket.send(msg);
+        console.log("Sent message via ZeroMQ:", msg);
+      }
+
+      // Send message via ZeroMQ when button1 is toggled
+      if (toggle === "button2") {
+        const msg = JSON.stringify({ cmd: "clean_frame" });
         zmqSocket.send(msg);
         console.log("Sent message via ZeroMQ:", msg);
       }
