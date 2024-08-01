@@ -3,6 +3,8 @@ import "./global.css";
 import io from "socket.io-client";
 import { useEffect, useState, useRef } from "react";
 import Draggable from "react-draggable";
+import FadersGroup from "./components/FadersGroup/FadersGroup";
+import PanGroup from "./components/PanGroup/PanGroup";
 
 const socket = io.connect("http://localhost:3001");
 
@@ -385,37 +387,12 @@ export default function App() {
         className={faderContainerClass}
         onMouseDown={handleMouseAltKey}
       >
-        {FadersDictionary.filter(
-          (fader) =>
-            fader.name === "fader1" ||
-            fader.name === "fader2" ||
-            fader.name === "fader3" ||
-            fader.name === "fader4" ||
-            fader.name === "fader5"
-        ).map((fader, index) => (
-          <div key={`fader${index}`}>
-            <div
-              className="fader-label-div"
-              onClick={() => handleFaderToggle(FadersDictionary.indexOf(fader))}
-            >
-              {fader.name}
-            </div>
-            <input
-              type="range"
-              min={0}
-              max={1}
-              step={0.0000000000000001}
-              value={faderValues[FadersDictionary.indexOf(fader)]}
-              className="fader-range"
-              onChange={(event) =>
-                handleFaderChange(
-                  FadersDictionary.indexOf(fader),
-                  event.target.value
-                )
-              }
-            />
-          </div>
-        ))}
+        <FadersGroup
+          faders={FadersDictionary.slice(0, 5)}
+          values={faderValues}
+          handleChange={handleFaderChange}
+          handleToggle={handleFaderToggle}
+        />
       </div>
       <Draggable>
         <div
@@ -479,20 +456,12 @@ export default function App() {
         className={panContainerClass}
         onMouseDown={handleMouseAltKey}
       >
-        {PansDictionary.map((pan, index) => (
-          <div key={`pan${index}`}>
-            <div className="fader-label-div">{pan.name}</div>
-            <input
-              type="range"
-              min={-1}
-              max={1}
-              step={0.01}
-              value={panValues[index]}
-              className="fader-range"
-              onChange={(event) => handlePanChange(index, event.target.value)}
-            />
-          </div>
-        ))}
+        <PanGroup
+          pans={PansDictionary}
+          values={panValues}
+          handleChange={handlePanChange}
+          handleToggle={handleFaderToggle}
+        />
       </div>
     </div>
   );
