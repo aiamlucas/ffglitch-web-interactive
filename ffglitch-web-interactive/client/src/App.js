@@ -318,61 +318,61 @@ export default function App() {
 
   let intervalId;
 
-  const handleFaderToggle = (index) => {
-    const parameterName = FadersDictionary[index].name;
+  // const handleFaderToggle = (index) => {
+  //   const parameterName = FadersDictionary[index].name;
 
-    setFaderValues((prevValues) => {
-      const newValues = [...prevValues];
-      newValues[index] = newValues[index] === 0 ? 1 : 0;
-      return newValues;
-    });
+  //   setFaderValues((prevValues) => {
+  //     const newValues = [...prevValues];
+  //     newValues[index] = newValues[index] === 0 ? 1 : 0;
+  //     return newValues;
+  //   });
 
-    const isActive = faderValues[index] === 1;
+  //   const isActive = faderValues[index] === 1;
 
-    const animateFaderValues = () => {
-      const duration = 2000;
-      const steps = 60;
-      const initialValue = faderValues[index];
-      const targetValue = initialValue === 0 ? 1 : 0;
-      const stepValue = (targetValue - initialValue) / steps;
+  //   const animateFaderValues = () => {
+  //     const duration = 2000;
+  //     const steps = 60;
+  //     const initialValue = faderValues[index];
+  //     const targetValue = initialValue === 0 ? 1 : 0;
+  //     const stepValue = (targetValue - initialValue) / steps;
 
-      let currentValue = initialValue;
-      let stepCount = 0;
+  //     let currentValue = initialValue;
+  //     let stepCount = 0;
 
-      intervalId = setInterval(() => {
-        stepCount++;
-        currentValue += stepValue;
+  //     intervalId = setInterval(() => {
+  //       stepCount++;
+  //       currentValue += stepValue;
 
-        setFaderValues((prevValues) => {
-          const newValues = [...prevValues];
-          newValues[index] = currentValue;
-          return newValues;
-        });
+  //       setFaderValues((prevValues) => {
+  //         const newValues = [...prevValues];
+  //         newValues[index] = currentValue;
+  //         return newValues;
+  //       });
 
-        socket.emit("send_message", {
-          fader: parameterName,
-          message: currentValue,
-        });
+  //       socket.emit("send_message", {
+  //         fader: parameterName,
+  //         message: currentValue,
+  //       });
 
-        if (stepCount === steps) {
-          clearInterval(intervalId);
-          setFaderValues((prevValues) => {
-            const newValues = [...prevValues];
-            newValues[index] = targetValue;
-            return newValues;
-          });
+  //       if (stepCount === steps) {
+  //         clearInterval(intervalId);
+  //         setFaderValues((prevValues) => {
+  //           const newValues = [...prevValues];
+  //           newValues[index] = targetValue;
+  //           return newValues;
+  //         });
 
-          setTimeout(animateFaderValues, duration);
-        }
-      }, duration / steps);
-    };
+  //         setTimeout(animateFaderValues, duration);
+  //       }
+  //     }, duration / steps);
+  //   };
 
-    if (isActive) {
-      animateFaderValues();
-    } else {
-      clearInterval(intervalId);
-    }
-  };
+  //   if (isActive) {
+  //     animateFaderValues();
+  //   } else {
+  //     clearInterval(intervalId);
+  //   }
+  // };
 
   return (
     <div
