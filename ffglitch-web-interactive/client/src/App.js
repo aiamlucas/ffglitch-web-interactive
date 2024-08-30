@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import Draggable from "react-draggable";
 import FadersGroup from "./components/FadersGroup/FadersGroup";
 import PanGroup from "./components/PanGroup/PanGroup";
+import VideoPlayer from "./components/VideoPlayer/VideoPlayer";
 
 const socket = io.connect("http://localhost:3001");
 
@@ -451,6 +452,9 @@ export default function App() {
           handleChange={handlePanChange}
           handleToggle={handleFaderToggle}
         />
+      </div>
+      <div>
+        <VideoPlayer src="http://localhost:3001/video" />
       </div>
     </div>
   );
