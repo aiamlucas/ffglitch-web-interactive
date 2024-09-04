@@ -20,10 +20,8 @@ const FadersDictionary = generateItemsDictionary(25, "fader");
 const PansDictionary = generateItemsDictionary(2, "pan");
 
 export default function App() {
-  const [message, setMessage] = useState("");
-  const [asciiMessage, setAsciiMessage] = useState("");
-  const [messageRecieved, setMessageRecieved] = useState("");
-  const [asciiMessageReceived, setAsciiMessageReceived] = useState([]);
+  const [chatMessage, setChatMessage] = useState("");
+  const [chatMessagesReceived, setChatMessagesReceived] = useState([]);
   const [mouseCoordinates, setMouseCoordinates] = useState({ x: 0, y: 0 });
   const [faderValues, setFaderValues] = useState(
     Array(FadersDictionary.length).fill(0)
@@ -32,11 +30,11 @@ export default function App() {
     Array(PansDictionary.length).fill(0)
   );
 
-  const messageInputRef = useRef(null);
-  const asciiMessageInputRef = useRef(null);
+  const chatMessageInputRef = useRef(null);
 
   const numButtons = 15;
   const [toggleValues, setToggleValues] = useState(Array(numButtons).fill(0));
+  const [panToggled, setPanToggled] = useState(false);
 
   const [initialClickX, setInitialClickX] = useState(0);
   const [initialClickY, setInitialClickY] = useState(0);
@@ -182,50 +180,38 @@ export default function App() {
     });
   };
 
+  const handlePanToggle = () => {
+    setPanToggled((prevState) => !prevState);
+    setPanValues(Array(PansDictionary.length).fill(0));
+  };
+
   const handleToggle = (toggle) => {
     const updatedValue = toggleValues[toggle] === 0 ? 1 : 0;
     socket.emit("send_toggle_value", { toggle, value: updatedValue });
   };
 
   // Message handlers
-  const sendMessage = () => {
-    socket.emit("send_message", { message });
-    messageInputRef.current.value = "";
-  };
-
-  const sendAsciiMessage = () => {
-    socket.emit("send_message", { asciiMessage });
-    asciiMessageInputRef.current.value = "";
+  const sendChatMessage = () => {
+    socket.emit("send_message", { chatMessage });
+    chatMessageInputRef.current.value = "";
   };
 
   useEffect(() => {
     socket.on("receive_message", (data) => {
-      const { message, asciiMessage } = data;
+      const { chatMessage } = data;
 
-      if (typeof message === "string") {
-        setMessageRecieved((prevMessages) => {
-          const updatedMessages = [...prevMessages, message];
-          const trimmedMessages = updatedMessages.slice(-8);
-          return trimmedMessages;
-        });
-      }
-
-      if (typeof asciiMessage === "string") {
-        setAsciiMessageReceived((prevAsciiMessages) => {
-          const updatedAsciiMessages = [...prevAsciiMessages, asciiMessage];
-          const trimmedAsciiMessages = updatedAsciiMessages.slice(-8);
-          return trimmedAsciiMessages;
+      if (typeof chatMessage === "string") {
+        setChatMessagesReceived((prevChatMessages) => {
+          const updatedChatMessages = [...prevChatMessages, chatMessage];
+          const trimmedChatMessages = updatedChatMessages.slice(-8);
+          return trimmedChatMessages;
         });
       }
     });
   }, []);
 
-  const displayedMessages = Array.isArray(messageRecieved)
-    ? messageRecieved.filter((_, index) => index % 2 !== 0)
-    : [];
-
-  const displayedAsciiMessages = Array.isArray(asciiMessageReceived)
-    ? asciiMessageReceived.filter((_, index) => index % 2 !== 0)
+  const displayedChatMessages = Array.isArray(chatMessagesReceived)
+    ? chatMessagesReceived.filter((_, index) => index % 2 !== 0)
     : [];
 
   const handleFaderContainerDoubleClick = () => {
@@ -234,10 +220,6 @@ export default function App() {
 
   const handleSpeechSynthContainerDoubleClick = () => {
     handleToggle("button2");
-  };
-
-  const handleAsciiSynthContainerDoubleClick = () => {
-    handleToggle("button3");
   };
 
   const handleMouseGuitarContainerDoubleClick = () => {
@@ -269,13 +251,7 @@ export default function App() {
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      sendMessage();
-    }
-  };
-
-  const handleKeyDownAscii = (event) => {
-    if (event.key === "Enter") {
-      sendAsciiMessage();
+      sendChatMessage();
     }
   };
 
@@ -287,10 +263,6 @@ export default function App() {
 
   const speechSynthContainerClass = toggleValues.button2
     ? "message-input message-input-blue"
-    : "message-input";
-
-  const asciiSynthContainerClass = toggleValues.button3
-    ? "message-input message-input-green"
     : "message-input";
 
   const mouseGuitarContainerClass = toggleValues.button4
@@ -389,31 +361,14 @@ export default function App() {
           onDoubleClick={handleSpeechSynthContainerDoubleClick}
         >
           <div className="message-history">
-            {displayedMessages.map((message, index) => (
+            {displayedChatMessages.map((message, index) => (
               <div key={index}>{message}</div>
             ))}
           </div>
           <input
-            onChange={(event) => setMessage(event.target.value)}
+            onChange={(event) => setChatMessage(event.target.value)}
             onKeyDown={handleKeyDown}
-            ref={messageInputRef}
-          />
-        </div>
-      </Draggable>
-      <Draggable>
-        <div
-          className={asciiSynthContainerClass}
-          onDoubleClick={handleAsciiSynthContainerDoubleClick}
-        >
-          <div className="message-history">
-            {displayedAsciiMessages.map((message, index) => (
-              <div key={index}>{message}</div>
-            ))}
-          </div>
-          <input
-            onChange={(event) => setAsciiMessage(event.target.value)}
-            onKeyDown={handleKeyDownAscii}
-            ref={asciiMessageInputRef}
+            ref={chatMessageInputRef}
           />
         </div>
       </Draggable>
@@ -449,13 +404,13 @@ export default function App() {
           pans={PansDictionary}
           values={panValues}
           handleChange={handlePanChange}
-          handleToggle={handleFaderToggle}
+          handleToggle={handlePanToggle}
         />
       </div>
     </div>
   );
 }
-// ___________________________________________________________________________
+
 // import "./App.css";
 // import "./global.css";
 // import io from "socket.io-client";
@@ -466,23 +421,16 @@ export default function App() {
 
 // const socket = io.connect("http://localhost:3001");
 
-// const generateFadersDictionary = (numFaders) => {
-//   const faders = [];
-//   for (let i = 1; i <= numFaders; i++) {
-//     faders.push({ name: `fader${i}`, value: 0 });
-//   }
-//   return faders;
+// // Generate dictionaries for faders and pans
+// const generateItemsDictionary = (numItems, prefix) => {
+//   return Array.from({ length: numItems }, (_, i) => ({
+//     name: `${prefix}${i + 1}`,
+//     value: 0,
+//   }));
 // };
-// const FadersDictionary = generateFadersDictionary(25);
 
-// const generatePansDictionary = (numPans) => {
-//   const pans = [];
-//   for (let i = 1; i <= numPans; i++) {
-//     pans.push({ name: `pan${i}`, value: 0 });
-//   }
-//   return pans;
-// };
-// const PansDictionary = generatePansDictionary(2);
+// const FadersDictionary = generateItemsDictionary(25, "fader");
+// const PansDictionary = generateItemsDictionary(2, "pan");
 
 // export default function App() {
 //   const [message, setMessage] = useState("");
@@ -500,23 +448,8 @@ export default function App() {
 //   const messageInputRef = useRef(null);
 //   const asciiMessageInputRef = useRef(null);
 
-//   const [toggleValues, setToggleValues] = useState({
-//     button1: 0,
-//     button2: 0,
-//     button3: 0,
-//     button4: 0,
-//     button5: 0,
-//     button6: 0,
-//     button7: 0,
-//     button8: 0,
-//     button9: 0,
-//     button10: 0,
-//     button11: 0,
-//     button12: 0,
-//     button13: 0,
-//     button14: 0,
-//     button15: 0,
-//   });
+//   const numButtons = 15;
+//   const [toggleValues, setToggleValues] = useState(Array(numButtons).fill(0));
 
 //   const [initialClickX, setInitialClickX] = useState(0);
 //   const [initialClickY, setInitialClickY] = useState(0);
@@ -528,6 +461,7 @@ export default function App() {
 //   const containerRef = useRef(null);
 //   const [zoomScale, setZoomScale] = useState(1);
 
+//   // Event handlers
 //   useEffect(() => {
 //     const handleScroll = (event) => {
 //       const delta = event.deltaY > 0 ? 0.1 : -0.1;
@@ -579,6 +513,7 @@ export default function App() {
 //     };
 //   }, [dragging]);
 
+//   // Socket event listeners
 //   useEffect(() => {
 //     socket.on("initial_fader_values", (data) => {
 //       const initialValues = data.map((faderValue) => faderValue.value);
@@ -628,6 +563,8 @@ export default function App() {
 //     };
 //   }, []);
 
+//   // Handler for faders, pans and toggles
+
 //   const handleFaderChange = (index, value) => {
 //     const faderName = `fader${index + 1}`;
 
@@ -663,6 +600,7 @@ export default function App() {
 //     socket.emit("send_toggle_value", { toggle, value: updatedValue });
 //   };
 
+//   // Message handlers
 //   const sendMessage = () => {
 //     socket.emit("send_message", { message });
 //     messageInputRef.current.value = "";
@@ -727,6 +665,8 @@ export default function App() {
 //     handleToggle("button6");
 //   };
 
+//   // Handlers for mouse events
+
 //   const sendCoordinatesToBackend = (x, y) => {
 //     socket.emit("send_message", { x, y });
 //   };
@@ -751,6 +691,8 @@ export default function App() {
 //       sendAsciiMessage();
 //     }
 //   };
+
+//   // CSS classes for containers
 
 //   const faderContainerClass = toggleValues.button1
 //     ? "fader-container active"
@@ -777,6 +719,8 @@ export default function App() {
 //     : "pan-container";
 
 //   let intervalId;
+
+//   // Handler for fader animation
 
 //   const handleFaderToggle = (index) => {
 //     const parameterName = FadersDictionary[index].name;

@@ -10,7 +10,7 @@ const PanGroup = ({ pans, values, handleChange, handleToggle }) => {
           pan={pan}
           value={values[index]}
           onChange={(value) => handleChange(index, value)}
-          onToggle={() => handleToggle(index)}
+          onToggle={handleToggle} // Pass the handleToggle function directly
         />
       ))}
     </div>
