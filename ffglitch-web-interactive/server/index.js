@@ -6,7 +6,10 @@ const cors = require("cors");
 const zmq = require("zeromq");
 app.use(cors());
 
+// fader2 => nb_frames
+
 const server = http.createServer(app);
+const zmqAddress = "tcp://localhost:4646";
 
 // Connecting with the URL from the frontend (localhost:3000)
 const io = new Server(server, {
@@ -16,7 +19,7 @@ const io = new Server(server, {
   },
 });
 
-// Gendictionaries for faders and pans
+// Generate dictionaries for faders and pans
 const generateItemsDictionary = (numItems, prefix) => {
   return Array.from({ length: numItems }, (_, i) => ({
     name: `${prefix}${i + 1}`,
@@ -38,10 +41,14 @@ const generateToggleValues = (numButtons) => {
 
 const toggleValues = generateToggleValues(15); // Dynamically create 15 buttons
 
+let nb_frames = 1; // Initial number of frames
+let x = 0; // Initialize x axis
+let y = 0; // Initialize y axis
+
 // Set up ZeroMQ
 async function setupZmq() {
   const zmqSocket = new zmq.Push();
-  await zmqSocket.connect("tcp://192.168.178.81:5555");
+  await zmqSocket.connect(zmqAddress);
   return zmqSocket;
 }
 
@@ -60,31 +67,47 @@ io.on("connection", (socket) => {
   socket.emit("initial_pan_values", PansDictionary);
 
   socket.on("send_message", (data) => {
-    const { fader, message } = data;
+    const { fader, message, username, chatMessage } = data;
 
-    const index = FadersDictionary.findIndex((param) => param.name === fader);
+    if (fader && message !== undefined) {
+      const index = FadersDictionary.findIndex((param) => param.name === fader);
 
-    if (index !== -1 && typeof message === "number") {
-      FadersDictionary[index].value = message;
+      if (index !== -1) {
+        FadersDictionary[index].value = message;
 
-      console.log("Fader value changed:", fader, FadersDictionary[index].value);
+        console.log(
+          "Fader value changed:",
+          fader,
+          FadersDictionary[index].value
+        );
 
-      // Broadcast the updated fader values to all connected clients
-      io.emit("updated_fader_values", FadersDictionary);
+        // Broadcast the updated fader values to all connected clients
+        io.emit("updated_fader_values", FadersDictionary);
 
-      // Place for output messages
+        // Update nb_frames based on fader2 value
+        if (fader === "fader2") {
+          nb_frames = Math.round(message * 100);
+          console.log("nb_frames updated to:", nb_frames);
 
-      // Send message via ZeroMQ for specific faders
-      if (fader === "fader1") {
-        // const msg = JSON.stringify({ "mv_pan.mv" [x,y]});
-        // zmqSocket.send(msg);
-        // console.log("Sent message via ZeroMQ:", msg);
+          // If needed, send the new nb_frames value via ZeroMQ
+        } else if (fader === "fader4") {
+          x = Math.round(message * 100); // Set x based on fader4
+          console.log("x axis updated to:", x);
+          sendXandY(); // Send x and y values via ZeroMQ
+        } else if (fader === "fader5") {
+          y = Math.round(message * 100); // Set y based on fader5
+          console.log("y axis updated to:", y);
+          sendXandY(); // Send x and y values via ZeroMQ
+        }
       }
+    } else if (chatMessage && username) {
+      console.log(`Received chat message from ${username}:`, chatMessage);
+      io.emit("receive_message", { username, chatMessage });
     } else {
       const panIndex = PansDictionary.findIndex(
         (param) => param.name === fader
       );
-      if (panIndex !== -1 && typeof message === "number") {
+      if (panIndex !== -1) {
         PansDictionary[panIndex].value = message;
 
         console.log(
@@ -95,8 +118,6 @@ io.on("connection", (socket) => {
 
         // Broadcast the updated pan values to all connected clients
         io.emit("updated_pan_values", PansDictionary);
-
-        // Place for output messages
       }
     }
   });
@@ -111,39 +132,17 @@ io.on("connection", (socket) => {
       // Broadcast the updated toggle values to all connected clients
       io.emit("updated_toggle_values", toggleValues);
 
-      // Place for output messages
-
-      // Send message via ZeroMQ when button1 is toggled
-      if (toggle === "button1") {
-        // const msg = JSON.stringify({ cmd: "keyframe" });
-        // zmqSocket.send(msg);
-        // console.log("Sent message via ZeroMQ:", msg);
+      if (toggle === "button4") {
+        const msg = JSON.stringify({
+          "cleaner.mb_type": nb_frames,
+          "cleaner.reset_mb_type": 1,
+          "cleaner.pict_type": nb_frames,
+          "cleaner.reset_pict_type": 1,
+        });
+        console.log(msg);
+        zmqSocket.send(msg);
+        console.log("Sent message via ZeroMQ:", msg);
       }
-
-      //nb_frames ---> selecionar o numero de frames
-
-      // Send message via ZeroMQ when button2 is toggled
-      if (toggle === "button2") {
-        // const msg = JSON.stringify({
-        //   "cleaner.mb_type": nb_frames,
-        //   "cleaner.reset_mb_type": 1,
-        //   "cleaner.pict_type": nb_frames,
-        //   "cleaner.reset_pict_type": 1,
-        // });
-        // zmqSocket.send(msg);
-        // console.log("Sent message via ZeroMQ:", msg);
-      }
-    }
-  });
-
-  socket.on("send_message", (data) => {
-    const { chatMessage } = data;
-
-    if (typeof chatMessage === "string") {
-      console.log("Received chat message:", chatMessage);
-      io.emit("receive_message", { chatMessage });
-
-      // Place for output messages
     }
   });
 
@@ -152,11 +151,18 @@ io.on("connection", (socket) => {
 
     if (typeof data.x === "number" && typeof data.y === "number") {
       console.log("Mouse Coordinates:", x, y);
-
-      // Place for output messages
     }
   });
 });
+
+// Function to send x and y values via ZeroMQ
+function sendXandY() {
+  const msg = JSON.stringify({
+    "mv_pan.mv": [x, y], // Send x and y values as motion vectors
+  });
+  zmqSocket.send(msg);
+  console.log("Sent x and y via ZeroMQ:", msg);
+}
 
 server.listen(3001, () => {
   console.log("Server is running...");
@@ -167,201 +173,15 @@ server.listen(3001, () => {
 // const http = require("http");
 // const { Server } = require("socket.io");
 // const cors = require("cors");
-// const OSC = require("osc-js");
 // const zmq = require("zeromq");
-
 // app.use(cors());
-// const osc = new OSC({
-//   plugin: new OSC.DatagramPlugin({ send: { port: 57120 } }),
-// }); // Set the port to 57120 for sending OSC messages
+
+// // fader2 => nb_frames
 
 // const server = http.createServer(app);
+// const zmqAddress = "tcp://localhost:4646";
 
-// // connecting with the URL from the frontend (localhost:3000)
-// const io = new Server(server, {
-//   cors: {
-//     origin: "*",
-//     methods: ["GET", "POST"],
-//   },
-// });
-
-// // dictionaries for faders and pans
-// const generateItemsDictionary = (numItems, prefix) => {
-//   return Array.from({ length: numItems }, (_, i) => ({
-//     name: `${prefix}${i + 1}`,
-//     value: 0,
-//   }));
-// };
-
-// // toggleValues
-// const generateToggleValues = (numButtons) => {
-//   const toggles = {};
-//   for (let i = 1; i <= numButtons; i++) {
-//     toggles[`button${i}`] = 0;
-//   }
-//   return toggles;
-// };
-
-// const FadersDictionary = generateItemsDictionary(25, "fader");
-// const PansDictionary = generateItemsDictionary(2, "pan");
-// const toggleValues = generateToggleValues(15); // Dynamically create 15 buttons
-
-// // Set up ZeroMQ
-// async function setupZmq() {
-//   const zmqSocket = new zmq.Push();
-//   await zmqSocket.connect("tcp://192.168.178.81:5555");
-//   return zmqSocket;
-// }
-
-// let zmqSocket;
-
-// setupZmq().then((socket) => {
-//   zmqSocket = socket;
-// });
-
-// io.on("connection", (socket) => {
-//   console.log(`User Connected: ${socket.id}`);
-
-//   // Send the current fader and toggle values to the client upon connection
-//   socket.emit("initial_fader_values", FadersDictionary);
-//   socket.emit("initial_toggle_values", toggleValues);
-//   socket.emit("initial_pan_values", PansDictionary);
-
-//   socket.on("send_message", (data) => {
-//     const { fader, message } = data;
-
-//     const index = FadersDictionary.findIndex((param) => param.name === fader);
-
-//     if (index !== -1 && typeof message === "number") {
-//       FadersDictionary[index].value = message;
-
-//       console.log("Fader value changed:", fader, FadersDictionary[index].value);
-
-//       // Broadcast the updated fader values to all connected clients
-//       io.emit("updated_fader_values", FadersDictionary);
-
-//       // Send the OSC message
-//       let oscAddress = `${fader}I`;
-//       let oscValue = message;
-//       let oscMessage = new OSC.Message(oscAddress, oscValue);
-//       osc.send(oscMessage);
-
-//       // Send message via ZeroMQ for specific faders
-//       if (fader === "fader1") {
-//         const msg = JSON.stringify({ cmd: "pan", x: message, y: message });
-//         zmqSocket.send(msg);
-//         console.log("Sent message via ZeroMQ:", msg);
-//       }
-//     } else {
-//       const panIndex = PansDictionary.findIndex(
-//         (param) => param.name === fader
-//       );
-//       if (panIndex !== -1 && typeof message === "number") {
-//         PansDictionary[panIndex].value = message;
-
-//         console.log(
-//           "Pan value changed:",
-//           fader,
-//           PansDictionary[panIndex].value
-//         );
-
-//         // Broadcast the updated pan values to all connected clients
-//         io.emit("updated_pan_values", PansDictionary);
-//       }
-//     }
-//   });
-
-//   socket.on("send_toggle_value", (data) => {
-//     const { toggle } = data;
-
-//     if (toggleValues.hasOwnProperty(toggle)) {
-//       toggleValues[toggle] = toggleValues[toggle] === 0 ? 1 : 0;
-//       console.log("Toggle value changed:", toggle, toggleValues[toggle]);
-
-//       // Broadcast the updated toggle values to all connected clients
-//       io.emit("updated_toggle_values", toggleValues);
-
-//       // Send the OSC message
-//       let oscAddress = `${toggle}I`;
-//       let oscValue = toggleValues[toggle];
-//       let oscMessage = new OSC.Message(oscAddress, oscValue);
-//       osc.send(oscMessage);
-
-//       // Send message via ZeroMQ when button1 is toggled
-//       if (toggle === "button1") {
-//         const msg = JSON.stringify({ cmd: "keyframe" });
-//         zmqSocket.send(msg);
-//         console.log("Sent message via ZeroMQ:", msg);
-//       }
-
-//       // Send message via ZeroMQ when button1 is toggled
-//       if (toggle === "button2") {
-//         const msg = JSON.stringify({ cmd: "clean_frame" });
-//         zmqSocket.send(msg);
-//         console.log("Sent message via ZeroMQ:", msg);
-//       }
-//     }
-//   });
-
-//   socket.on("send_message", (data) => {
-//     const { chatMessage } = data;
-
-//     if (typeof chatMessage === "string") {
-//       console.log("Received chat message:", chatMessage);
-//       io.emit("receive_message", { chatMessage });
-
-//       if (toggleValues.button2 === 1) {
-//         let voiceSupercollider = new OSC.Message("/voice", 12.221, chatMessage);
-//         osc.send(voiceSupercollider);
-//       } else if (toggleValues.button3 === 1) {
-//         let voiceSupercollider = new OSC.Message(
-//           "/AsciiSynth",
-//           12.221,
-//           chatMessage
-//         );
-//         osc.send(voiceSupercollider);
-//       }
-//     }
-//   });
-
-//   socket.on("send_message", (data) => {
-//     const { x, y } = data;
-
-//     if (typeof data.x === "number" && typeof data.y === "number") {
-//       console.log("Mouse Coordinates:", x, y);
-
-//       let oscMouseArgs = [x, y];
-//       let oscMouseMessage = new OSC.Message(
-//         "/mouseCoordinates",
-//         oscMouseArgs[0],
-//         String(oscMouseArgs[1])
-//       );
-
-//       osc.send(oscMouseMessage);
-//     }
-//   });
-// });
-
-// server.listen(3001, () => {
-//   console.log("Server is running...");
-// });
-
-// const express = require("express");
-// const app = express();
-// const http = require("http");
-// const { Server } = require("socket.io");
-// const cors = require("cors");
-// const OSC = require("osc-js");
-// const zmq = require("zeromq");
-
-// app.use(cors());
-// const osc = new OSC({
-//   plugin: new OSC.DatagramPlugin({ send: { port: 57120 } }),
-// }); // Set the port to 57120 for sending OSC messages
-
-// const server = http.createServer(app);
-
-// // connecting with the URL from the frontend (localhost:3000)
+// // Connecting with the URL from the frontend (localhost:3000)
 // const io = new Server(server, {
 //   cors: {
 //     origin: "*",
@@ -380,58 +200,23 @@ server.listen(3001, () => {
 // const FadersDictionary = generateItemsDictionary(25, "fader");
 // const PansDictionary = generateItemsDictionary(2, "pan");
 
-// // let FadersDictionary = [
-// //   { name: "fader1", value: 0 },
-// //   { name: "fader2", value: 0 },
-// //   { name: "fader3", value: 0 },
-// //   { name: "fader4", value: 0 },
-// //   { name: "fader5", value: 0 },
-// //   { name: "fader6", value: 0 },
-// //   { name: "fader7", value: 0 },
-// //   { name: "fader8", value: 0 },
-// //   { name: "fader9", value: 0 },
-// //   { name: "fader10", value: 0 },
-// //   { name: "fader11", value: 0 },
-// //   { name: "fader12", value: 0 },
-// //   { name: "fader13", value: 0 },
-// //   { name: "fader14", value: 0 },
-// //   { name: "fader15", value: 0 },
-// //   { name: "fader16", value: 0 },
-// //   { name: "fader17", value: 0 },
-// //   { name: "fader18", value: 0 },
-// //   { name: "fader19", value: 0 },
-// //   { name: "fader20", value: 0 },
-// //   { name: "fader21", value: 0 },
-// //   { name: "fader22", value: 0 },
-// //   { name: "fader23", value: 0 },
-// //   { name: "fader24", value: 0 },
-// //   { name: "fader25", value: 0 },
-// // ];
-
-// // const faderValues = Array(FadersDictionary.length).fill(0);
-
-// let toggleValues = {
-//   button1: 0,
-//   button2: 0,
-//   button3: 0,
-//   button4: 0,
-//   button5: 0,
-//   button6: 0,
-//   button7: 0,
-//   button8: 0,
-//   button9: 0,
-//   button10: 0,
-//   button11: 0,
-//   button12: 0,
-//   button13: 0,
-//   button14: 0,
-//   button15: 0,
+// // Function to dynamically create toggleValues object
+// const generateToggleValues = (numButtons) => {
+//   const toggles = {};
+//   for (let i = 1; i <= numButtons; i++) {
+//     toggles[`button${i}`] = 0;
+//   }
+//   return toggles;
 // };
+
+// const toggleValues = generateToggleValues(15); // Dynamically create 15 buttons
+
+// let nb_frames = 1; // Initial number of frames
 
 // // Set up ZeroMQ
 // async function setupZmq() {
 //   const zmqSocket = new zmq.Push();
-//   await zmqSocket.connect("tcp://192.168.178.81:5555");
+//   await zmqSocket.connect(zmqAddress);
 //   return zmqSocket;
 // }
 
@@ -450,35 +235,47 @@ server.listen(3001, () => {
 //   socket.emit("initial_pan_values", PansDictionary);
 
 //   socket.on("send_message", (data) => {
-//     const { fader, message } = data;
+//     const { fader, message, username, chatMessage } = data;
 
-//     const index = FadersDictionary.findIndex((param) => param.name === fader);
+//     if (fader && message !== undefined) {
+//       const index = FadersDictionary.findIndex((param) => param.name === fader);
 
-//     if (index !== -1 && typeof message === "number") {
-//       FadersDictionary[index].value = message;
+//       if (index !== -1) {
+//         FadersDictionary[index].value = message;
 
-//       console.log("Fader value changed:", fader, FadersDictionary[index].value);
+//         console.log(
+//           "Fader value changed:",
+//           fader,
+//           FadersDictionary[index].value
+//         );
 
-//       // Broadcast the updated fader values to all connected clients
-//       io.emit("updated_fader_values", FadersDictionary);
+//         // Broadcast the updated fader values to all connected clients
+//         io.emit("updated_fader_values", FadersDictionary);
 
-//       // Send the OSC message
-//       let oscAddress = `${fader}I`;
-//       let oscValue = message;
-//       let oscMessage = new OSC.Message(oscAddress, oscValue);
-//       osc.send(oscMessage);
+//         // Update nb_frames based on fader2 value
+//         if (fader === "fader2") {
+//           nb_frames = Math.round(message * 100);
+//           console.log("nb_frames updated to:", nb_frames);
 
-//       // Send message via ZeroMQ for specific faders
-//       if (fader === "fader1") {
-//         const msg = JSON.stringify({ cmd: "pan", x: message, y: message });
-//         zmqSocket.send(msg);
-//         console.log("Sent message via ZeroMQ:", msg);
+//           // // If needed, send the new nb_frames value via ZeroMQ or broadcast to clients
+//           // const msg = JSON.stringify({
+//           //   "cleaner.mb_type": nb_frames,
+//           //   "cleaner.reset_mb_type": 1,
+//           //   "cleaner.pict_type": nb_frames,
+//           //   "cleaner.reset_pict_type": 1,
+//           // });
+//           // zmqSocket.send(msg);
+//           // console.log("Sent message via ZeroMQ:", msg);
+//         }
 //       }
+//     } else if (chatMessage && username) {
+//       console.log(`Received chat message from ${username}:`, chatMessage);
+//       io.emit("receive_message", { username, chatMessage });
 //     } else {
 //       const panIndex = PansDictionary.findIndex(
 //         (param) => param.name === fader
 //       );
-//       if (panIndex !== -1 && typeof message === "number") {
+//       if (panIndex !== -1) {
 //         PansDictionary[panIndex].value = message;
 
 //         console.log(
@@ -503,55 +300,17 @@ server.listen(3001, () => {
 //       // Broadcast the updated toggle values to all connected clients
 //       io.emit("updated_toggle_values", toggleValues);
 
-//       // Send the OSC message
-//       let oscAddress = `${toggle}I`;
-//       let oscValue = toggleValues[toggle];
-//       let oscMessage = new OSC.Message(oscAddress, oscValue);
-//       osc.send(oscMessage);
-
-//       // Send message via ZeroMQ when button1 is toggled
-//       if (toggle === "button1") {
-//         const msg = JSON.stringify({ cmd: "keyframe" });
+//       if (toggle === "button4") {
+//         const msg = JSON.stringify({
+//           "cleaner.mb_type": nb_frames,
+//           "cleaner.reset_mb_type": 1,
+//           "cleaner.pict_type": nb_frames,
+//           "cleaner.reset_pict_type": 1,
+//         });
+//         console.log(msg);
 //         zmqSocket.send(msg);
 //         console.log("Sent message via ZeroMQ:", msg);
 //       }
-
-//       // Send message via ZeroMQ when button1 is toggled
-//       if (toggle === "button2") {
-//         const msg = JSON.stringify({ cmd: "clean_frame" });
-//         zmqSocket.send(msg);
-//         console.log("Sent message via ZeroMQ:", msg);
-//       }
-//     }
-//   });
-
-//   socket.on("send_message", (data) => {
-//     const { message, asciiMessage } = data;
-
-//     if (typeof message === "string") {
-//       console.log("Received message:", message);
-//       socket.broadcast.emit("receive_message", { message });
-
-//       if (toggleValues.button2 === 1) {
-//         let voiceSupercollider = new OSC.Message("/voice", 12.221, message);
-//         osc.send(voiceSupercollider);
-//       } else if (toggleValues.button3 === 1) {
-//         let voiceSupercollider = new OSC.Message(
-//           "/AsciiSynth",
-//           12.221,
-//           message
-//         );
-//         osc.send(voiceSupercollider);
-//       }
-//     } else if (typeof asciiMessage === "string") {
-//       console.log("Received ascii message:", asciiMessage);
-//       let asciiMessageSupercollider = new OSC.Message(
-//         "/ascii",
-//         12.221,
-//         asciiMessage
-//       );
-//       osc.send(asciiMessageSupercollider);
-//       io.emit("receive_message", { asciiMessage });
 //     }
 //   });
 
@@ -560,15 +319,6 @@ server.listen(3001, () => {
 
 //     if (typeof data.x === "number" && typeof data.y === "number") {
 //       console.log("Mouse Coordinates:", x, y);
-
-//       let oscMouseArgs = [x, y];
-//       let oscMouseMessage = new OSC.Message(
-//         "/mouseCoordinates",
-//         oscMouseArgs[0],
-//         String(oscMouseArgs[1])
-//       );
-
-//       osc.send(oscMouseMessage);
 //     }
 //   });
 // });
