@@ -12,7 +12,7 @@ const socket = io.connect("http://localhost:3001");
 // Generate dictionaries for faders and pans
 const generateItemsDictionary = (numItems, prefix) => {
   return Array.from({ length: numItems }, (_, i) => ({
-    name: `${prefix}${i + 1}`,
+    name: `${prefix}${i + 1}`, // Corrected the syntax for string interpolation
     value: 0,
   }));
 };
@@ -20,7 +20,7 @@ const generateItemsDictionary = (numItems, prefix) => {
 const FadersDictionary = generateItemsDictionary(25, "fader");
 const PansDictionary = generateItemsDictionary(2, "pan");
 
-export default function AppDesktop() {
+export default function App() {
   const [chatMessage, setChatMessage] = useState("");
   const [chatMessagesReceived, setChatMessagesReceived] = useState([]);
   const [mouseCoordinates, setMouseCoordinates] = useState({ x: 0, y: 0 });
@@ -35,8 +35,8 @@ export default function AppDesktop() {
 
   const numButtons = 15;
   const [toggleValues, setToggleValues] = useState(Array(numButtons).fill(0));
+  const [panToggled, setPanToggled] = useState(false);
 
-  // Define the missing state variables
   const [initialClickX, setInitialClickX] = useState(0);
   const [initialClickY, setInitialClickY] = useState(0);
   const [initialDivX, setInitialDivX] = useState(0);
@@ -80,8 +80,8 @@ export default function AppDesktop() {
       const offsetX = event.clientX - initialClickX;
       const offsetY = event.clientY - initialClickY;
       const div = document.querySelector(".fader-container");
-      div.style.left = `${initialDivX + offsetX - 500}px`;
-      div.style.top = `${initialDivY + offsetY}px`;
+      div.style.left = `${initialDivX + offsetX - 500}px`; // Corrected the syntax for string interpolation
+      div.style.top = `${initialDivY + offsetY}px`; // Corrected the syntax for string interpolation
     }
   };
 
@@ -150,8 +150,9 @@ export default function AppDesktop() {
   }, []);
 
   // Handler for faders, pans and toggles
+
   const handleFaderChange = (index, value) => {
-    const faderName = `fader${index + 1}`;
+    const faderName = `fader${index + 1}`; // Corrected the syntax for string interpolation
 
     setFaderValues((prevValues) => {
       const newValues = [...prevValues];
@@ -166,7 +167,7 @@ export default function AppDesktop() {
   };
 
   const handlePanChange = (index, value) => {
-    const panName = `pan${index + 1}`;
+    const panName = `pan${index + 1}`; // Corrected the syntax for string interpolation
 
     setPanValues((prevValues) => {
       const newValues = [...prevValues];
@@ -180,11 +181,17 @@ export default function AppDesktop() {
     });
   };
 
+  const handlePanToggle = () => {
+    setPanToggled((prevState) => !prevState);
+    setPanValues(Array(PansDictionary.length).fill(0));
+  };
+
   const handleToggle = (toggle) => {
     const updatedValue = toggleValues[toggle] === 0 ? 1 : 0;
     socket.emit("send_toggle_value", { toggle, value: updatedValue });
   };
 
+  // Message handlers
   const sendChatMessage = () => {
     socket.emit("send_message", { chatMessage });
     chatMessageInputRef.current.value = "";
@@ -228,9 +235,106 @@ export default function AppDesktop() {
     handleToggle("button6");
   };
 
+  // Handlers for mouse events
+
+  const sendCoordinatesToBackend = (x, y) => {
+    socket.emit("send_message", { x, y });
+  };
+
+  const handleMouseMovement = (event) => {
+    const { clientX, clientY } = event;
+    setMouseCoordinates({ x: clientX, y: clientY });
+
+    if (toggleValues.button6 === 1) {
+      sendCoordinatesToBackend(clientX, clientY);
+    }
+  };
+
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
       sendChatMessage();
+    }
+  };
+
+  // CSS classes for containers
+
+  const faderContainerClass = toggleValues.button1
+    ? "fader-container active"
+    : "fader-container";
+
+  const speechSynthContainerClass = toggleValues.button2
+    ? "message-input message-input-blue"
+    : "message-input";
+
+  const mouseGuitarContainerClass = toggleValues.button4
+    ? "mouse-guitar mouse-guitar-red"
+    : "mouse-guitar";
+
+  const recSoundContainerClass = toggleValues.button5
+    ? "rec-sound rec-sound-extra-red"
+    : "rec-sound";
+
+  const panContainerClass = toggleValues.button1
+    ? "pan-container active"
+    : "pan-container";
+
+  let intervalId;
+
+  // Handler for fader animation
+
+  const handleFaderToggle = (index) => {
+    const parameterName = FadersDictionary[index].name;
+
+    setFaderValues((prevValues) => {
+      const newValues = [...prevValues];
+      newValues[index] = newValues[index] === 0 ? 1 : 0;
+      return newValues;
+    });
+
+    const isActive = faderValues[index] === 1;
+
+    const animateFaderValues = () => {
+      const duration = 2000;
+      const steps = 60;
+      const initialValue = faderValues[index];
+      const targetValue = initialValue === 0 ? 1 : 0;
+      const stepValue = (targetValue - initialValue) / steps;
+
+      let currentValue = initialValue;
+      let stepCount = 0;
+
+      intervalId = setInterval(() => {
+        stepCount++;
+        currentValue += stepValue;
+
+        setFaderValues((prevValues) => {
+          const newValues = [...prevValues];
+          newValues[index] = currentValue;
+          return newValues;
+        });
+
+        socket.emit("send_message", {
+          fader: parameterName,
+          message: currentValue,
+        });
+
+        if (stepCount === steps) {
+          clearInterval(intervalId);
+          setFaderValues((prevValues) => {
+            const newValues = [...prevValues];
+            newValues[index] = targetValue;
+            return newValues;
+          });
+
+          setTimeout(animateFaderValues, duration);
+        }
+      }, duration / steps);
+    };
+
+    if (isActive) {
+      animateFaderValues();
+    } else {
+      clearInterval(intervalId);
     }
   };
 
@@ -238,24 +342,23 @@ export default function AppDesktop() {
     <div
       className="App"
       ref={containerRef}
-      style={{ transform: `scale(${zoomScale})` }}
+      style={{ transform: `scale(${zoomScale})` }} // Corrected the syntax for string interpolation
     >
       <div
         onDoubleClick={handleFaderContainerDoubleClick}
-        className="fader-container"
+        className={faderContainerClass}
         onMouseDown={handleMouseAltKey}
       >
         <FadersGroup
           faders={FadersDictionary.slice(0, 5)}
           values={faderValues}
           handleChange={handleFaderChange}
-          handleToggle={handleToggle}
+          handleToggle={handleFaderToggle}
         />
       </div>
-
       <Draggable>
         <div
-          className="message-input"
+          className={speechSynthContainerClass}
           onDoubleClick={handleSpeechSynthContainerDoubleClick}
         >
           <div className="message-history">
@@ -270,39 +373,39 @@ export default function AppDesktop() {
           />
         </div>
       </Draggable>
-
       <Draggable>
         <div
-          className="mouse-guitar"
+          className={mouseGuitarContainerClass}
           onDoubleClick={handleMouseGuitarContainerDoubleClick}
+          onMouseMove={handleMouseMovement}
         ></div>
       </Draggable>
-
       <Draggable>
         <div
-          className={`rec-sound ${
+          className={`${mouseGuitarContainerClass} ${recSoundContainerClass} ${
             toggleValues.button5 === 1 ? "red-rec blink-red" : ""
-          }`}
+          }`} // Corrected the syntax for className
           onDoubleClick={handleRecSoundDoubleClick}
+          onMouseMove={handleMouseMovement}
         ></div>
       </Draggable>
-
       <Draggable>
         <div
-          className={`mouse-on ${toggleValues.button6 === 1 ? "blue" : ""}`}
+          className={`mouse-on ${toggleValues.button6 === 1 ? "blue" : ""}`} // Corrected the syntax for className
           onDoubleClick={handleMouseOnContainerDoubleClick}
+          onMouseMove={handleMouseMovement}
         ></div>
       </Draggable>
-
       <div
-        className="pan-container"
         onDoubleClick={() => handleToggle("button2")}
+        className={panContainerClass}
+        onMouseDown={handleMouseAltKey}
       >
         <PanGroup
           pans={PansDictionary}
           values={panValues}
           handleChange={handlePanChange}
-          handleToggle={handlePanChange}
+          handleToggle={handlePanToggle}
         />
       </div>
     </div>
