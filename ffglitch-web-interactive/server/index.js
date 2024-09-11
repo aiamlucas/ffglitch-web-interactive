@@ -1,17 +1,22 @@
 const express = require("express");
-const app = express();
-const http = require("http");
+const https = require("https");
+const fs = require("fs");
 const { Server } = require("socket.io");
 const cors = require("cors");
 const zmq = require("zeromq");
+const app = express();
+
 app.use(cors());
 
-// fader2 => nb_frames
-
-const server = http.createServer(app);
 const zmqAddress = "tcp://localhost:4646";
 
-// Connecting with the URL from the frontend (localhost:3000)
+// Load the self-signed certificate and private key
+const server = https.createServer({
+  key: fs.readFileSync("server.key"), // Path to your private key
+  cert: fs.readFileSync("server.cert"), // Path to your self-signed certificate
+});
+
+// Connecting with the URL from the frontend (localhost:3000) with WebSockets over HTTPS
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -88,8 +93,6 @@ io.on("connection", (socket) => {
         if (fader === "fader2") {
           nb_frames = Math.round(message * 100);
           console.log("nb_frames updated to:", nb_frames);
-
-          // If needed, send the new nb_frames value via ZeroMQ
         } else if (fader === "fader4") {
           x = Math.round(message * 100); // Set x based on fader4
           console.log("x axis updated to:", x);
@@ -164,8 +167,9 @@ function sendXandY() {
   console.log("Sent x and y via ZeroMQ:", msg);
 }
 
+// Listen on HTTPS instead of HTTP
 server.listen(3001, () => {
-  console.log("Server is running...");
+  console.log("Server is running on https://localhost:3001");
 });
 
 // const express = require("express");
@@ -212,6 +216,8 @@ server.listen(3001, () => {
 // const toggleValues = generateToggleValues(15); // Dynamically create 15 buttons
 
 // let nb_frames = 1; // Initial number of frames
+// let x = 0; // Initialize x axis
+// let y = 0; // Initialize y axis
 
 // // Set up ZeroMQ
 // async function setupZmq() {
@@ -257,15 +263,15 @@ server.listen(3001, () => {
 //           nb_frames = Math.round(message * 100);
 //           console.log("nb_frames updated to:", nb_frames);
 
-//           // // If needed, send the new nb_frames value via ZeroMQ or broadcast to clients
-//           // const msg = JSON.stringify({
-//           //   "cleaner.mb_type": nb_frames,
-//           //   "cleaner.reset_mb_type": 1,
-//           //   "cleaner.pict_type": nb_frames,
-//           //   "cleaner.reset_pict_type": 1,
-//           // });
-//           // zmqSocket.send(msg);
-//           // console.log("Sent message via ZeroMQ:", msg);
+//           // If needed, send the new nb_frames value via ZeroMQ
+//         } else if (fader === "fader4") {
+//           x = Math.round(message * 100); // Set x based on fader4
+//           console.log("x axis updated to:", x);
+//           sendXandY(); // Send x and y values via ZeroMQ
+//         } else if (fader === "fader5") {
+//           y = Math.round(message * 100); // Set y based on fader5
+//           console.log("y axis updated to:", y);
+//           sendXandY(); // Send x and y values via ZeroMQ
 //         }
 //       }
 //     } else if (chatMessage && username) {
@@ -322,6 +328,15 @@ server.listen(3001, () => {
 //     }
 //   });
 // });
+
+// // Function to send x and y values via ZeroMQ
+// function sendXandY() {
+//   const msg = JSON.stringify({
+//     "mv_pan.mv": [x, y], // Send x and y values as motion vectors
+//   });
+//   zmqSocket.send(msg);
+//   console.log("Sent x and y via ZeroMQ:", msg);
+// }
 
 // server.listen(3001, () => {
 //   console.log("Server is running...");
