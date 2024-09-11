@@ -4,7 +4,7 @@
 .mobile-container {
   height: 100vh;
   width: 100vw;
-  background-color: #002fa7; /* Background color set to #002FA7 */
+  background-color: #002fa7;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,21 +15,25 @@
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
-  font-family: "Roboto", sans-serif; /* Apply Roboto font globally */
+  font-family: "Roboto", sans-serif;
 }
 
-/* Fixed text container with padding near the top center */
+/* Text container for displaying x, y, z values */
 .text-container {
   position: absolute;
-  top: 5%; /* Adjust to position the text near the top */
+  top: 10%;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
-  padding: 1rem; /* Optional padding to give space around text */
-  color: black;
-  font-family: "Roboto", sans-serif; /* Ensure Roboto is applied */
-  font-size: 2.5rem; /* Bigger font size */
-  font-weight: 300; /* Light font weight */
+  padding: 1rem;
+  color: white;
+  font-size: 2rem;
+  font-weight: 400; /* Medium weight to improve visibility */
+}
+
+.error {
+  color: red;
+  font-size: 1.5rem;
 }
 
 /* Container for buttons at the bottom */
@@ -39,14 +43,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.25rem; /* Equal space between all buttons */
 }
 
 /* Styling for the long push button */
 .long-push-button {
   background-color: #e0ff2e;
-  border-radius: 0.625rem;
-  width: 8rem;
+  border-radius: 0.625rem; /* Equivalent to 10px */
+  width: 8rem; /* Slightly longer */
   height: 3rem;
   font-size: 1.2em;
   display: flex;
@@ -54,7 +58,7 @@
   align-items: center;
   color: black;
   cursor: pointer;
-  opacity: 0.4;
+  opacity: 0.7;
   transition: background-color 0.2s, opacity 0.2s;
 }
 
@@ -68,6 +72,7 @@
   transition: background-color 0.2s;
 }
 
+/* Styling for the two smaller toggle buttons */
 .small-toggle-button {
   background-color: #e0ff2e;
   border-radius: 0.625rem;
@@ -79,7 +84,7 @@
   align-items: center;
   color: black;
   cursor: pointer;
-  opacity: 0.4;
+  opacity: 0.7;
   transition: background-color 0.2s, opacity 0.2s;
   box-sizing: border-box;
 }
@@ -95,6 +100,7 @@
   transition: background-color 0.2s;
 }
 
+/* Styling for the larger button (centered) with lower opacity */
 .large-button {
   background-color: #e0ff2e;
   border-radius: 0.625rem;
@@ -105,7 +111,7 @@
   justify-content: center;
   align-items: center;
   color: black;
-  opacity: 0.4;
+  opacity: 0.7;
   transition: background-color 0.2s, opacity 0.2s;
   cursor: pointer;
   touch-action: manipulation;
