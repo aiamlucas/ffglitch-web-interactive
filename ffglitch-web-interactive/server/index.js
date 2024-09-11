@@ -1,3 +1,4 @@
+//server/index.js
 const express = require("express");
 const https = require("https");
 const fs = require("fs");
@@ -16,13 +17,21 @@ const server = https.createServer({
   cert: fs.readFileSync("server.cert"), // Path to your self-signed certificate
 });
 
-// Connecting with the URL from the frontend (localhost:3000) with WebSockets over HTTPS
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "*", // Replace this with your client address
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
+
+// OLD Connecting with the URL from the frontend (localhost:3000) with WebSockets over HTTPS
+// const io = new Server(server, {
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"],
+//   },
+// });
 
 // Generate dictionaries for faders and pans
 const generateItemsDictionary = (numItems, prefix) => {

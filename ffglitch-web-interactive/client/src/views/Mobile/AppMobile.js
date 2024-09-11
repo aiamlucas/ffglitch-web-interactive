@@ -3,6 +3,12 @@ import "../Mobile/AppMobile.css";
 import { useState } from "react";
 import "@fontsource/roboto"; // Import Roboto font
 import { useDeviceOrientation } from "../../hooks/useDeviceOrientation"; // Import your hook
+import io from "socket.io-client";
+
+const socket = io("wss://localhost:3001", {
+  secure: true,
+  rejectUnauthorized: false, // Allow self-signed certificates
+});
 
 export default function AppMobile() {
   const { orientation, requestAccess, revokeAccess, error } =
