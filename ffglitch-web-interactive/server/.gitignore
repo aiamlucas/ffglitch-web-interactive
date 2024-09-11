@@ -1,0 +1,3 @@
+# Ignore SSL certificate and private key
+server/server.key
+server/server.cert
