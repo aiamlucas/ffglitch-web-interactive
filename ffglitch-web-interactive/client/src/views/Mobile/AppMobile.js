@@ -1,12 +1,51 @@
 // src/views/Mobile/AppMobile.js
 import "../Mobile/AppMobile.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function AppMobile() {
   const [isSmallToggled1, setIsSmallToggled1] = useState(false); // State for small toggle button 1
   const [isSmallToggled2, setIsSmallToggled2] = useState(false); // State for small toggle button 2
   const [isLongPressed, setIsLongPressed] = useState(false); // State for long push button
   const [isPressed, setIsPressed] = useState(false); // State for large button
+  const [xValue, setXValue] = useState(0); // State for x-axis value
+  const [yValue, setYValue] = useState(0); // State for y-axis value
+
+  // Map the accelerometer values to the range -255 to +255
+  const mapRange = (value, inMin, inMax, outMin, outMax) => {
+    return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+  };
+
+  useEffect(() => {
+    const handleMotionEvent = (event) => {
+      const { accelerationIncludingGravity } = event;
+      let rawX = accelerationIncludingGravity.x || 0;
+      let rawY = accelerationIncludingGravity.y || 0;
+
+      // Map the raw accelerometer values to the range -255 to +255
+      const mappedX = Math.round(mapRange(rawX, -9.8, 9.8, -255, 255));
+      const mappedY = Math.round(mapRange(rawY, -9.8, 9.8, -255, 255));
+
+      setXValue(mappedX);
+      setYValue(mappedY);
+    };
+
+    // Request permission for iOS
+    if (typeof DeviceMotionEvent.requestPermission === "function") {
+      DeviceMotionEvent.requestPermission()
+        .then((permissionState) => {
+          if (permissionState === "granted") {
+            window.addEventListener("devicemotion", handleMotionEvent);
+          }
+        })
+        .catch(console.error);
+    } else {
+      window.addEventListener("devicemotion", handleMotionEvent);
+    }
+
+    return () => {
+      window.removeEventListener("devicemotion", handleMotionEvent);
+    };
+  }, []);
 
   // Push button handler for long button
   const handleLongPressStart = () => {
@@ -41,6 +80,14 @@ export default function AppMobile() {
 
   return (
     <div className="mobile-container">
+      {/* Display x and y values when the large button is pressed */}
+      {isPressed && (
+        <div>
+          <h2>x: {xValue}</h2>
+          <h2>y: {yValue}</h2>
+        </div>
+      )}
+
       {/* Large Button - Center */}
       <div
         className={`large-button ${isPressed ? "pressed" : ""}`}
@@ -48,7 +95,9 @@ export default function AppMobile() {
         onMouseUp={handlePressEnd}
         onTouchStart={handlePressStart}
         onTouchEnd={handlePressEnd}
-      ></div>
+      >
+        Press Me
+      </div>
 
       {/* Bottom buttons: long push button and two smaller toggle buttons */}
       <div className="bottom-buttons">
@@ -59,19 +108,25 @@ export default function AppMobile() {
           onMouseUp={handleLongPressEnd}
           onTouchStart={handleLongPressStart}
           onTouchEnd={handleLongPressEnd}
-        ></div>
+        >
+          Long Push
+        </div>
 
         {/* Small Toggle Button 1 */}
         <div
           className={`small-toggle-button ${isSmallToggled1 ? "active" : ""}`}
           onClick={handleSmallToggleClick1}
-        ></div>
+        >
+          Toggle 1
+        </div>
 
         {/* Small Toggle Button 2 */}
         <div
           className={`small-toggle-button ${isSmallToggled2 ? "active" : ""}`}
           onClick={handleSmallToggleClick2}
-        ></div>
+        >
+          Toggle 2
+        </div>
       </div>
     </div>
   );
@@ -82,12 +137,28 @@ export default function AppMobile() {
 // import { useState } from "react";
 
 // export default function AppMobile() {
-//   const [isToggled, setIsToggled] = useState(false); // State for toggle button
+//   const [isSmallToggled1, setIsSmallToggled1] = useState(false); // State for small toggle button 1
+//   const [isSmallToggled2, setIsSmallToggled2] = useState(false); // State for small toggle button 2
+//   const [isLongPressed, setIsLongPressed] = useState(false); // State for long push button
 //   const [isPressed, setIsPressed] = useState(false); // State for large button
 
-//   // Toggle button handler (toggles between on and off states)
-//   const handleToggleClick = () => {
-//     setIsToggled((prev) => !prev); // Toggle the button state immediately
+//   // Push button handler for long button
+//   const handleLongPressStart = () => {
+//     setIsLongPressed(true); // Button pressed
+//   };
+
+//   const handleLongPressEnd = () => {
+//     setIsLongPressed(false); // Button released
+//   };
+
+//   // Toggle button handler for small toggle button 1
+//   const handleSmallToggleClick1 = () => {
+//     setIsSmallToggled1((prev) => !prev); // Toggle small button 1
+//   };
+
+//   // Toggle button handler for small toggle button 2
+//   const handleSmallToggleClick2 = () => {
+//     setIsSmallToggled2((prev) => !prev); // Toggle small button 2
 //   };
 
 //   // Handle press for the large button (start press)
@@ -104,12 +175,6 @@ export default function AppMobile() {
 
 //   return (
 //     <div className="mobile-container">
-//       {/* Toggle Button - Upper Right */}
-//       <div
-//         className={`toggle-button ${isToggled ? "active" : ""}`}
-//         onClick={handleToggleClick} // Use onClick for both mobile and desktop
-//       ></div>
-
 //       {/* Large Button - Center */}
 //       <div
 //         className={`large-button ${isPressed ? "pressed" : ""}`}
@@ -118,6 +183,30 @@ export default function AppMobile() {
 //         onTouchStart={handlePressStart}
 //         onTouchEnd={handlePressEnd}
 //       ></div>
+
+//       {/* Bottom buttons: long push button and two smaller toggle buttons */}
+//       <div className="bottom-buttons">
+//         {/* Long Push Button */}
+//         <div
+//           className={`long-push-button ${isLongPressed ? "pressed" : ""}`}
+//           onMouseDown={handleLongPressStart}
+//           onMouseUp={handleLongPressEnd}
+//           onTouchStart={handleLongPressStart}
+//           onTouchEnd={handleLongPressEnd}
+//         ></div>
+
+//         {/* Small Toggle Button 1 */}
+//         <div
+//           className={`small-toggle-button ${isSmallToggled1 ? "active" : ""}`}
+//           onClick={handleSmallToggleClick1}
+//         ></div>
+
+//         {/* Small Toggle Button 2 */}
+//         <div
+//           className={`small-toggle-button ${isSmallToggled2 ? "active" : ""}`}
+//           onClick={handleSmallToggleClick2}
+//         ></div>
+//       </div>
 //     </div>
 //   );
 // }
