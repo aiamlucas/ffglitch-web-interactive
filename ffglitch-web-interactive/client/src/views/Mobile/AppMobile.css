@@ -1,10 +1,10 @@
 /* views/Mobile/AppMobile.css */
 
-/* Make the entire background blue */
+/* Make the entire background #002FA7 */
 .mobile-container {
   height: 100vh;
   width: 100vw;
-  background-color: blue;
+  background-color: #002fa7; /* Background color set to #002FA7 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,50 +15,38 @@
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
+  font-family: "Roboto", sans-serif; /* Apply Roboto font globally */
+}
+
+/* Fixed text container with padding near the top center */
+.text-container {
+  position: absolute;
+  top: 5%; /* Adjust to position the text near the top */
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  padding: 1rem; /* Optional padding to give space around text */
+  color: black;
+  font-family: "Roboto", sans-serif; /* Ensure Roboto is applied */
+  font-size: 2.5rem; /* Bigger font size */
+  font-weight: 300; /* Light font weight */
 }
 
 /* Container for buttons at the bottom */
 .bottom-buttons {
   position: absolute;
-  bottom: 2rem; /* Increased padding from bottom in rem */
+  bottom: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1.25rem; /* Equal space between all buttons */
+  gap: 1.25rem;
 }
 
 /* Styling for the long push button */
 .long-push-button {
-  background-color: yellow;
-  border-radius: 0.625rem; /* Equivalent to 10px */
-  width: 8rem; /* Equivalent to ~160px (slightly longer) */
-  height: 3rem; /* Equivalent to ~80px */
-  font-size: 1.2em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: black;
-  cursor: pointer;
-  opacity: 0.5; /* Less opacity by default */
-  transition: background-color 0.2s, opacity 0.2s;
-}
-
-/* When the long push button is pressed */
-.long-push-button.pressed {
-  background-color: gold; /* Stronger yellow when pressed */
-  opacity: 1; /* Full opacity when pressed */
-}
-
-.long-push-button:hover {
-  background-color: darkyellow;
-  transition: background-color 0.2s;
-}
-
-/* Styling for the two smaller toggle buttons */
-.small-toggle-button {
-  background-color: yellow;
-  border-radius: 0.625rem; /* Equivalent to 10px */
-  width: 3rem; /* Same width and height */
+  background-color: #e0ff2e;
+  border-radius: 0.625rem;
+  width: 8rem;
   height: 3rem;
   font-size: 1.2em;
   display: flex;
@@ -66,48 +54,69 @@
   align-items: center;
   color: black;
   cursor: pointer;
-  opacity: 0.5; /* Less opacity when not toggled */
+  opacity: 0.4;
   transition: background-color 0.2s, opacity 0.2s;
-  /* Ensure consistent size, prevent layout shift */
+}
+
+.long-push-button.pressed {
+  background-color: #e0ff2e;
+  opacity: 1;
+}
+
+.long-push-button:hover {
+  background-color: #d4ff00;
+  transition: background-color 0.2s;
+}
+
+.small-toggle-button {
+  background-color: #e0ff2e;
+  border-radius: 0.625rem;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: background-color 0.2s, opacity 0.2s;
   box-sizing: border-box;
 }
 
-/* When the small toggle buttons are active */
 .small-toggle-button.active {
-  background-color: gold; /* Stronger yellow when toggled */
+  background-color: #e0ff2e;
   opacity: 1;
 }
 
 .small-toggle-button:hover,
 .long-push-button:hover {
-  background-color: darkyellow;
+  background-color: #d4ff00;
   transition: background-color 0.2s;
 }
 
-/* Styling for the larger button (centered) with lower opacity */
 .large-button {
-  background-color: yellow;
-  border-radius: 0.625rem; /* Equivalent to 10px */
-  width: 6rem; /* Equivalent to ~160px */
-  height: 6rem; /* Equivalent to ~160px */
+  background-color: #e0ff2e;
+  border-radius: 0.625rem;
+  width: 6rem;
+  height: 6rem;
   font-size: 1.5em;
   display: flex;
   justify-content: center;
   align-items: center;
   color: black;
-  opacity: 0.5;
+  opacity: 0.4;
   transition: background-color 0.2s, opacity 0.2s;
   cursor: pointer;
   touch-action: manipulation;
 }
 
-/* When the large button is pressed */
 .large-button.pressed {
-  background-color: gold;
+  background-color: #e0ff2e;
   opacity: 1;
 }
 
 .large-button:hover {
-  transform: scale(1.1); /* Optional scaling effect for large button */
+  transform: scale(1.1);
   transition: transform 0.2s;
 }

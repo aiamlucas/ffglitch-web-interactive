@@ -1,10 +1,10 @@
-/* views/Mobile/AppMobile.css
+/* views/Mobile/AppMobile.css */
 
-/* Make the entire background blue */
+/* Make the entire background #002FA7 */
 .mobile-container {
   height: 100vh;
   width: 100vw;
-  background-color: blue;
+  background-color: #002fa7; /* Background color set to #002FA7 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -17,57 +17,98 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Styling for the toggle button (upper-right corner) */
-.toggle-button {
-  background-color: yellow;
-  border-radius: 10px;
-  width: 10vw;
-  height: 10vw;
+/* Fixed text container with padding near the top center */
+.text-container {
   position: absolute;
-  top: 5%;
-  right: 5%;
+  top: 5%; /* Adjust to position the text near the top */
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  padding: 1rem; /* Optional padding to give space around text */
+  color: white;
+}
+
+/* Container for buttons at the bottom */
+.bottom-buttons {
+  position: absolute;
+  bottom: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* Styling for the long push button */
+.long-push-button {
+  background-color: #e0ff2e;
+  border-radius: 0.625rem;
+  width: 8rem;
+  height: 3rem;
   font-size: 1.2em;
   display: flex;
   justify-content: center;
   align-items: center;
   color: black;
   cursor: pointer;
-  opacity: 0.5; /* Less opacity when not toggled */
+  opacity: 0.4;
   transition: background-color 0.2s, opacity 0.2s;
 }
 
-/* When the toggle button is active (toggled on) */
-.toggle-button.active {
-  background-color: gold; /* Stronger yellow when toggled */
-  opacity: 1; /* Full opacity when toggled */
+.long-push-button.pressed {
+  background-color: #e0ff2e;
+  opacity: 1;
 }
 
-.toggle-button:hover {
-  background-color: darkyellow;
-  transform: scale(1.1);
-  transition: transform 0.2s;
+.long-push-button:hover {
+  background-color: #d4ff00;
+  transition: background-color 0.2s;
 }
 
-/* Styling for the larger button (centered) with lower opacity */
+.small-toggle-button {
+  background-color: #e0ff2e;
+  border-radius: 0.625rem;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: background-color 0.2s, opacity 0.2s;
+  box-sizing: border-box;
+}
+
+.small-toggle-button.active {
+  background-color: #e0ff2e;
+  opacity: 1;
+}
+
+.small-toggle-button:hover,
+.long-push-button:hover {
+  background-color: #d4ff00;
+  transition: background-color 0.2s;
+}
+
 .large-button {
-  background-color: yellow;
-  border-radius: 10px;
-  width: 20vw;
-  height: 20vw;
+  background-color: #e0ff2e;
+  border-radius: 0.625rem;
+  width: 6rem;
+  height: 6rem;
   font-size: 1.5em;
   display: flex;
   justify-content: center;
   align-items: center;
   color: black;
-  opacity: 0.5;
+  opacity: 0.4;
   transition: background-color 0.2s, opacity 0.2s;
   cursor: pointer;
   touch-action: manipulation;
 }
 
-/* When the large button is pressed */
 .large-button.pressed {
-  background-color: gold;
+  background-color: #e0ff2e;
   opacity: 1;
 }
 
