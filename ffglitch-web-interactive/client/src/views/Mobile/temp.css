@@ -54,13 +54,37 @@
 /* Inner Circle */
 .inner-circle {
   position: absolute;
-  width: 8rem;
-  height: 8rem;
+  width: 6rem; /* Reduced size */
+  height: 6rem;
   border-radius: 50%;
-  background-color: rgba(255, 0, 0, 0.15); /* Semi-transparent red */
+  background-color: rgba(255, 0, 0, 0.1); /* Semi-transparent red */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+/* X and Y Axis Lines */
+.x-axis-line,
+.y-axis-line {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.2); /* Reduced opacity */
+  z-index: 1;
+}
+
+.x-axis-line {
+  width: 150%; /* Extended length */
+  height: 2px;
+  top: 50%;
+  left: -25%; /* Shift left to center */
+  transform: translateY(-50%);
+}
+
+.y-axis-line {
+  height: 150%;
+  width: 2px;
+  left: 50%;
+  top: -25%; /* Shift up to center */
+  transform: translateX(-50%);
 }
 
 /* Small Ball */
@@ -70,8 +94,8 @@
   height: 1.5rem;
   border-radius: 50%;
   background-color: red;
-  transform: translate(-50%, -50%);
   z-index: 2;
+  transform: translate(-50%, -50%);
 }
 
 /* Bottom buttons */
@@ -80,17 +104,15 @@
   bottom: 2rem;
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 1rem; /* Slightly smaller gap */
+  gap: 0.5rem; /* Space between buttons */
 }
 
-/* Small toggle buttons */
 .small-toggle-button {
   background-color: #e0ff2e;
-  border-radius: 0.625rem;
+  border-radius: 0.5rem;
   width: 3rem;
   height: 3rem;
-  font-size: 1rem; /* Smaller font */
+  font-size: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -108,10 +130,10 @@
 /* Long push button */
 .long-push-button {
   background-color: #e0ff2e;
-  border-radius: 0.625rem;
-  width: 8rem;
-  height: 3rem;
-  font-size: 1rem; /* Smaller font size */
+  border-radius: 0.5rem;
+  width: 5rem;
+  height: 2.5rem;
+  font-size: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;

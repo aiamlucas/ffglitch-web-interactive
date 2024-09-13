@@ -21,10 +21,10 @@
 /* Draggable Log Container */
 .log-container {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 150px;
-  height: 80px;
+  top: 60px; /* Increased padding from top */
+  right: 15px; /* Increased padding from right */
+  width: 160px;
+  height: 85px;
   padding: 0.5rem;
   border: 1px solid black;
   border-radius: 0.5rem;
@@ -45,22 +45,48 @@
   border-radius: 50%;
   background-color: transparent;
   z-index: 1;
+  transition: all 2s ease; /* 2 second transition for toggling */
 }
 
 .large-circle.toggled {
-  border-color: #007bff;
+  border-color: #000; /* Stay black */
 }
 
-/* Inner Circle */
 .inner-circle {
   position: absolute;
-  width: 8rem;
-  height: 8rem;
+  width: 6rem;
+  height: 6rem;
   border-radius: 50%;
-  background-color: rgba(255, 0, 0, 0.15); /* Semi-transparent red */
+  background-color: rgba(255, 0, 0, 0.1); /* Semi-transparent red */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  transition: all 2s ease; /* Transition effect */
+}
+
+/* X and Y Axis Lines */
+.x-axis-line,
+.y-axis-line {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.2); /* Reduced opacity */
+  z-index: 1;
+  transition: all 2s ease; /* Transition effect */
+}
+
+.x-axis-line {
+  width: 180%; /* Extended length */
+  height: 2px;
+  top: 50%;
+  left: -40%; /* Shift left to center */
+  transform: translateY(-50%);
+}
+
+.y-axis-line {
+  height: 180%;
+  width: 2px;
+  left: 50%;
+  top: -40%; /* Shift top to center */
+  transform: translateX(-50%);
 }
 
 /* Small Ball */
@@ -70,27 +96,25 @@
   height: 1.5rem;
   border-radius: 50%;
   background-color: red;
-  transform: translate(-50%, -50%);
   z-index: 2;
+  transform: translate(-50%, -50%);
 }
 
 /* Bottom buttons */
 .bottom-buttons {
   position: absolute;
-  bottom: 2rem;
+  bottom: 8rem; /* Increased distance from the bottom */
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 1rem; /* Slightly smaller gap */
+  gap: 0.5rem; /* Space between buttons */
 }
 
-/* Small toggle buttons */
 .small-toggle-button {
   background-color: #e0ff2e;
-  border-radius: 0.625rem;
+  border-radius: 0.5rem;
   width: 3rem;
   height: 3rem;
-  font-size: 1rem; /* Smaller font */
+  font-size: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -108,10 +132,10 @@
 /* Long push button */
 .long-push-button {
   background-color: #e0ff2e;
-  border-radius: 0.625rem;
-  width: 8rem;
+  border-radius: 0.5rem;
+  width: 7rem;
   height: 3rem;
-  font-size: 1rem; /* Smaller font size */
+  font-size: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
