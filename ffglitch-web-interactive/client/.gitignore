@@ -24,3 +24,4 @@ yarn-error.log*
 .env
 client/server.key
 client/server.cert
+*.swp

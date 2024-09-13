@@ -1,1 +1,8 @@
+
 .bfg-report/
+# Ignore SSL certificate and private key
+server/server.key
+server/server.cert
+
+# Ignore Vim or other editor swap files
+*.swp
