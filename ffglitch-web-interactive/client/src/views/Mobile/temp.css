@@ -18,41 +18,100 @@
   font-family: "Roboto", sans-serif;
 }
 
-/* Text container for displaying x, y, z values */
-.text-container {
+/* Draggable Log Container */
+.log-container {
   position: absolute;
-  top: 10%;
+  top: 20px;
+  right: 20px;
+  width: 150px;
+  height: 80px;
+  padding: 0.5rem;
+  border: 1px solid black;
+  border-radius: 0.5rem;
+  background-color: transparent; /* Transparent background */
+  color: black;
+  font-size: 1rem;
+  cursor: grab;
+  z-index: 10;
+  overflow: hidden; /* Prevent overflow of text */
+}
+
+/* Large Circle */
+.large-circle {
+  position: relative;
+  width: 15rem;
+  height: 15rem;
+  border: 2px solid #000;
+  border-radius: 50%;
+  background-color: transparent;
+  z-index: 1;
+}
+
+.large-circle.toggled {
+  border-color: #007bff;
+}
+
+/* Inner Circle */
+.inner-circle {
+  position: absolute;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  background-color: rgba(255, 0, 0, 0.15); /* Semi-transparent red */
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  padding: 1rem;
-  color: white;
-  font-size: 2rem;
-  font-weight: 400; /* Medium weight to improve visibility */
+  transform: translate(-50%, -50%);
 }
 
-.error {
-  color: red;
-  font-size: 1.5rem;
+/* Small Ball */
+.small-ball {
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: red;
+  transform: translate(-50%, -50%);
+  z-index: 2;
 }
 
-/* Container for buttons at the bottom */
+/* Bottom buttons */
 .bottom-buttons {
   position: absolute;
   bottom: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1.25rem; /* Equal space between all buttons */
+  gap: 1rem; /* Slightly smaller gap */
 }
 
-/* Styling for the long push button */
+/* Small toggle buttons */
+.small-toggle-button {
+  background-color: #e0ff2e;
+  border-radius: 0.625rem;
+  width: 3rem;
+  height: 3rem;
+  font-size: 1rem; /* Smaller font */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.small-toggle-button.active {
+  background-color: #d4ff00;
+  opacity: 1;
+}
+
+/* Long push button */
 .long-push-button {
   background-color: #e0ff2e;
-  border-radius: 0.625rem; /* Equivalent to 10px */
-  width: 8rem; /* Slightly longer */
+  border-radius: 0.625rem;
+  width: 8rem;
   height: 3rem;
-  font-size: 1.2em;
+  font-size: 1rem; /* Smaller font size */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -63,94 +122,6 @@
 }
 
 .long-push-button.pressed {
-  background-color: #e0ff2e;
-  opacity: 1;
-}
-
-.long-push-button:hover {
   background-color: #d4ff00;
-  transition: background-color 0.2s;
-}
-
-/* Styling for the two smaller toggle buttons */
-.small-toggle-button {
-  background-color: #e0ff2e;
-  border-radius: 0.625rem;
-  width: 3rem;
-  height: 3rem;
-  font-size: 1.2em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: black;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: background-color 0.2s, opacity 0.2s;
-  box-sizing: border-box;
-}
-
-.small-toggle-button.active {
-  background-color: #e0ff2e;
   opacity: 1;
-}
-
-.small-toggle-button:hover,
-.long-push-button:hover {
-  background-color: #d4ff00;
-  transition: background-color 0.2s;
-}
-
-/* Styling for the larger button (centered) with lower opacity */
-.large-button {
-  background-color: #e0ff2e;
-  border-radius: 0.625rem;
-  width: 6rem;
-  height: 6rem;
-  font-size: 1.5em;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: black;
-  opacity: 0.7;
-  transition: background-color 0.2s, opacity 0.2s;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-.large-button.pressed {
-  background-color: #e0ff2e;
-  opacity: 1;
-}
-
-.large-button:hover {
-  transform: scale(1.1);
-  transition: transform 0.2s;
-}
-
-/* ciecles */
-
-/* Large Circle */
-.large-circle {
-  position: relative;
-  width: 200px;
-  height: 200px;
-  border: 2px solid #000;
-  border-radius: 50%;
-  margin: 0 auto;
-  background-color: transparent;
-}
-
-.large-circle.toggled {
-  /* Styles when the large circle is toggled */
-  border-color: #007bff;
-}
-
-/* Small Ball */
-.small-ball {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background-color: red;
-  transform: translate(-50%, -50%);
 }
