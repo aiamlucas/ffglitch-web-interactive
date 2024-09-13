@@ -9,7 +9,6 @@ export const useDeviceOrientation = () => {
   });
   const [error, setError] = useState(null);
 
-  // Event handler for device orientation
   const handleOrientation = (event) => {
     setOrientation({
       alpha: event.alpha,
@@ -18,39 +17,46 @@ export const useDeviceOrientation = () => {
     });
   };
 
-  // Request permission for iOS and listen for device orientation
-  const requestAccess = async () => {
+  const requestAccess = useCallback(async () => {
     if (typeof DeviceOrientationEvent.requestPermission === "function") {
       try {
         const permission = await DeviceOrientationEvent.requestPermission();
         if (permission === "granted") {
           window.addEventListener("deviceorientation", handleOrientation);
+          return true;
         } else {
-          setError(new Error("Permission denied to access device orientation"));
+          setError("Permission denied");
+          return false;
         }
       } catch (err) {
         setError(err);
+        return false;
       }
     } else {
       window.addEventListener("deviceorientation", handleOrientation);
+      return true;
     }
-  };
-
-  // Remove event listener on unmount or when permission is revoked
-  const revokeAccess = () => {
-    window.removeEventListener("deviceorientation", handleOrientation);
-    setOrientation({ alpha: null, beta: null, gamma: null });
-  };
-
-  // Automatically revoke access when the component unmounts
-  useEffect(() => {
-    return () => revokeAccess();
   }, []);
+
+  const revokeAccess = useCallback(() => {
+    window.removeEventListener("deviceorientation", handleOrientation);
+    setOrientation({
+      alpha: null,
+      beta: null,
+      gamma: null,
+    });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      revokeAccess(); // Clean up on unmount
+    };
+  }, [revokeAccess]);
 
   return {
     orientation,
+    error,
     requestAccess,
     revokeAccess,
-    error,
   };
 };
