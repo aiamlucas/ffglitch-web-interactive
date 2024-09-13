@@ -49,9 +49,11 @@ export default function AppMobile() {
     return Math.max(0, Math.min(mappedValue, 100)); // Ensure it stays within 0% to 100%
   };
 
-  // Map Gamma (-90 to +90) for X-axis (left to right) and Beta (-180 to +180) for Y-axis (top to bottom)
-  const ballXPercent = mapGyroscopeToScreen(orientation?.gamma, -90, 90); // X-axis: full width
-  const ballYPercent = mapGyroscopeToScreen(orientation?.beta, -180, 180); // Y-axis: full height
+  // Gamma: x-axis movement (left to right, adjusted for smaller hand tilts)
+  const ballXPercent = mapGyroscopeToScreen(orientation?.gamma, -60, 60);
+
+  // Beta: y-axis movement (top to bottom, adjusted for smaller hand tilts)
+  const ballYPercent = mapGyroscopeToScreen(orientation?.beta, -45, 45);
 
   return (
     <div className="mobile-container">
