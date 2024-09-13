@@ -8,12 +8,12 @@ export default function AppMobile() {
   const { orientation, requestAccess, revokeAccess, error } =
     useDeviceOrientation(); // Use the hook
   const [isTracking, setIsTracking] = useState(false);
-  const [isLongPressed, setIsLongPressed] = useState(false);
+  const [isLargeToggled, setIsLargeToggled] = useState(false); // State for large button
   const [isSmallToggled1, setIsSmallToggled1] = useState(false);
   const [isSmallToggled2, setIsSmallToggled2] = useState(false);
   const [isSmallToggled3, setIsSmallToggled3] = useState(false);
   const [isSmallToggled4, setIsSmallToggled4] = useState(false);
-  const [isLargeToggled, setIsLargeToggled] = useState(false); // New state for large button
+  const [isLongPressed, setIsLongPressed] = useState(false);
 
   // Handlers for small toggle buttons
   const handleSmallToggleClick1 = () => setIsSmallToggled1((prev) => !prev);
@@ -41,25 +41,17 @@ export default function AppMobile() {
     });
   };
 
-  // Mapping the orientation values (alpha, beta, gamma) to -100 to 100 range for position
-  const mapRange = (value, inMin, inMax, outMin, outMax) => {
-    if (value === null || isNaN(value)) return 0; // Handle cases where the value might be null or NaN
-    return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+  // Map gyroscope values to the range between 0 and 100% of the screen width and height
+  const mapGyroscopeToScreen = (value, minInput, maxInput) => {
+    if (value === null || isNaN(value)) return 50; // Default to the center
+    const mappedValue =
+      ((value - minInput) * (100 - 0)) / (maxInput - minInput) + 0;
+    return Math.max(0, Math.min(mappedValue, 100)); // Ensure it stays within 0% to 100%
   };
 
-  const centerX = 150; // Center x-coordinate of the large circle
-  const centerY = 150; // Center y-coordinate of the large circle
-  const radius = 100; // Radius of the large circle
-
-  const mappedX = orientation?.beta
-    ? mapRange(orientation.beta, -180, 180, -radius, radius)
-    : 0;
-  const mappedY = orientation?.gamma
-    ? mapRange(orientation.gamma, -90, 90, -radius, radius)
-    : 0;
-
-  const ballX = centerX + mappedX;
-  const ballY = centerY - mappedY; // Subtract to account for coordinate system
+  // Map Gamma (-90 to +90) for X-axis (left to right) and Beta (-180 to +180) for Y-axis (top to bottom)
+  const ballXPercent = mapGyroscopeToScreen(orientation?.gamma, -90, 90); // X-axis: full width
+  const ballYPercent = mapGyroscopeToScreen(orientation?.beta, -180, 180); // Y-axis: full height
 
   return (
     <div className="mobile-container">
@@ -67,8 +59,8 @@ export default function AppMobile() {
       <div className="text-container">
         {isTracking && (
           <div>
-            <h2>x: {Math.round(mappedX)}</h2>
-            <h2>y: {Math.round(mappedY)}</h2>
+            <h2>x: {Math.round(ballXPercent)}%</h2>
+            <h2>y: {Math.round(ballYPercent)}%</h2>
             <ul>
               <li>Alpha (ɑ): {orientation.alpha}</li>
               <li>Beta (β): {orientation.beta}</li>
@@ -79,19 +71,20 @@ export default function AppMobile() {
         {error && <p className="error">{error.message}</p>}
       </div>
 
-      {/* Large Circle */}
+      {/* Large Circle that acts as a toggle button */}
       <div
         className={`large-circle ${isLargeToggled ? "toggled" : ""}`}
-        onClick={handleLargeToggleClick}
-      >
-        {/* Small Ball */}
-        <div
-          className="small-ball"
-          style={{
-            transform: `translate(${ballX}px, ${ballY}px)`,
-          }}
-        ></div>
-      </div>
+        onClick={handleLargeToggleClick} // Toggle tracking on click
+      ></div>
+
+      {/* Small Ball moves based on orientation within the full screen */}
+      <div
+        className="small-ball"
+        style={{
+          left: `${ballXPercent}%`,
+          top: `${ballYPercent}%`,
+        }}
+      ></div>
 
       {/* Bottom buttons: long push button and four small toggle buttons */}
       <div className="bottom-buttons">
@@ -126,6 +119,135 @@ export default function AppMobile() {
     </div>
   );
 }
+
+// // src/views/Mobile/AppMobile.js
+// import "../Mobile/AppMobile.css";
+// import { useState } from "react";
+// import "@fontsource/roboto"; // Import Roboto font
+// import { useDeviceOrientation } from "../../hooks/useDeviceOrientation"; // Import your hook
+
+// export default function AppMobile() {
+//   const { orientation, requestAccess, revokeAccess, error } =
+//     useDeviceOrientation(); // Use the hook
+//   const [isTracking, setIsTracking] = useState(false);
+//   const [isLongPressed, setIsLongPressed] = useState(false);
+//   const [isSmallToggled1, setIsSmallToggled1] = useState(false);
+//   const [isSmallToggled2, setIsSmallToggled2] = useState(false);
+//   const [isSmallToggled3, setIsSmallToggled3] = useState(false);
+//   const [isSmallToggled4, setIsSmallToggled4] = useState(false);
+//   const [isLargeToggled, setIsLargeToggled] = useState(false); // New state for large button
+
+//   // Handlers for small toggle buttons
+//   const handleSmallToggleClick1 = () => setIsSmallToggled1((prev) => !prev);
+//   const handleSmallToggleClick2 = () => setIsSmallToggled2((prev) => !prev);
+//   const handleSmallToggleClick3 = () => setIsSmallToggled3((prev) => !prev);
+//   const handleSmallToggleClick4 = () => setIsSmallToggled4((prev) => !prev);
+
+//   // Handlers for long press button
+//   const handleLongPressStart = () => setIsLongPressed(true);
+//   const handleLongPressEnd = () => setIsLongPressed(false);
+
+//   // Handle toggling the large button (which is the circle now)
+//   const handleLargeToggleClick = async (event) => {
+//     event.preventDefault();
+//     setIsLargeToggled((prev) => {
+//       const newState = !prev;
+//       if (newState) {
+//         requestAccess(); // Start tracking
+//         setIsTracking(true);
+//       } else {
+//         revokeAccess(); // Stop tracking
+//         setIsTracking(false);
+//       }
+//       return newState;
+//     });
+//   };
+
+//   // Mapping the orientation values (alpha, beta, gamma) to -100 to 100 range for position
+//   const mapRange = (value, inMin, inMax, outMin, outMax) => {
+//     if (value === null || isNaN(value)) return 0; // Handle cases where the value might be null or NaN
+//     return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+//   };
+
+//   const centerX = 150; // Center x-coordinate of the large circle
+//   const centerY = 150; // Center y-coordinate of the large circle
+//   const radius = 100; // Radius of the large circle
+
+//   const mappedX = orientation?.beta
+//     ? mapRange(orientation.beta, -180, 180, -radius, radius)
+//     : 0;
+//   const mappedY = orientation?.gamma
+//     ? mapRange(orientation.gamma, -90, 90, -radius, radius)
+//     : 0;
+
+//   const ballX = centerX + mappedX;
+//   const ballY = centerY - mappedY; // Subtract to account for coordinate system
+
+//   return (
+//     <div className="mobile-container">
+//       {/* Fixed text container - always stays on top */}
+//       <div className="text-container">
+//         {isTracking && (
+//           <div>
+//             <h2>x: {Math.round(mappedX)}</h2>
+//             <h2>y: {Math.round(mappedY)}</h2>
+//             <ul>
+//               <li>Alpha (ɑ): {orientation.alpha}</li>
+//               <li>Beta (β): {orientation.beta}</li>
+//               <li>Gamma (γ): {orientation.gamma}</li>
+//             </ul>
+//           </div>
+//         )}
+//         {error && <p className="error">{error.message}</p>}
+//       </div>
+
+//       {/* Large Circle */}
+//       <div
+//         className={`large-circle ${isLargeToggled ? "toggled" : ""}`}
+//         onClick={handleLargeToggleClick}
+//       >
+//         {/* Small Ball */}
+//         <div
+//           className="small-ball"
+//           style={{
+//             transform: `translate(${ballX}px, ${ballY}px)`,
+//           }}
+//         ></div>
+//       </div>
+
+//       {/* Bottom buttons: long push button and four small toggle buttons */}
+//       <div className="bottom-buttons">
+//         <div
+//           className={`long-push-button ${isLongPressed ? "pressed" : ""}`}
+//           onMouseDown={handleLongPressStart}
+//           onMouseUp={handleLongPressEnd}
+//           onTouchStart={handleLongPressStart}
+//           onTouchEnd={handleLongPressEnd}
+//         ></div>
+
+//         <div
+//           className={`small-toggle-button ${isSmallToggled1 ? "active" : ""}`}
+//           onClick={handleSmallToggleClick1}
+//         ></div>
+
+//         <div
+//           className={`small-toggle-button ${isSmallToggled2 ? "active" : ""}`}
+//           onClick={handleSmallToggleClick2}
+//         ></div>
+
+//         <div
+//           className={`small-toggle-button ${isSmallToggled3 ? "active" : ""}`}
+//           onClick={handleSmallToggleClick3}
+//         ></div>
+
+//         <div
+//           className={`small-toggle-button ${isSmallToggled4 ? "active" : ""}`}
+//           onClick={handleSmallToggleClick4}
+//         ></div>
+//       </div>
+//     </div>
+//   );
+// }
 
 // // src/views/Mobile/AppMobile.js
 // import "../Mobile/AppMobile.css";
