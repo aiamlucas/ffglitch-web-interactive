@@ -126,3 +126,31 @@
   transform: scale(1.1);
   transition: transform 0.2s;
 }
+
+/* ciecles */
+
+/* Large Circle */
+.large-circle {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border: 2px solid #000;
+  border-radius: 50%;
+  margin: 0 auto;
+  background-color: transparent;
+}
+
+.large-circle.toggled {
+  /* Styles when the large circle is toggled */
+  border-color: #007bff;
+}
+
+/* Small Ball */
+.small-ball {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: red;
+  transform: translate(-50%, -50%);
+}
