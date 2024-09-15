@@ -21,10 +21,10 @@
 /* Draggable Log Container */
 .log-container {
   position: absolute;
-  top: 60px; /* Increased padding from top */
-  right: 15px; /* Increased padding from right */
-  width: 160px;
-  height: 85px;
+  top: 60px;
+  right: 15px;
+  width: 80px; /* Fit the longest message */
+  height: 70px;
   padding: 0.5rem;
   border: 1px solid black;
   border-radius: 0.5rem;
@@ -34,6 +34,13 @@
   cursor: grab;
   z-index: 10;
   overflow: hidden; /* Prevent overflow of text */
+}
+
+.log-container ul {
+  list-style-type: none; /* Remove bullet points */
+  padding: 0;
+  margin: 0;
+  text-align: left; /* Align text to the left */
 }
 
 /* Large Circle */
@@ -52,6 +59,7 @@
   border-color: #000; /* Stay black */
 }
 
+/* Inner Circle */
 .inner-circle {
   position: absolute;
   width: 6rem;
@@ -61,7 +69,6 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  transition: all 2s ease; /* Transition effect */
 }
 
 /* X and Y Axis Lines */
@@ -70,22 +77,21 @@
   position: absolute;
   background-color: rgba(0, 0, 0, 0.2); /* Reduced opacity */
   z-index: 1;
-  transition: all 2s ease; /* Transition effect */
 }
 
 .x-axis-line {
-  width: 180%; /* Extended length */
+  width: 150%; /* Middle-ground length */
   height: 2px;
   top: 50%;
-  left: -40%; /* Shift left to center */
+  left: -25%; /* Adjusted to keep it centered */
   transform: translateY(-50%);
 }
 
 .y-axis-line {
-  height: 180%;
+  height: 150%; /* Middle-ground length */
   width: 2px;
   left: 50%;
-  top: -40%; /* Shift top to center */
+  top: -25%; /* Adjusted to keep it centered */
   transform: translateX(-50%);
 }
 
@@ -103,10 +109,10 @@
 /* Bottom buttons */
 .bottom-buttons {
   position: absolute;
-  bottom: 8rem; /* Increased distance from the bottom */
+  bottom: 8rem;
   display: flex;
   justify-content: center;
-  gap: 0.5rem; /* Space between buttons */
+  gap: 0.5rem;
 }
 
 .small-toggle-button {
@@ -129,8 +135,8 @@
   opacity: 1;
 }
 
-/* Long push button */
-.long-push-button {
+/* Clear Glitch button */
+.clear-glitch-button {
   background-color: #e0ff2e;
   border-radius: 0.5rem;
   width: 7rem;
@@ -145,7 +151,7 @@
   transition: background-color 0.2s, opacity 0.2s;
 }
 
-.long-push-button.pressed {
+.clear-glitch-button.pressed {
   background-color: #d4ff00;
   opacity: 1;
 }
