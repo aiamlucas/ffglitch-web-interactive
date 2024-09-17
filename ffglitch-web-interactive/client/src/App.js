@@ -24,6 +24,7 @@ export default function App() {
     };
   }, []);
 
+  // return <>{isMobile ? <AppMobile /> : <AppDesktop />}</>;
   return <>{isMobile ? <AppMobile /> : <AppDesktop />}</>;
 }
 
