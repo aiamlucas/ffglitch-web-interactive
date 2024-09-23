@@ -42,8 +42,8 @@ body {
 
 .fader-container {
   position: relative;
-  width: 35rem; /* Increased width for larger faders */
-  height: 22rem; /* Increased height for larger faders */
+  width: 35rem;
+  height: 22rem;
   padding-top: 1rem;
   background-color: transparent;
   border: 0.1rem solid black;
@@ -64,18 +64,18 @@ body {
 }
 
 .fader-label {
-  width: 8rem; /* Increase label width */
+  width: 8rem;
   text-align: right;
   margin-right: 1.5rem;
   margin-bottom: 1rem;
-  font-size: 1.2rem; /* Larger font for labels */
+  font-size: 1.2rem;
 }
 
 .fader-range {
-  width: 100%;
+  width: 100%; /* Faders remain full width */
   -webkit-appearance: none;
   appearance: none;
-  height: 0.4rem; /* Make the slider track thicker */
+  height: 0.4rem;
   background-color: #3d3d3d;
   outline: none;
   margin-bottom: 2rem;
@@ -83,8 +83,8 @@ body {
 
 .fader-range::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 0.5rem; /* Wider thumb for better interaction */
-  height: 2rem; /* Taller thumb for a larger control area */
+  width: 0.5rem;
+  height: 2rem;
   background-color: #3d3d3d;
   cursor: pointer;
   border: none;
@@ -106,47 +106,22 @@ body {
   border: none;
 }
 
-.fader-container.active .fader-range::-moz-range-thumb {
-  background-color: white;
-}
-
-.fader-container div {
-  display: flex;
-  align-items: baseline;
-  justify-content: flex-start;
-  width: 100%;
-  margin-bottom: 1rem;
-  gap: 1rem;
-}
-
-.fader-label {
-  width: 4rem;
-  background-color: red;
-  text-align: right;
-  margin-right: 1rem;
-}
-
-.fader-label-div {
-  width: 30%;
-  max-width: 6rem; /* Increase max width */
-  text-align: center;
-  margin-right: 1rem;
-}
-
-/* For Pan controls, use the same fader styles, making the Pans larger as well */
+/* Pan control styles */
 .pan-control {
   width: 100%;
   margin-top: 2rem;
+  position: relative;
 }
 
 .pan-range {
   width: 100%;
+  max-width: 20rem; /* Shortened pan control */
   -webkit-appearance: none;
   appearance: none;
-  height: 0.4rem; /* Make the pan control track thicker */
+  height: 0.4rem;
   background-color: #3d3d3d;
   outline: none;
-  margin-bottom: 2rem;
+  position: relative;
 }
 
 .pan-range::-webkit-slider-thumb {
@@ -172,6 +147,19 @@ body {
   background-color: #3d3d3d;
   cursor: pointer;
   border: none;
+}
+
+/* Middle mark for the pan control */
+.pan-control::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0.2rem;
+  height: 1.5rem;
+  background-color: red; /* Red middle mark to indicate center */
+  z-index: 1;
 }
 
 .message-input {
