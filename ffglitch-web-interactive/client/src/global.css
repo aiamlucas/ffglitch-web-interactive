@@ -139,16 +139,15 @@ body {
   text-align: center;
   margin-right: 1rem;
 }
-
 /* Pan slider with a middle marker */
 .pan-range {
-  width: 150%; /* Longer pan slider */
-  height: 0.5rem; /* Slightly thicker */
+  width: 200%; /* Make the pan slider longer */
+  height: 0.5rem; /* Same thickness as the fader track */
   background: linear-gradient(
     to right,
     #3d3d3d 0%,
     /* Track color */ #3d3d3d 49%,
-    /* Color before the marker */ #ffffff 50%,
+    /* Color before the marker */ #000000 50%,
     /* Marker color at 50% (zero point) */ #3d3d3d 51%,
     /* Color after the marker */ #3d3d3d 100%
   );
@@ -157,18 +156,19 @@ body {
   appearance: none;
 }
 
+/* Adjust pan slider thumb to match fader knob */
 .pan-range::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 0.7rem; /* Slightly wider thumb */
-  height: 2rem; /* Taller thumb */
-  background-color: #ffffff; /* Thumb color */
+  width: 0.5rem; /* Same width as fader thumb */
+  height: 2rem; /* Same height as fader thumb */
+  background-color: #ffffff; /* Same color as fader thumb */
   cursor: pointer;
   border: none;
-  border-radius: 0.5rem; /* Rounded thumb */
+  border-radius: 0.5rem; /* Rounded thumb for consistency */
 }
 
 .pan-range::-moz-range-thumb {
-  width: 0.7rem;
+  width: 0.5rem;
   height: 2rem;
   background-color: #ffffff;
   cursor: pointer;
@@ -177,7 +177,7 @@ body {
 }
 
 .pan-range::-ms-thumb {
-  width: 0.7rem;
+  width: 0.5rem;
   height: 2rem;
   background-color: #ffffff;
   cursor: pointer;
@@ -185,7 +185,7 @@ body {
   border-radius: 0.5rem;
 }
 
-/* Optional: Add hover effect for better interaction feedback */
+/* Optional: Hover effect for pan slider */
 .pan-range:hover {
   background: linear-gradient(
     to right,
