@@ -1,3 +1,5 @@
 # Ignore SSL certificate and private key
 server.key
 server.cert
+cert.pem
+cert.crt

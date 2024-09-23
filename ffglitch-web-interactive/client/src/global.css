@@ -3,10 +3,7 @@
   --fader-container-active-background: orange;
   --gray-background-lines: rgb(18, 18, 18);
   --dark-gray-background: rgb(3, 3, 3);
-
   --gray-container-black-between: rgb(0, 0, 0);
-  /* --gray-container-black-border: rgb(32,32,32); */
-
   --pattern-grid-color: rgb(17, 39, 60);
   --background-color: rgb(6, 24, 40);
 }
@@ -42,12 +39,13 @@ body {
   margin: 0;
   padding: 0;
 }
+
 .fader-container {
   position: relative;
-  width: 30rem;
-  height: 19rem;
+  width: 35rem; /* Increased width for larger faders */
+  height: 22rem; /* Increased height for larger faders */
   padding-top: 1rem;
-  background-color: transparent; /* Set default background to transparent */
+  background-color: transparent;
   border: 0.1rem solid black;
   display: flex;
   flex-direction: column;
@@ -62,46 +60,47 @@ body {
 }
 
 .fader-container.active {
-  background-color: transparent; /* Apply green background with 40% opacity when active */
+  background-color: transparent;
 }
 
 .fader-label {
-  width: 6rem;
+  width: 8rem; /* Increase label width */
   text-align: right;
-  margin-right: 1rem;
-  margin-bottom: 1rem; /* Add a margin-bottom value */
+  margin-right: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.2rem; /* Larger font for labels */
 }
 
 .fader-range {
   width: 100%;
   -webkit-appearance: none;
   appearance: none;
-  height: 0.1rem;
+  height: 0.4rem; /* Make the slider track thicker */
   background-color: #3d3d3d;
   outline: none;
-  /* margin-top: 1rem; */
+  margin-bottom: 2rem;
 }
 
 .fader-range::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 0.2rem;
-  height: 1.3rem;
+  width: 0.5rem; /* Wider thumb for better interaction */
+  height: 2rem; /* Taller thumb for a larger control area */
   background-color: #3d3d3d;
   cursor: pointer;
   border: none;
 }
 
 .fader-range::-moz-range-thumb {
-  width: 0.2rem;
-  height: 1.3rem;
+  width: 0.5rem;
+  height: 2rem;
   background-color: #3d3d3d;
   cursor: pointer;
   border: none;
 }
 
 .fader-range::-ms-thumb {
-  width: 0.2rem;
-  height: 1.3rem;
+  width: 0.5rem;
+  height: 2rem;
   background-color: #3d3d3d;
   cursor: pointer;
   border: none;
@@ -117,7 +116,7 @@ body {
   justify-content: flex-start;
   width: 100%;
   margin-bottom: 1rem;
-  gap: 1rem; /* Add gap between the text and faders */
+  gap: 1rem;
 }
 
 .fader-label {
@@ -129,9 +128,50 @@ body {
 
 .fader-label-div {
   width: 30%;
-  max-width: 4rem; /* Adjust the max-width value as desired */
+  max-width: 6rem; /* Increase max width */
   text-align: center;
   margin-right: 1rem;
+}
+
+/* For Pan controls, use the same fader styles, making the Pans larger as well */
+.pan-control {
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.pan-range {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 0.4rem; /* Make the pan control track thicker */
+  background-color: #3d3d3d;
+  outline: none;
+  margin-bottom: 2rem;
+}
+
+.pan-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0.5rem;
+  height: 2rem;
+  background-color: #3d3d3d;
+  cursor: pointer;
+  border: none;
+}
+
+.pan-range::-moz-range-thumb {
+  width: 0.5rem;
+  height: 2rem;
+  background-color: #3d3d3d;
+  cursor: pointer;
+  border: none;
+}
+
+.pan-range::-ms-thumb {
+  width: 0.5rem;
+  height: 2rem;
+  background-color: #3d3d3d;
+  cursor: pointer;
+  border: none;
 }
 
 .message-input {
@@ -144,7 +184,6 @@ body {
   opacity: 0.7;
   padding: 10px;
   max-height: 200px;
-  /* overflow-y: auto;  */
   overflow: hidden;
   resize: both;
 }
@@ -155,7 +194,6 @@ body {
 }
 
 .message-history div {
-  /* color: white; */
   font-family: monospace;
   margin-bottom: 5px;
   color: white;
@@ -164,7 +202,6 @@ body {
 .message-input input {
   border: none;
   background-color: transparent;
-  /* color: white; */
   font-family: monospace;
   width: 12rem;
   outline: none;
@@ -201,11 +238,9 @@ body {
 
 .mouse-guitar {
   position: absolute;
-  /* z-index: 999; */
   width: 7rem;
   height: 7rem;
   background-color: rgb(17, 39, 60);
-  /* background-color: red; */
   border-radius: 50%;
   opacity: 0.5;
 }
@@ -220,21 +255,15 @@ body {
 
 .mouse-on {
   position: absolute;
-  /* z-index: 999; */
   width: 7rem;
   height: 7rem;
   background-color: rgb(255, 247, 0);
-  /* background-color: red; */
   border-radius: 50%;
   opacity: 0.5;
 }
 
 .message-input-green .message-history div {
   color: black;
-}
-
-.message-input-green {
-  background-color: rgb(85, 243, 90);
 }
 
 .message-input-green input {

@@ -1,149 +1,298 @@
-/* views/Mobile/AppMobile.css */
+:root {
+  --fader-container-background: rgb(71, 92, 124);
+  --fader-container-active-background: orange;
+  --gray-background-lines: rgb(18, 18, 18);
+  --dark-gray-background: rgb(3, 3, 3);
+  --gray-container-black-between: rgb(0, 0, 0);
+  --pattern-grid-color: rgb(17, 39, 60);
+  --background-color: rgb(6, 24, 40);
+}
 
-/* Make the entire background #002FA7 */
-.mobile-container {
-  height: 100vh;
-  width: 100vw;
-  background-color: #002fa7;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  position: relative;
-  touch-action: manipulation;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-  -webkit-tap-highlight-color: transparent;
+html,
+body {
+  font-size: 14px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--dark-gray-background);
+  background-image: linear-gradient(
+      to right,
+      var(--gray-background-lines) 0.07px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      var(--gray-background-lines) 0.07px,
+      transparent 1px
+    );
+  background-size: 90px 90px;
+  background-position: -1px -1px;
+}
+
+.App {
   font-family: "Roboto", sans-serif;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
 }
 
-/* Draggable Log Container */
-.log-container {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 150px;
-  height: 80px;
-  padding: 0.5rem;
-  border: 1px solid black;
-  border-radius: 0.5rem;
-  background-color: transparent; /* Transparent background */
-  color: black;
-  font-size: 1rem;
-  cursor: grab;
-  z-index: 10;
-  overflow: hidden; /* Prevent overflow of text */
-}
-
-/* Large Circle */
-.large-circle {
+.fader-container {
   position: relative;
-  width: 15rem;
-  height: 15rem;
-  border: 2px solid #000;
-  border-radius: 50%;
+  width: 35rem; /* Increased width for larger faders */
+  height: 22rem; /* Increased height for larger faders */
+  padding-top: 1rem;
   background-color: transparent;
-  z-index: 1;
+  border: 0.1rem solid black;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-top: 2rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+  box-sizing: border-box;
+  border-radius: 0.3rem;
 }
 
-.large-circle.toggled {
-  border-color: #007bff;
+.fader-container.active {
+  background-color: transparent;
 }
 
-/* Inner Circle */
-.inner-circle {
-  position: absolute;
-  width: 6rem; /* Reduced size */
-  height: 6rem;
-  border-radius: 50%;
-  background-color: rgba(255, 0, 0, 0.1); /* Semi-transparent red */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.fader-label {
+  width: 8rem; /* Increase label width */
+  text-align: right;
+  margin-right: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.2rem; /* Larger font for labels */
 }
 
-/* X and Y Axis Lines */
-.x-axis-line,
-.y-axis-line {
-  position: absolute;
-  background-color: rgba(0, 0, 0, 0.2); /* Reduced opacity */
-  z-index: 1;
+.fader-range {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 0.4rem; /* Make the slider track thicker */
+  background-color: #3d3d3d;
+  outline: none;
+  margin-bottom: 2rem;
 }
 
-.x-axis-line {
-  width: 150%; /* Extended length */
-  height: 2px;
-  top: 50%;
-  left: -25%; /* Shift left to center */
-  transform: translateY(-50%);
+.fader-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0.5rem; /* Wider thumb for better interaction */
+  height: 2rem; /* Taller thumb for a larger control area */
+  background-color: #3d3d3d;
+  cursor: pointer;
+  border: none;
 }
 
-.y-axis-line {
-  height: 150%;
-  width: 2px;
-  left: 50%;
-  top: -25%; /* Shift up to center */
-  transform: translateX(-50%);
+.fader-range::-moz-range-thumb {
+  width: 0.5rem;
+  height: 2rem;
+  background-color: #3d3d3d;
+  cursor: pointer;
+  border: none;
 }
 
-/* Small Ball */
-.small-ball {
-  position: absolute;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 50%;
+.fader-range::-ms-thumb {
+  width: 0.5rem;
+  height: 2rem;
+  background-color: #3d3d3d;
+  cursor: pointer;
+  border: none;
+}
+
+.fader-container.active .fader-range::-moz-range-thumb {
+  background-color: white;
+}
+
+.fader-container div {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  width: 100%;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.fader-label {
+  width: 4rem;
   background-color: red;
-  z-index: 2;
-  transform: translate(-50%, -50%);
+  text-align: right;
+  margin-right: 1rem;
 }
 
-/* Bottom buttons */
-.bottom-buttons {
+.fader-label-div {
+  width: 30%;
+  max-width: 6rem; /* Increase max width */
+  text-align: center;
+  margin-right: 1rem;
+}
+
+/* For Pan controls, use the same fader styles, making the Pans larger as well */
+.pan-control {
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.pan-range {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 0.4rem; /* Make the pan control track thicker */
+  background-color: #3d3d3d;
+  outline: none;
+  margin-bottom: 2rem;
+}
+
+.pan-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0.5rem;
+  height: 2rem;
+  background-color: #3d3d3d;
+  cursor: pointer;
+  border: none;
+}
+
+.pan-range::-moz-range-thumb {
+  width: 0.5rem;
+  height: 2rem;
+  background-color: #3d3d3d;
+  cursor: pointer;
+  border: none;
+}
+
+.pan-range::-ms-thumb {
+  width: 0.5rem;
+  height: 2rem;
+  background-color: #3d3d3d;
+  cursor: pointer;
+  border: none;
+}
+
+.message-input {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 1px solid #999999;
+  background-color: #333333;
+  color: white;
+  opacity: 0.7;
+  padding: 10px;
+  max-height: 200px;
+  overflow: hidden;
+  resize: both;
+}
+
+.message-history {
+  width: 12rem;
+  color: white;
+}
+
+.message-history div {
+  font-family: monospace;
+  margin-bottom: 5px;
+  color: white;
+}
+
+.message-input input {
+  border: none;
+  background-color: transparent;
+  font-family: monospace;
+  width: 12rem;
+  outline: none;
+  color: white;
+}
+
+.message-input::-webkit-resizer {
+  display: none;
+}
+
+.fader-container.dragging {
+  opacity: 0.5;
+}
+
+.message-input.dragging {
+  opacity: 0.5;
+}
+
+.fader-container.dragging,
+.message-input.dragging {
   position: absolute;
-  bottom: 2rem;
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem; /* Space between buttons */
+  z-index: 999;
 }
 
-.small-toggle-button {
-  background-color: #e0ff2e;
-  border-radius: 0.5rem;
-  width: 3rem;
-  height: 3rem;
-  font-size: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.message-input-blue {
+  color: white;
+  background-color: rgb(3, 10, 22);
+}
+
+.message-input-green {
+  color: #000000;
+  background-color: rgb(85, 243, 90);
+}
+
+.mouse-guitar {
+  position: absolute;
+  width: 7rem;
+  height: 7rem;
+  background-color: rgb(17, 39, 60);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+.mouse-guitar-red {
+  background-color: red;
+}
+
+.rec-sound .rec-sound-extra-red {
+  background-color: rgb(255, 2, 213);
+}
+
+.mouse-on {
+  position: absolute;
+  width: 7rem;
+  height: 7rem;
+  background-color: rgb(255, 247, 0);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+.message-input-green .message-history div {
   color: black;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: background-color 0.2s, opacity 0.2s;
 }
 
-.small-toggle-button.active {
-  background-color: #d4ff00;
-  opacity: 1;
-}
-
-/* Long push button */
-.long-push-button {
-  background-color: #e0ff2e;
-  border-radius: 0.5rem;
-  width: 5rem;
-  height: 2.5rem;
-  font-size: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.message-input-green input {
   color: black;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: background-color 0.2s, opacity 0.2s;
 }
 
-.long-push-button.pressed {
-  background-color: #d4ff00;
-  opacity: 1;
+.red-rec {
+  background-color: red;
+  opacity: 0.7;
+}
+
+@keyframes blink-red {
+  0% {
+    background-color: red;
+    opacity: 0.7;
+  }
+  50% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: red;
+    opacity: 0.7;
+  }
+}
+
+.blink-red {
+  animation: blink-red 1s linear infinite;
+}
+
+.blue {
+  background-color: blue;
 }
