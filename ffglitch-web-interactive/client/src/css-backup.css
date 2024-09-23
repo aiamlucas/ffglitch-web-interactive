@@ -1,17 +1,15 @@
-
 :root {
   --fader-container-background: rgb(71, 92, 124);
   --fader-container-active-background: orange;
-  --gray-background-lines: rgb(18,18,18);
-  --dark-gray-background: rgb(3,3,3);
+  --gray-background-lines: rgb(18, 18, 18);
+  --dark-gray-background: rgb(3, 3, 3);
 
-  --gray-container-black-between: rgb(0,0,0);
+  --gray-container-black-between: rgb(0, 0, 0);
   /* --gray-container-black-border: rgb(32,32,32); */
 
   --pattern-grid-color: rgb(17, 39, 60);
   --background-color: rgb(6, 24, 40);
 }
-
 
 html,
 body {
@@ -20,11 +18,18 @@ body {
   margin: 0;
   padding: 0;
   background-color: var(--dark-gray-background);
-  background-image: linear-gradient(to right, var(--gray-background-lines) 0.07px, transparent 1px),
-                    linear-gradient(to bottom, var(--gray-background-lines) 0.07px, transparent 1px);
+  background-image: linear-gradient(
+      to right,
+      var(--gray-background-lines) 0.07px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      var(--gray-background-lines) 0.07px,
+      transparent 1px
+    );
   background-size: 90px 90px;
   background-position: -1px -1px;
-
 }
 
 .App {
@@ -72,7 +77,7 @@ body {
   -webkit-appearance: none;
   appearance: none;
   height: 0.1rem;
-  background-color: #3D3D3D;
+  background-color: #3d3d3d;
   outline: none;
   /* margin-top: 1rem; */
 }
@@ -81,7 +86,7 @@ body {
   -webkit-appearance: none;
   width: 0.2rem;
   height: 1.3rem;
-  background-color: #3D3D3D;
+  background-color: #3d3d3d;
   cursor: pointer;
   border: none;
 }
@@ -89,7 +94,7 @@ body {
 .fader-range::-moz-range-thumb {
   width: 0.2rem;
   height: 1.3rem;
-  background-color: #3D3D3D;
+  background-color: #3d3d3d;
   cursor: pointer;
   border: none;
 }
@@ -97,17 +102,14 @@ body {
 .fader-range::-ms-thumb {
   width: 0.2rem;
   height: 1.3rem;
-  background-color: #3D3D3D;
+  background-color: #3d3d3d;
   cursor: pointer;
   border: none;
 }
 
-
-
 .fader-container.active .fader-range::-moz-range-thumb {
-  background-color:  white
+  background-color: white;
 }
-
 
 .fader-container div {
   display: flex;
@@ -120,11 +122,10 @@ body {
 
 .fader-label {
   width: 4rem;
-  background-color: red; 
+  background-color: red;
   text-align: right;
   margin-right: 1rem;
 }
-
 
 .fader-label-div {
   width: 30%;
@@ -132,7 +133,6 @@ body {
   text-align: center;
   margin-right: 1rem;
 }
-
 
 .message-input {
   display: flex;
@@ -143,11 +143,10 @@ body {
   color: white;
   opacity: 0.7;
   padding: 10px;
-  max-height: 200px; 
+  max-height: 200px;
   /* overflow-y: auto;  */
   overflow: hidden;
-  resize: both; 
-
+  resize: both;
 }
 
 .message-history {
@@ -168,1279 +167,103 @@ body {
   /* color: white; */
   font-family: monospace;
   width: 12rem;
-  outline: none; 
+  outline: none;
   color: white;
 }
-
 
 .message-input::-webkit-resizer {
   display: none;
 }
 
-
 .fader-container.dragging {
   opacity: 0.5;
-
 }
 
 .message-input.dragging {
   opacity: 0.5;
-
 }
 
 .fader-container.dragging,
 .message-input.dragging {
-position: absolute;
-z-index: 999;
+  position: absolute;
+  z-index: 999;
 }
 
 .message-input-blue {
-color: white;
-background-color: rgb(3, 10, 22);
-
+  color: white;
+  background-color: rgb(3, 10, 22);
 }
 
 .message-input-green {
-color: #000000;
-background-color: rgb(85, 243, 90);
+  color: #000000;
+  background-color: rgb(85, 243, 90);
 }
 
 .mouse-guitar {
-position: absolute;
-/* z-index: 999; */
-width: 7rem;
-height: 7rem;
-background-color: rgb(17, 39, 60);
-/* background-color: red; */
-border-radius: 50%;
-opacity: 0.5;
+  position: absolute;
+  /* z-index: 999; */
+  width: 7rem;
+  height: 7rem;
+  background-color: rgb(17, 39, 60);
+  /* background-color: red; */
+  border-radius: 50%;
+  opacity: 0.5;
 }
 
-.mouse-guitar-red  {
-background-color: red;
+.mouse-guitar-red {
+  background-color: red;
 }
 
 .rec-sound .rec-sound-extra-red {
-background-color: rgb(255, 2, 213);
+  background-color: rgb(255, 2, 213);
 }
 
 .mouse-on {
-position: absolute;
-/* z-index: 999; */
-width: 7rem;
-height: 7rem;
-background-color: rgb(255, 247, 0);
-/* background-color: red; */
-border-radius: 50%;
-opacity: 0.5;
-
+  position: absolute;
+  /* z-index: 999; */
+  width: 7rem;
+  height: 7rem;
+  background-color: rgb(255, 247, 0);
+  /* background-color: red; */
+  border-radius: 50%;
+  opacity: 0.5;
 }
 
 .message-input-green .message-history div {
-color: black;
+  color: black;
 }
 
-
 .message-input-green {
-background-color: rgb(85, 243, 90);
+  background-color: rgb(85, 243, 90);
 }
 
 .message-input-green input {
-color: black;
+  color: black;
 }
 
-/* last one */
-
-:root {
-  --fader-container-background: rgb(71, 92, 124);
-  --fader-container-active-background: orange;
-  --gray-background-lines: rgb(18,18,18);
-  --dark-gray-background: rgb(3,3,3);
-
-  --gray-container-black-between: rgb(0,0,0);
-  /* --gray-container-black-border: rgb(32,32,32); */
-
-  --pattern-grid-color: rgb(17, 39, 60);
-  --background-color: rgb(6, 24, 40);
-}
-
-
-html,
-body {
-  font-size: 14px;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background-color: var(--dark-gray-background);
-  background-image: linear-gradient(to right, var(--gray-background-lines) 0.07px, transparent 1px),
-                    linear-gradient(to bottom, var(--gray-background-lines) 0.07px, transparent 1px);
-  background-size: 90px 90px;
-  background-position: -1px -1px;
-
-}
-
-.App {
-  font-family: "Roboto", sans-serif;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-}
-.fader-container {
-  position: relative;
-  width: 30rem;
-  height: 19rem;
-  padding-top: 1rem;
-  background-color: transparent; /* Set default background to transparent */
-  border: 0.1rem solid black;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding-top: 2rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  padding-bottom: 2rem;
-  box-sizing: border-box;
-  border-radius: 0.3rem;
-}
-
-.fader-container.active {
-  background-color: transparent; /* Apply green background with 40% opacity when active */
-}
-
-.fader-label {
-  width: 6rem;
-  text-align: right;
-  margin-right: 1rem;
-  margin-bottom: 1rem; /* Add a margin-bottom value */
-}
-
-.fader-range {
-  width: 100%;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 0.1rem;
-  background-color: #3D3D3D;
-  outline: none;
-  /* margin-top: 1rem; */
-}
-
-.fader-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 0.2rem;
-  height: 1.3rem;
-  background-color: #3D3D3D;
-  cursor: pointer;
-  border: none;
-}
-
-.fader-range::-moz-range-thumb {
-  width: 0.2rem;
-  height: 1.3rem;
-  background-color: #3D3D3D;
-  cursor: pointer;
-  border: none;
-}
-
-.fader-range::-ms-thumb {
-  width: 0.2rem;
-  height: 1.3rem;
-  background-color: #3D3D3D;
-  cursor: pointer;
-  border: none;
-}
-
-
-
-.fader-container.active .fader-range::-moz-range-thumb {
-  background-color:  white
-}
-
-
-.fader-container div {
-  display: flex;
-  align-items: baseline;
-  justify-content: flex-start;
-  width: 100%;
-  margin-bottom: 1rem;
-  gap: 1rem; /* Add gap between the text and faders */
-}
-
-.fader-label {
-  width: 4rem;
-  background-color: red; 
-  text-align: right;
-  margin-right: 1rem;
-}
-
-
-.fader-label-div {
-  width: 30%;
-  max-width: 4rem; /* Adjust the max-width value as desired */
-  text-align: center;
-  margin-right: 1rem;
-}
-
-
-.message-input {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  border: 1px solid #999999;
-  background-color: #333333;
-  color: white;
+.red-rec {
+  background-color: red;
   opacity: 0.7;
-  padding: 10px;
-  max-height: 200px; 
-  /* overflow-y: auto;  */
-  overflow: hidden;
-  resize: both; 
-
 }
 
-.message-history {
-  width: 12rem;
-  color: white;
-}
-
-.message-history div {
-  /* color: white; */
-  font-family: monospace;
-  margin-bottom: 5px;
-  color: white;
-}
-
-.message-input input {
-  border: none;
-  background-color: transparent;
-  /* color: white; */
-  font-family: monospace;
-  width: 12rem;
-  outline: none; 
-  color: white;
-}
-
-
-.message-input::-webkit-resizer {
-  display: none;
-}
-
-
-.fader-container.dragging {
-  opacity: 0.5;
-
-}
-
-.message-input.dragging {
-  opacity: 0.5;
-
-}
-
-.fader-container.dragging,
-.message-input.dragging {
-position: absolute;
-z-index: 999;
-}
-
-.message-input-blue {
-color: white;
-background-color: rgb(3, 10, 22);
-
-}
-
-.message-input-green {
-color: #000000;
-background-color: rgb(85, 243, 90);
-}
-
-.mouse-guitar {
-position: absolute;
-/* z-index: 999; */
-width: 7rem;
-height: 7rem;
-background-color: rgb(17, 39, 60);
-/* background-color: red; */
-border-radius: 50%;
-opacity: 0.5;
-}
-
-.mouse-guitar-red  {
-background-color: red;
-}
-
-.rec-sound .rec-sound-extra-red {
-background-color: rgb(255, 2, 213);
-}
-
-.mouse-on {
-position: absolute;
-/* z-index: 999; */
-width: 7rem;
-height: 7rem;
-background-color: rgb(255, 247, 0);
-/* background-color: red; */
-border-radius: 50%;
-opacity: 0.5;
-
-}
-
-
-
-
-:root {
-  --fader-container-background: rgb(71, 92, 124);
-  --fader-container-active-background: orange;
-  --gray-background-lines: rgb(18,18,18);
-  --dark-gray-background: rgb(3,3,3);
-
-  --gray-container-black-between: rgb(0,0,0);
-  /* --gray-container-black-border: rgb(32,32,32); */
-
-  --pattern-grid-color: rgb(17, 39, 60);
-  --background-color: rgb(6, 24, 40);
-}
-
-
-html,
-body {
-  font-size: 14px;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background-color: var(--dark-gray-background);
-  background-image: linear-gradient(to right, var(--gray-background-lines) 0.07px, transparent 1px),
-                    linear-gradient(to bottom, var(--gray-background-lines) 0.07px, transparent 1px);
-  background-size: 90px 90px;
-  background-position: -1px -1px;
-
-}
-
-.App {
-  font-family: "Roboto", sans-serif;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-}
-.fader-container {
-  position: relative;
-  width: 30rem;
-  height: 19rem;
-  padding-top: 1rem;
-  background-color: transparent; /* Set default background to transparent */
-  border: 0.1rem solid black;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding-top: 2rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  padding-bottom: 2rem;
-  box-sizing: border-box;
-  border-radius: 0.3rem;
-}
-
-.fader-container.active {
-  background-color: transparent; /* Apply green background with 40% opacity when active */
-}
-
-.fader-label {
-  width: 6rem;
-  text-align: right;
-  margin-right: 1rem;
-  margin-bottom: 1rem; /* Add a margin-bottom value */
-}
-
-.fader-range {
-  width: 100%;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 0.1rem;
-  background-color: #3D3D3D;
-  outline: none;
-  /* margin-top: 1rem; */
-}
-
-.fader-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 0.2rem;
-  height: 1.3rem;
-  background-color: #3D3D3D;
-  cursor: pointer;
-  border: none;
-}
-
-.fader-range::-moz-range-thumb {
-  width: 0.2rem;
-  height: 1.3rem;
-  background-color: #3D3D3D;
-  cursor: pointer;
-  border: none;
-}
-
-.fader-range::-ms-thumb {
-  width: 0.2rem;
-  height: 1.3rem;
-  background-color: #3D3D3D;
-  cursor: pointer;
-  border: none;
-}
-
-
-
-.fader-container.active .fader-range::-moz-range-thumb {
-  background-color:  white
-}
-
-
-.fader-container div {
-  display: flex;
-  align-items: baseline;
-  justify-content: flex-start;
-  width: 100%;
-  margin-bottom: 1rem;
-  gap: 1rem; /* Add gap between the text and faders */
-}
-
-.fader-label {
-  width: 4rem;
-  background-color: red; 
-  text-align: right;
-  margin-right: 1rem;
-}
-
-
-.fader-label-div {
-  width: 30%;
-  max-width: 4rem; /* Adjust the max-width value as desired */
-  text-align: center;
-  margin-right: 1rem;
-}
-
-
-.message-input {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  border: 1px solid #999999;
-  background-color: #333333;
-  color: white;
-  opacity: 0.7;
-  padding: 10px;
-  max-height: 200px; 
-  /* overflow-y: auto;  */
-  overflow: hidden;
-  resize: both; 
-
-}
-
-.message-history {
-  width: 12rem;
-}
-
-.message-history div {
-  /* color: white; */
-  font-family: monospace;
-  margin-bottom: 5px;
-}
-
-.message-input input {
-  border: none;
-  background-color: transparent;
-  /* color: white; */
-  font-family: monospace;
-  width: 12rem;
-  outline: none; 
-}
-
-
-.message-input::-webkit-resizer {
-  display: none;
-}
-
-
-.fader-container.dragging {
-  opacity: 0.5;
-
-}
-
-.message-input.dragging {
-  opacity: 0.5;
-
-}
-
-.fader-container.dragging,
-.message-input.dragging {
-position: absolute;
-z-index: 999;
-}
-
-.message-input-blue {
-color: white;
-background-color: rgb(3, 10, 22);
-
-}
-
-.message-input-green {
-color: #000000;
-background-color: rgb(85, 243, 90);
-}
-
-.mouse-guitar {
-position: absolute;
-/* z-index: 999; */
-width: 7rem;
-height: 7rem;
-background-color: rgb(17, 39, 60);
-/* background-color: red; */
-border-radius: 50%;
-opacity: 0.5;
-}
-
-.mouse-guitar-red  {
-background-color: red;
-}
-
-.rec-sound .rec-sound-extra-red {
-background-color: rgb(255, 2, 213);
-}
-
-.mouse-on {
-position: absolute;
-/* z-index: 999; */
-width: 7rem;
-height: 7rem;
-background-color: rgb(255, 247, 0);
-/* background-color: red; */
-border-radius: 50%;
-opacity: 0.5;
-
-}
-
-
-
-:root {
-    --fader-container-background: rgb(71, 92, 124);
-    --fader-container-active-background: orange;
-    --gray-background-lines: rgb(18,18,18);
-    --dark-gray-background: rgb(3,3,3);
-
-    --gray-container-black-between: rgb(0,0,0);
-    /* --gray-container-black-border: rgb(32,32,32); */
-
-    --pattern-grid-color: rgb(17, 39, 60);
-    --background-color: rgb(6, 24, 40);
-  }
-  
-
-  html,
-  body {
-    font-size: 14px;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: var(--dark-gray-background);
-    background-image: linear-gradient(to right, var(--gray-background-lines) 0.07px, transparent 1px),
-                      linear-gradient(to bottom, var(--gray-background-lines) 0.07px, transparent 1px);
-    background-size: 90px 90px;
-    background-position: -1px -1px;
-
-  }
-  
-  .App {
-    font-family: "Roboto", sans-serif;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-  }
-  .fader-container {
-    position: relative;
-    width: 30rem;
-    height: 19rem;
-    padding-top: 1rem;
-    background-color: transparent; /* Set default background to transparent */
-    border: 0.1rem solid black;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding-top: 2rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    padding-bottom: 2rem;
-    box-sizing: border-box;
-    border-radius: 0.3rem;
-  }
-  
-  .fader-container.active {
-    background-color: transparent; /* Apply green background with 40% opacity when active */
-  }
-
-  .fader-label {
-    width: 6rem;
-    text-align: right;
-    margin-right: 1rem;
-    margin-bottom: 1rem; /* Add a margin-bottom value */
-  }
-
-  .fader-range {
-    width: 100%;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 0.1rem;
-    background-color: #3D3D3D;
-    outline: none;
-    /* margin-top: 1rem; */
-  }
-  
-  .fader-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 1rem;
-    height: 2rem;
-    background-color: white;
-    cursor: pointer;
-    border: none;
-  }
-
-  .fader-range::-moz-range-thumb {
-    width: 0.2rem;
-    height: 1.3rem;
-    background-color: #3D3D3D;
-    cursor: pointer;
-    border: none;
-  }
-  
-  .fader-range::-ms-thumb {
-    width: 1rem;
-    height: 2rem;
-    background-color: white;
-    cursor: pointer;
-    border: none;
-  }
-
-
-  
-  .fader-container.active .fader-range::-moz-range-thumb {
-    background-color:  white
-  }
-  
-
-  .fader-container div {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-    width: 100%;
-    margin-bottom: 1rem;
-    gap: 1rem; /* Add gap between the text and faders */
-  }
-  
-  .fader-label {
-    width: 4rem;
-    background-color: red; 
-    text-align: right;
-    margin-right: 1rem;
-  }
- 
-
-  .fader-label-div {
-    width: 30%;
-    max-width: 4rem; /* Adjust the max-width value as desired */
-    text-align: center;
-    margin-right: 1rem;
-  }
- 
-
-  .message-input {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    border: 1px solid #999999;
-    background-color: #333333;
-    color: white;
+@keyframes blink-red {
+  0% {
+    background-color: red;
     opacity: 0.7;
-    padding: 10px;
-    max-height: 200px; 
-    /* overflow-y: auto;  */
-    overflow: hidden;
-    resize: both; 
-  
   }
-  
-  .message-history {
-    width: 12rem;
-  }
-  
-  .message-history div {
-    /* color: white; */
-    font-family: monospace;
-    margin-bottom: 5px;
-  }
-  
-  .message-input input {
-    border: none;
+  50% {
     background-color: transparent;
-    /* color: white; */
-    font-family: monospace;
-    width: 12rem;
-    outline: none; 
   }
-
-
-.message-input::-webkit-resizer {
-    display: none;
-  }
-  
-  
-  .fader-container.dragging {
-    opacity: 0.5;
-
-  }
-  
-  .message-input.dragging {
-    opacity: 0.5;
- 
-  }
-  
-  .fader-container.dragging,
-.message-input.dragging {
-  position: absolute;
-  z-index: 999;
-}
-
-.message-input-blue {
-  color: white;
-  background-color: rgb(3, 10, 22);
-  
-}
-
-.message-input-green {
-  color: #000000;
-  background-color: rgb(85, 243, 90);
-}
-
-.mouse-guitar {
-  position: absolute;
-  /* z-index: 999; */
-  width: 7rem;
-  height: 7rem;
-  background-color: rgb(17, 39, 60);
-  /* background-color: red; */
-  border-radius: 50%;
-  opacity: 0.5;
-}
-
-.mouse-guitar-red  {
-  background-color: red;
-}
-
-.rec-sound .rec-sound-extra-red {
-  background-color: rgb(255, 2, 213);
-}
-
-.mouse-on {
-  position: absolute;
-  /* z-index: 999; */
-  width: 7rem;
-  height: 7rem;
-  background-color: rgb(255, 247, 0);
-  /* background-color: red; */
-  border-radius: 50%;
-  opacity: 0.5;
-  
-}
-
-
-
-:root {
-    --fader-container-background: rgb(71, 92, 124);
-    --fader-container-active-background: orange;
-    --gray-background-lines: rgb(18,18,18);
-    --dark-gray-background: rgb(3,3,3);
-
-    --gray-container-black-between: rgb(0,0,0);
-    /* --gray-container-black-border: rgb(32,32,32); */
-
-    --pattern-grid-color: rgb(17, 39, 60);
-    --background-color: rgb(6, 24, 40);
-  }
-  
-
-  html,
-  body {
-    font-size: 14px;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: var(--dark-gray-background);
-    background-image: linear-gradient(to right, var(--gray-background-lines) 0.07px, transparent 1px),
-                      linear-gradient(to bottom, var(--gray-background-lines) 0.07px, transparent 1px);
-    background-size: 90px 90px;
-    background-position: -1px -1px;
-
-  }
-  
-  .App {
-    font-family: "Roboto", sans-serif;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .fader-container {
-    position: relative;
-    width: 30rem; 
-    height: 19rem;
-    padding-top: 1rem;
-    background-color: var(--fader-container-background);
-    border: 0.1rem solid black;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    /* padding: 2rem; */
-    padding-top: 2rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    padding-bottom: 2rem;
-    box-sizing: border-box;
-    border-radius: 0.3rem;
-  }
-
-  .fader-container.active {
-    background-color: orange;
-  }
-
-  .fader-label {
-    width: 6rem;
-    text-align: right;
-    margin-right: 1rem;
-    margin-bottom: 1rem; /* Add a margin-bottom value */
-  }
-  
-  
-  .fader-range {
-    width: 100%;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 0.1rem;
-    background-color: #3D3D3D;
-    outline: none;
-    /* margin-top: 1rem; */
-  }
-  
-  .fader-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 1rem;
-    height: 2rem;
-    background-color: white;
-    cursor: pointer;
-    border: none;
-  }
-  
-  .fader-range::-moz-range-thumb {
-    width: 0.2rem;
-    height: 1.3rem;
-    background-color: white;
-    cursor: pointer;
-    border: none;
-  }
-  
-  .fader-range::-ms-thumb {
-    width: 1rem;
-    height: 2rem;
-    background-color: white;
-    cursor: pointer;
-    border: none;
-  }
-  
-  .fader-container div {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-    width: 100%;
-    /* margin-bottom: 0.8rem; */
-  }
-
-  .fader-container div {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-    width: 100%;
-    margin-bottom: 1rem;
-    gap: 1rem; /* Add gap between the text and faders */
-  }
-  
-  .fader-label {
-    width: 4rem;
-    background-color: red; 
-    text-align: right;
-    margin-right: 1rem;
-  }
- 
-
-  .fader-label-div {
-    width: 30%;
-    max-width: 4rem; /* Adjust the max-width value as desired */
-    text-align: center;
-    margin-right: 1rem;
-  }
- 
-
-  .message-input {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    border: 1px solid #999999;
-    background-color: #333333;
-    color: white;
+  100% {
+    background-color: red;
     opacity: 0.7;
-    padding: 10px;
-    max-height: 200px; 
-    /* overflow-y: auto;  */
-    overflow: hidden;
-    resize: both; 
-  
   }
-  
-  .message-history {
-    width: 12rem;
-  }
-  
-  .message-history div {
-    /* color: white; */
-    font-family: monospace;
-    margin-bottom: 5px;
-  }
-  
-  .message-input input {
-    border: none;
-    background-color: transparent;
-    /* color: white; */
-    font-family: monospace;
-    width: 12rem;
-    outline: none; 
-  }
-
-
-.message-input::-webkit-resizer {
-    display: none;
-  }
-  
-  
-  .fader-container.dragging {
-    opacity: 0.5;
-
-  }
-  
-  .message-input.dragging {
-    opacity: 0.5;
- 
-  }
-  
-  .fader-container.dragging,
-.message-input.dragging {
-  position: absolute;
-  z-index: 999;
 }
 
-.message-input-blue {
-  color: white;
-  background-color: rgb(3, 10, 22);
-  
+.blink-red {
+  animation: blink-red 1s linear infinite;
 }
 
-.message-input-green {
-  color: #000000;
-  background-color: rgb(85, 243, 90);
-}
-
-.mouse-guitar {
-  position: absolute;
-  /* z-index: 999; */
-  width: 7rem;
-  height: 7rem;
-  background-color: rgb(17, 39, 60);
-  /* background-color: red; */
-  border-radius: 50%;
-  opacity: 0.5;
-}
-
-.mouse-guitar-red  {
-  background-color: red;
-}
-
-.rec-sound .rec-sound-extra-red {
-  background-color: rgb(255, 2, 213);
-}
-
-.mouse-on {
-  position: absolute;
-  /* z-index: 999; */
-  width: 7rem;
-  height: 7rem;
-  background-color: rgb(255, 247, 0);
-  /* background-color: red; */
-  border-radius: 50%;
-  opacity: 0.5;
-  
-}
-
-
-/* ----------------- */
-
-
-
-:root {
-    --fader-container-background: rgb(71, 92, 124);
-    --fader-container-active-background: orange;
-    --gray-background-lines: rgb(18,18,18);
-    --dark-gray-background: rgb(3,3,3);
-
-    --gray-container-black-between: rgb(0,0,0);
-    /* --gray-container-black-border: rgb(32,32,32); */
-
-    --pattern-grid-color: rgb(17, 39, 60);
-    --background-color: rgb(6, 24, 40);
-  }
-  
-
-  html,
-  body {
-    font-size: 14px;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: var(--dark-gray-background);
-    background-image: linear-gradient(to right, var(--gray-background-lines) 0.07px, transparent 1px),
-                      linear-gradient(to bottom, var(--gray-background-lines) 0.07px, transparent 1px);
-    background-size: 90px 90px;
-    background-position: -1px -1px;
-
-  }
-  
-  .App {
-    font-family: "Roboto", sans-serif;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-  }
-  .fader-container {
-    position: relative;
-    width: 30rem;
-    height: 19rem;
-    padding-top: 1rem;
-    background-color: transparent; /* Set default background to transparent */
-    border: 0.1rem solid black;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding-top: 2rem;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    padding-bottom: 2rem;
-    box-sizing: border-box;
-    border-radius: 0.3rem;
-  }
-  
-  .fader-container.active {
-    background-color: rgba(7, 11, 233, 0.4); /* Apply green background with 40% opacity when active */
-  }
-
-  .fader-label {
-    width: 6rem;
-    text-align: right;
-    margin-right: 1rem;
-    margin-bottom: 1rem; /* Add a margin-bottom value */
-  }
-  
-  
-  .fader-range {
-    width: 100%;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 0.1rem;
-    background-color: #3D3D3D;
-    outline: none;
-    /* margin-top: 1rem; */
-  }
-  
-  .fader-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 1rem;
-    height: 2rem;
-    background-color: white;
-    cursor: pointer;
-    border: none;
-  }
-  
-  .fader-range::-moz-range-thumb {
-    width: 0.2rem;
-    height: 1.3rem;
-    background-color: white;
-    cursor: pointer;
-    border: none;
-  }
-  
-  .fader-range::-ms-thumb {
-    width: 1rem;
-    height: 2rem;
-    background-color: white;
-    cursor: pointer;
-    border: none;
-  }
-  
-  .fader-container div {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-    width: 100%;
-    /* margin-bottom: 0.8rem; */
-  }
-
-  .fader-container div {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-    width: 100%;
-    margin-bottom: 1rem;
-    gap: 1rem; /* Add gap between the text and faders */
-  }
-  
-  .fader-label {
-    width: 4rem;
-    background-color: red; 
-    text-align: right;
-    margin-right: 1rem;
-  }
- 
-
-  .fader-label-div {
-    width: 30%;
-    max-width: 4rem; /* Adjust the max-width value as desired */
-    text-align: center;
-    margin-right: 1rem;
-  }
- 
-
-  .message-input {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    border: 1px solid #999999;
-    background-color: #333333;
-    color: white;
-    opacity: 0.7;
-    padding: 10px;
-    max-height: 200px; 
-    /* overflow-y: auto;  */
-    overflow: hidden;
-    resize: both; 
-  
-  }
-  
-  .message-history {
-    width: 12rem;
-  }
-  
-  .message-history div {
-    /* color: white; */
-    font-family: monospace;
-    margin-bottom: 5px;
-  }
-  
-  .message-input input {
-    border: none;
-    background-color: transparent;
-    /* color: white; */
-    font-family: monospace;
-    width: 12rem;
-    outline: none; 
-  }
-
-
-.message-input::-webkit-resizer {
-    display: none;
-  }
-  
-  
-  .fader-container.dragging {
-    opacity: 0.5;
-
-  }
-  
-  .message-input.dragging {
-    opacity: 0.5;
- 
-  }
-  
-  .fader-container.dragging,
-.message-input.dragging {
-  position: absolute;
-  z-index: 999;
-}
-
-.message-input-blue {
-  color: white;
-  background-color: rgb(3, 10, 22);
-  
-}
-
-.message-input-green {
-  color: #000000;
-  background-color: rgb(85, 243, 90);
-}
-
-.mouse-guitar {
-  position: absolute;
-  /* z-index: 999; */
-  width: 7rem;
-  height: 7rem;
-  background-color: rgb(17, 39, 60);
-  /* background-color: red; */
-  border-radius: 50%;
-  opacity: 0.5;
-}
-
-.mouse-guitar-red  {
-  background-color: red;
-}
-
-.rec-sound .rec-sound-extra-red {
-  background-color: rgb(255, 2, 213);
-}
-
-.mouse-on {
-  position: absolute;
-  /* z-index: 999; */
-  width: 7rem;
-  height: 7rem;
-  background-color: rgb(255, 247, 0);
-  /* background-color: red; */
-  border-radius: 50%;
-  opacity: 0.5;
-  
+.blue {
+  background-color: blue;
 }

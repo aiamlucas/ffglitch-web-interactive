@@ -71,44 +71,50 @@ body {
   margin-right: 1rem;
   margin-bottom: 1rem; /* Add a margin-bottom value */
 }
-
 .fader-range {
   width: 100%;
   -webkit-appearance: none;
   appearance: none;
-  height: 0.1rem;
+  height: 0.5rem; /* Slightly thicker track */
   background-color: #3d3d3d;
   outline: none;
-  /* margin-top: 1rem; */
+  border-radius: 0.25rem; /* Subtle rounding of the track */
 }
 
 .fader-range::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 0.2rem;
-  height: 1.3rem;
-  background-color: #3d3d3d;
+  width: 0.5rem; /* Slightly wider thumb */
+  height: 2rem; /* Slightly taller thumb */
+  background-color: #ffffff; /* Thumb color for contrast */
   cursor: pointer;
   border: none;
+  border-radius: 0.5rem; /* Slightly rounded thumb */
 }
 
 .fader-range::-moz-range-thumb {
-  width: 0.2rem;
-  height: 1.3rem;
-  background-color: #3d3d3d;
+  width: 0.5rem; /* Slightly wider thumb */
+  height: 2rem; /* Slightly taller thumb */
+  background-color: #ffffff;
   cursor: pointer;
   border: none;
+  border-radius: 0.5rem;
 }
 
 .fader-range::-ms-thumb {
-  width: 0.2rem;
-  height: 1.3rem;
-  background-color: #3d3d3d;
+  width: 0.5rem;
+  height: 2rem;
+  background-color: #ffffff;
   cursor: pointer;
   border: none;
+  border-radius: 0.5rem;
+}
+
+.fader-container.active .fader-range::-webkit-slider-thumb {
+  background-color: #ff9900; /* Change thumb color when active */
 }
 
 .fader-container.active .fader-range::-moz-range-thumb {
-  background-color: white;
+  background-color: #ff9900;
 }
 
 .fader-container div {
@@ -132,6 +138,63 @@ body {
   max-width: 4rem; /* Adjust the max-width value as desired */
   text-align: center;
   margin-right: 1rem;
+}
+
+/* Pan slider with a middle marker */
+.pan-range {
+  width: 150%; /* Longer pan slider */
+  height: 0.5rem; /* Slightly thicker */
+  background: linear-gradient(
+    to right,
+    #3d3d3d 0%,
+    /* Track color */ #3d3d3d 49%,
+    /* Color before the marker */ #ffffff 50%,
+    /* Marker color at 50% (zero point) */ #3d3d3d 51%,
+    /* Color after the marker */ #3d3d3d 100%
+  );
+  border-radius: 0.25rem;
+  outline: none;
+  appearance: none;
+}
+
+.pan-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0.7rem; /* Slightly wider thumb */
+  height: 2rem; /* Taller thumb */
+  background-color: #ffffff; /* Thumb color */
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem; /* Rounded thumb */
+}
+
+.pan-range::-moz-range-thumb {
+  width: 0.7rem;
+  height: 2rem;
+  background-color: #ffffff;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.pan-range::-ms-thumb {
+  width: 0.7rem;
+  height: 2rem;
+  background-color: #ffffff;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+/* Optional: Add hover effect for better interaction feedback */
+.pan-range:hover {
+  background: linear-gradient(
+    to right,
+    #3d3d3d 0%,
+    #3d3d3d 49%,
+    #91ff2a 50%,
+    /* Change marker color on hover */ #3d3d3d 51%,
+    #3d3d3d 100%
+  );
 }
 
 .message-input {

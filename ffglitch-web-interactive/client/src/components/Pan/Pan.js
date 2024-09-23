@@ -19,7 +19,7 @@ const Pan = ({ pan, value, onChange, onToggle }) => {
         max={1}
         step={0.01}
         value={value}
-        className="fader-range"
+        className="pan-range"
         onChange={(event) => onChange(parseFloat(event.target.value))}
         onDoubleClick={handleDoubleClick}
         // Reset to 0 on double-click on the range input
@@ -34,13 +34,15 @@ export default Pan;
 
 // const Pan = ({ pan, value, onChange, onToggle }) => {
 //   // This function is called when the user double-clicks on the pan label
-//   const handleDoubleClick = () => {
-//     event.stopPropagation();
-//     onChange(0);
+//   const handleDoubleClick = (event) => {
+//     event.stopPropagation(); // Prevent the event from bubbling up
+//     onChange(0); // Reset the pan value to zero
 //   };
+
 //   return (
 //     <div>
-//       <div className="fader-label-div" onClick={onToggle}>
+//       <div className="fader-label-div" onDoubleClick={onToggle}>
+//         {/* onDoubleClick ensures toggle is specific to pan */}
 //         {pan.name}
 //       </div>
 //       <input
@@ -52,6 +54,7 @@ export default Pan;
 //         className="fader-range"
 //         onChange={(event) => onChange(parseFloat(event.target.value))}
 //         onDoubleClick={handleDoubleClick}
+//         // Reset to 0 on double-click on the range input
 //       />
 //     </div>
 //   );
