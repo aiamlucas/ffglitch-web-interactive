@@ -4,7 +4,7 @@ const Fader = ({ fader, value, onChange, onToggle }) => {
   return (
     <div>
       <div className="fader-label-div" onClick={onToggle}>
-        {fader.name}
+        {/* {fader.name} */}
       </div>
       <input
         type="range"

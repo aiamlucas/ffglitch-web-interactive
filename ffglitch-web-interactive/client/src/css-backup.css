@@ -71,44 +71,50 @@ body {
   margin-right: 1rem;
   margin-bottom: 1rem; /* Add a margin-bottom value */
 }
-
 .fader-range {
   width: 100%;
   -webkit-appearance: none;
   appearance: none;
-  height: 0.1rem;
+  height: 0.5rem; /* Slightly thicker track */
   background-color: #3d3d3d;
   outline: none;
-  /* margin-top: 1rem; */
+  border-radius: 0.25rem; /* Subtle rounding of the track */
 }
 
 .fader-range::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 0.2rem;
-  height: 1.3rem;
-  background-color: #3d3d3d;
+  width: 0.5rem; /* Slightly wider thumb */
+  height: 2rem; /* Slightly taller thumb */
+  background-color: #ffffff; /* Thumb color for contrast */
   cursor: pointer;
   border: none;
+  border-radius: 0.5rem; /* Slightly rounded thumb */
 }
 
 .fader-range::-moz-range-thumb {
-  width: 0.2rem;
-  height: 1.3rem;
-  background-color: #3d3d3d;
+  width: 0.5rem; /* Slightly wider thumb */
+  height: 2rem; /* Slightly taller thumb */
+  background-color: #ffffff;
   cursor: pointer;
   border: none;
+  border-radius: 0.5rem;
 }
 
 .fader-range::-ms-thumb {
-  width: 0.2rem;
-  height: 1.3rem;
-  background-color: #3d3d3d;
+  width: 0.5rem;
+  height: 2rem;
+  background-color: #ffffff;
   cursor: pointer;
   border: none;
+  border-radius: 0.5rem;
+}
+
+.fader-container.active .fader-range::-webkit-slider-thumb {
+  background-color: #ff9900; /* Change thumb color when active */
 }
 
 .fader-container.active .fader-range::-moz-range-thumb {
-  background-color: white;
+  background-color: #ff9900;
 }
 
 .fader-container div {
@@ -132,6 +138,75 @@ body {
   max-width: 4rem; /* Adjust the max-width value as desired */
   text-align: center;
   margin-right: 1rem;
+}
+/* Pan slider with a middle marker */
+.pan-range {
+  width: 200%; /* Make the pan slider longer */
+  height: 0.5rem; /* Same thickness as the fader track */
+  background: linear-gradient(
+    to right,
+    #3d3d3d 0%,
+    /* Track color */ #3d3d3d 49%,
+    /* Color before the marker */ #000000 50%,
+    /* Marker color at 50% (zero point) */ #3d3d3d 51%,
+    /* Color after the marker */ #3d3d3d 100%
+  );
+  border-radius: 0.25rem;
+  outline: none;
+  appearance: none;
+}
+
+/* Adjust pan slider thumb to match fader knob */
+.pan-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0.5rem; /* Same width as fader thumb */
+  height: 2rem; /* Same height as fader thumb */
+  background-color: #ffffff; /* Same color as fader thumb */
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem; /* Rounded thumb for consistency */
+}
+
+.pan-range::-moz-range-thumb {
+  width: 0.5rem;
+  height: 2rem;
+  background-color: #ffffff;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.pan-range::-ms-thumb {
+  width: 0.5rem;
+  height: 2rem;
+  background-color: #ffffff;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+/* Optional: Hover effect for pan slider */
+.pan-range:hover {
+  background: linear-gradient(
+    to right,
+    #3d3d3d 0%,
+    #3d3d3d 49%,
+    #91ff2a 50%,
+    /* Change marker color on hover */ #3d3d3d 51%,
+    #3d3d3d 100%
+  );
+}
+
+/* Ensure each pan takes up a full row */
+.pan-container {
+  display: flex;
+  flex-direction: column; /* Ensure pans are stacked vertically */
+  gap: 1rem; /* Add spacing between the pans */
+}
+
+.pan-container .pan-range {
+  width: 100%; /* Ensure the pan slider takes the full width */
+  margin-bottom: 1rem; /* Add margin below each pan for spacing */
 }
 
 .message-input {
@@ -266,4 +341,57 @@ body {
 
 .blue {
   background-color: blue;
+}
+
+/* Updated fader-container styles */
+.fader-container {
+  display: flex;
+  flex-direction: column; /* Stack faders and pans vertically */
+  gap: 1rem; /* Space between faders and pans */
+  padding: 1rem;
+  border: 1px solid #666; /* Darker gray border */
+  border-radius: 0.5rem; /* Slight rounding of the corners */
+  background-color: transparent; /* Always transparent background */
+  width: fit-content; /* Adjust width to fit content */
+}
+
+/* Ensure the fader and pan lines are visible and styled the same */
+.fader-range,
+.pan-range {
+  width: 100%; /* Full width for faders and pans */
+  height: 0.5rem; /* Slightly thicker line */
+  background-color: #3d3d3d; /* Dark gray background for the slider */
+  outline: none;
+  appearance: none;
+  border-radius: 0.25rem;
+}
+
+/* Thumb for fader and pan - visible and consistent */
+.fader-range::-webkit-slider-thumb,
+.pan-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0.7rem; /* Thumb width */
+  height: 2rem; /* Thumb height */
+  background-color: #67686b; /* Thumb color */
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem; /* Rounded thumb */
+}
+
+/* Same for Firefox and other browsers */
+.fader-range::-moz-range-thumb,
+.pan-range::-moz-range-thumb,
+.fader-range::-ms-thumb,
+.pan-range::-ms-thumb {
+  width: 0.7rem;
+  height: 2rem;
+  background-color: #67686b;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+/* Optional hover effect for container */
+.fader-container:hover {
+  border-color: lightgray; /* Slight border change on hover */
 }

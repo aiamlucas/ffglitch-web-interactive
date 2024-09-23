@@ -197,6 +197,18 @@ body {
   );
 }
 
+/* Ensure each pan takes up a full row */
+.pan-container {
+  display: flex;
+  flex-direction: column; /* Ensure pans are stacked vertically */
+  gap: 1rem; /* Add spacing between the pans */
+}
+
+.pan-container .pan-range {
+  width: 100%; /* Ensure the pan slider takes the full width */
+  margin-bottom: 1rem; /* Add margin below each pan for spacing */
+}
+
 .message-input {
   display: flex;
   flex-direction: column;
@@ -329,4 +341,57 @@ body {
 
 .blue {
   background-color: blue;
+}
+
+/* Updated fader-container styles */
+.fader-container {
+  display: flex;
+  flex-direction: column; /* Stack faders and pans vertically */
+  gap: 1rem; /* Space between faders and pans */
+  padding: 1rem;
+  border: 1px solid #666; /* Darker gray border */
+  border-radius: 0.5rem; /* Slight rounding of the corners */
+  background-color: transparent; /* Always transparent background */
+  width: fit-content; /* Adjust width to fit content */
+}
+
+/* Ensure the fader and pan lines are visible and styled the same */
+.fader-range,
+.pan-range {
+  width: 100%; /* Full width for faders and pans */
+  height: 0.5rem; /* Slightly thicker line */
+  background-color: #3d3d3d; /* Dark gray background for the slider */
+  outline: none;
+  appearance: none;
+  border-radius: 0.25rem;
+}
+
+/* Thumb for fader and pan - visible and consistent */
+.fader-range::-webkit-slider-thumb,
+.pan-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 0.7rem; /* Thumb width */
+  height: 2rem; /* Thumb height */
+  background-color: #67686b; /* Thumb color */
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem; /* Rounded thumb */
+}
+
+/* Same for Firefox and other browsers */
+.fader-range::-moz-range-thumb,
+.pan-range::-moz-range-thumb,
+.fader-range::-ms-thumb,
+.pan-range::-ms-thumb {
+  width: 0.7rem;
+  height: 2rem;
+  background-color: #67686b;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+/* Optional hover effect for container */
+.fader-container:hover {
+  border-color: lightgray; /* Slight border change on hover */
 }

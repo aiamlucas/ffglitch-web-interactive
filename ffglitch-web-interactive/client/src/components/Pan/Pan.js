@@ -11,7 +11,7 @@ const Pan = ({ pan, value, onChange, onToggle }) => {
     <div>
       <div className="fader-label-div" onDoubleClick={onToggle}>
         {/* onDoubleClick ensures toggle is specific to pan */}
-        {pan.name}
+        {/* {pan.name} */}
       </div>
       <input
         type="range"
