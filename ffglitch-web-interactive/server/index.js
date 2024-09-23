@@ -32,7 +32,7 @@ const generateItemsDictionary = (numItems, prefix) => {
   }));
 };
 
-const FadersDictionary = generateItemsDictionary(25, "fader");
+const FadersDictionary = generateItemsDictionary(2, "fader");
 const PansDictionary = generateItemsDictionary(2, "pan");
 
 // Function to dynamically create toggleValues object
