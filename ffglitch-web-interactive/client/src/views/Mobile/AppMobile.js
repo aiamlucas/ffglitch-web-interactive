@@ -86,7 +86,7 @@ export default function AppMobile() {
   // Handle dragging event
   const handleDrag = (e, data) => {
     setBallPosition({ x: data.x, y: data.y });
-    updateLogWithPosition(data.x, data.y);
+    // updateLogWithPosition(data.x, data.y);
   };
 
   // Map gyroscope values to the range between -50% and +50% of the screen width/height
@@ -109,13 +109,6 @@ export default function AppMobile() {
 
   // Format values to have 2 digits after the comma
   const formatValue = (value) => (value !== null ? value.toFixed(2) : "0.00");
-
-  // Update the logs when gyroscope moves the ball
-  useEffect(() => {
-    if (!isDragging) {
-      updateLogWithPosition(ballXPercent, ballYPercent);
-    }
-  }, [ballXPercent, ballYPercent]);
 
   return (
     <div className="mobile-container">
