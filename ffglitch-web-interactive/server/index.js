@@ -32,7 +32,7 @@ const generateItemsDictionary = (numItems, prefix) => {
   }));
 };
 
-const FadersDictionary = generateItemsDictionary(2, "fader");
+const FadersDictionary = generateItemsDictionary(3, "fader");
 const PansDictionary = generateItemsDictionary(2, "pan");
 
 // Function to dynamically create toggleValues object
@@ -94,14 +94,14 @@ io.on("connection", (socket) => {
         io.emit("updated_fader_values", FadersDictionary);
 
         // Update nb_frames based on fader2 value
-        if (fader === "fader2") {
+        if (fader === "fader1") {
           nb_frames = Math.round(message * 100);
           console.log("nb_frames updated to:", nb_frames);
-        } else if (fader === "fader4") {
+        } else if (fader === "fader2") {
           x = Math.round(message * 100); // Set x based on fader4 for Desktop
           console.log("Desktop x axis updated to:", x);
           sendDesktopXandY(); // Send x and y values via ZeroMQ
-        } else if (fader === "fader5") {
+        } else if (fader === "fader3") {
           y = Math.round(message * 100); // Set y based on fader5 for Desktop
           console.log("Desktop y axis updated to:", y);
           sendDesktopXandY(); // Send x and y values via ZeroMQ

@@ -24,7 +24,7 @@ const generateItemsDictionary = (numItems, prefix) => {
   }));
 };
 
-const FadersDictionary = generateItemsDictionary(2, "fader");
+const FadersDictionary = generateItemsDictionary(3, "fader");
 const PansDictionary = generateItemsDictionary(2, "pan");
 
 export default function App() {
