@@ -155,3 +155,65 @@
   background-color: #d4ff00;
   opacity: 1;
 }
+
+/* Fader container for upper-left positioning */
+.faders-container {
+  position: absolute;
+  top: 4rem; /* 20px -> 1.25rem (16px = 1rem) */
+  left: 2rem; /* 20px -> 1.25rem */
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem; /* 10px -> 0.625rem */
+}
+
+/* Fader container styles */
+.fader-range {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 0.125rem; /* 2px -> 0.125rem */
+  background: black;
+  outline: none;
+  border-radius: 0.0625rem; /* 1px -> 0.0625rem */
+  cursor: pointer;
+  margin: 0.625rem 0; /* 10px -> 0.625rem */
+}
+
+/* Style the thumb (the draggable part) */
+.fader-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0.5rem; /* 8px -> 0.5rem */
+  height: 1.125rem; /* 18px -> 1.125rem */
+  background: black; /* Make the thumb black */
+  cursor: pointer;
+}
+
+.fader-range::-moz-range-thumb {
+  width: 0.5rem; /* 8px -> 0.5rem */
+  height: 1.125rem; /* 18px -> 1.125rem */
+  background: black;
+  cursor: pointer;
+}
+
+/* For WebKit browsers */
+.fader-range::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 0.125rem; /* 2px -> 0.125rem */
+  cursor: pointer;
+  background: black;
+  border-radius: 0.0625rem; /* 1px -> 0.0625rem */
+}
+
+/* For Firefox */
+.fader-range::-moz-range-track {
+  width: 100%;
+  height: 0.125rem; /* 2px -> 0.125rem */
+  cursor: pointer;
+  background: black;
+  border-radius: 0.0625rem; /* 1px -> 0.0625rem */
+}
+
+/* Hide track outline */
+.fader-range:focus {
+  outline: none;
+}

@@ -9,8 +9,8 @@ const Fader = ({ fader, value, onChange, onToggle }) => {
       <input
         type="range"
         min={0}
-        max={1}
-        step={0.01}
+        max={50}
+        step={1}
         value={value}
         className="fader-range"
         onChange={(event) => onChange(parseFloat(event.target.value))}
