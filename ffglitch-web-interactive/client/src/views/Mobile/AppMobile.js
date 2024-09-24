@@ -26,7 +26,7 @@ export default function AppMobile() {
   const { orientation, requestAccess, revokeAccess, error } =
     useDeviceOrientation(); // Use the hook
   const [isTracking, setIsTracking] = useState(false);
-  const [isLargeToggled, setIsLargeToggled] = useState(false); // State for large button
+  // const [isLargeToggled, setIsLargeToggled] = useState(false); // State for large button
   const [isSmallToggled1, setIsSmallToggled1] = useState(true); // X-axis toggle (default to enabled)
   const [isSmallToggled2, setIsSmallToggled2] = useState(true); // Y-axis toggle (default to enabled)
   const [isSmallToggled3, setIsSmallToggled3] = useState(true); // Additional toggle button
@@ -41,6 +41,48 @@ export default function AppMobile() {
     Array(FadersDictionary.length).fill(0)
   );
 
+  const [buttonValues, setButtonValues] = useState(
+    Array(6).fill(0) // 4 buttons
+  );
+
+  // const handleButtonToggle = (index) => {
+  //   const updatedButtonValues = [...buttonValues];
+  //   updatedButtonValues[index] = buttonValues[index] === 0 ? 1 : 0;
+
+  //   // Emit the toggle event to the server
+  //   const buttonName = `button${index + 1}`;
+  //   socket.emit("send_toggle_value", { toggle: buttonName });
+
+  //   setButtonValues(updatedButtonValues);
+  //   setLastEvent(`Toggled ${buttonName} to ${updatedButtonValues[index]}`);
+  // };
+
+  const handleButtonToggle = (index) => {
+    const updatedButtonValues = [...buttonValues];
+    updatedButtonValues[index] = buttonValues[index] === 0 ? 1 : 0;
+
+    // Emit the toggle event to the server
+    const buttonName = `button${index + 1}`;
+    socket.emit("send_toggle_value", {
+      toggle: buttonName,
+      value: updatedButtonValues[index],
+    });
+
+    setButtonValues(updatedButtonValues);
+    setLastEvent(`Toggled ${buttonName} to ${updatedButtonValues[index]}`);
+
+    // If it's the large circle (index 5), control tracking
+    if (index === 5) {
+      if (updatedButtonValues[5]) {
+        requestAccess(); // Start tracking
+        setIsTracking(true);
+      } else {
+        revokeAccess(); // Stop tracking
+        setIsTracking(false);
+      }
+    }
+  };
+
   const handleFaderChange = (index, value) => {
     const newFaderValues = [...faderValues];
     newFaderValues[index] = value;
@@ -53,51 +95,42 @@ export default function AppMobile() {
     // setLastEvent(`${faderName}: ${value.toFixed(2)}`);
   };
 
-  const handleSmallToggleClick1 = () => {
-    setIsSmallToggled1((prev) => !prev);
-    setLastEvent(`X-Axis ${isSmallToggled1 ? "Off" : "On"}`);
-  };
+  // const handleLargeToggleClick = async (event) => {
+  //   event.preventDefault();
+  //   const updatedButtonValues = [...buttonValues];
+  //   updatedButtonValues[5] = buttonValues[5] === 0 ? 1 : 0; // Large circle at index 5
 
-  const handleSmallToggleClick2 = () => {
-    setIsSmallToggled2((prev) => !prev);
-    setLastEvent(`Y-Axis ${isSmallToggled2 ? "Off" : "On"}`);
-  };
+  //   setButtonValues(updatedButtonValues);
+  //   setLastEvent(`Circle ${updatedButtonValues[5] ? "On" : "Off"}`);
 
-  const handleSmallToggleClick3 = () => {
-    setIsSmallToggled3((prev) => !prev);
-    setLastEvent(`Toggle 1 ${isSmallToggled3 ? "Off" : "On"}`);
-  };
+  //   // Emit to server
+  //   socket.emit("send_toggle_value", { toggle: "button6" }); // button6 for large circle
 
-  const handleSmallToggleClick4 = () => {
-    setIsSmallToggled4((prev) => !prev);
-    setLastEvent(`Toggle 2 ${isSmallToggled4 ? "Off" : "On"}`);
-  };
+  //   if (updatedButtonValues[5]) {
+  //     requestAccess(); // Start tracking
+  //     setIsTracking(true);
+  //   } else {
+  //     revokeAccess(); // Stop tracking
+  //     setIsTracking(false);
+  //   }
+  // };
 
-  // Handle toggling the large button (which is the circle now)
-  const handleLargeToggleClick = async (event) => {
-    event.preventDefault();
-    setIsLargeToggled((prev) => {
-      const newState = !prev;
-      if (newState) {
-        requestAccess(); // Start tracking
-        setIsTracking(true);
-      } else {
-        revokeAccess(); // Stop tracking
-        setIsTracking(false);
-      }
-      setLastEvent(`Circle ${newState ? "On" : "Off"}`);
-      return newState;
-    });
-  };
-
-  // Handle Clear Glitch button start and end
   const handleClearGlitchStart = () => {
-    setIsClearGlitch(true);
-    setLastEvent("Clear Glitch");
+    const updatedButtonValues = [...buttonValues];
+    updatedButtonValues[0] = 1; // Push button (long press) at index 0
+    setButtonValues(updatedButtonValues);
+    setLastEvent("Clear Glitch Started");
+
+    socket.emit("send_toggle_value", { toggle: "button1", value: 1 });
   };
 
   const handleClearGlitchEnd = () => {
-    setIsClearGlitch(false);
+    const updatedButtonValues = [...buttonValues];
+    updatedButtonValues[0] = 0; // Reset push button state
+    setButtonValues(updatedButtonValues);
+    setLastEvent("Clear Glitch Ended");
+
+    socket.emit("send_toggle_value", { toggle: "button1", value: 0 });
   };
 
   // Update the logs with the ball's position
@@ -174,34 +207,17 @@ export default function AppMobile() {
     };
   }, []);
 
-  // useEffect(() => {
-  //   // Listen for initial fader values when the mobile client connects
-  //   socket.on("initial_fader_values", (data) => {
-  //     const initialValues = data.map((faderValue) => faderValue.value);
-  //     setFaderValues(initialValues);
-  //   });
+  useEffect(() => {
+    // Listen for updated button values from the server
+    socket.on("updated_toggle_values", (data) => {
+      const updatedButtonValues = Object.values(data);
+      setButtonValues(updatedButtonValues);
+    });
 
-  //   // Listen for updated fader values
-  //   socket.on("updated_fader_values", (data) => {
-  //     const updatedValues = data.map((faderValue) => faderValue.value);
-  //     setFaderValues(updatedValues);
-
-  //     const faderIndex = updatedValues.findIndex(
-  //       (value, index) => value !== faderValues[index]
-  //     );
-
-  //     // Log only the fader that changed
-  //     if (faderIndex !== -1) {
-  //       setLastEvent(`Fader${faderIndex + 1}: ${updatedValues[faderIndex]}`);
-  //     }
-  //   });
-
-  //   // Clean up when the component unmounts
-  //   return () => {
-  //     socket.off("initial_fader_values");
-  //     socket.off("updated_fader_values");
-  //   };
-  // }, []);
+    return () => {
+      socket.off("updated_toggle_values");
+    };
+  }, []);
 
   return (
     <div className="mobile-container">
@@ -221,17 +237,17 @@ export default function AppMobile() {
 
       {/* Large Circle that acts as a toggle button */}
       <div
-        className={`large-circle ${isLargeToggled ? "toggled" : ""}`}
-        onClick={handleLargeToggleClick} // Toggle tracking on click
+        className={`large-circle ${buttonValues[5] ? "toggled" : ""}`} // Use buttonValues[5] to manage toggled state
+        onClick={() => handleButtonToggle(5)} // Handle the toggle via buttonValues[5]
       >
         {/* X and Y axis lines */}
-        {isLargeToggled && (
+        {buttonValues[5] === 1 && (
           <>
             <div className="x-axis-line"></div>
             <div className="y-axis-line"></div>
           </>
         )}
-        {isLargeToggled && <div className="inner-circle"></div>}
+        {buttonValues[5] === 1 && <div className="inner-circle"></div>}
       </div>
 
       {/* Small Ball moves based on orientation within the full screen */}
@@ -264,35 +280,24 @@ export default function AppMobile() {
 
       {/* Bottom buttons: Clear Glitch and four small toggle buttons */}
       <div className="bottom-buttons">
+        {/* Long Push Button */}
         <div
-          className={`clear-glitch-button ${isClearGlitch ? "pressed" : ""}`}
+          className={`clear-glitch-button ${buttonValues[0] ? "pressed" : ""}`} // Apply the "pressed" class when buttonValues[0] is 1
           onMouseDown={handleClearGlitchStart}
           onMouseUp={handleClearGlitchEnd}
           onTouchStart={handleClearGlitchStart}
           onTouchEnd={handleClearGlitchEnd}
         ></div>
 
-        <div
-          className={`small-toggle-button ${isSmallToggled1 ? "active" : ""}`}
-          onClick={handleSmallToggleClick1}
-          style={{ opacity: isSmallToggled1 ? 1 : 0.2 }}
-        ></div>
-
-        <div
-          className={`small-toggle-button ${isSmallToggled2 ? "active" : ""}`}
-          onClick={handleSmallToggleClick2}
-          style={{ opacity: isSmallToggled2 ? 1 : 0.2 }}
-        ></div>
-
-        <div
-          className={`small-toggle-button ${isSmallToggled3 ? "active" : ""}`}
-          onClick={handleSmallToggleClick3}
-        ></div>
-
-        <div
-          className={`small-toggle-button ${isSmallToggled4 ? "active" : ""}`}
-          onClick={handleSmallToggleClick4}
-        ></div>
+        {/* Toggle Buttons */}
+        {buttonValues.slice(1, 5).map((value, index) => (
+          <div
+            key={index}
+            className={`small-toggle-button ${value ? "active" : ""}`}
+            onClick={() => handleButtonToggle(index + 1)} // Buttons 1 to 4 mapped to indices 1-4
+            style={{ opacity: value ? 1 : 0.2 }}
+          ></div>
+        ))}
       </div>
     </div>
   );
