@@ -50,7 +50,7 @@ export default function AppMobile() {
     const faderName = `fader${index + 1}`;
     socket.emit("send_message", { fader: faderName, message: value });
     // Log the fader change to lastEvent
-    setLastEvent(`${faderName}: ${value.toFixed(2)}`);
+    // setLastEvent(`${faderName}: ${value.toFixed(2)}`);
   };
 
   const handleSmallToggleClick1 = () => {
@@ -155,6 +155,15 @@ export default function AppMobile() {
     // Listen for updated fader values
     socket.on("updated_fader_values", (data) => {
       const updatedValues = data.map((faderValue) => faderValue.value);
+
+      // Compare and log only the fader that changed
+      updatedValues.forEach((value, index) => {
+        if (value !== faderValues[index]) {
+          setLastEvent(`Fader${index + 1}: ${value.toFixed(2)}`);
+        }
+      });
+
+      // Update the state with the new fader values
       setFaderValues(updatedValues);
     });
 
@@ -164,6 +173,35 @@ export default function AppMobile() {
       socket.off("updated_fader_values");
     };
   }, []);
+
+  // useEffect(() => {
+  //   // Listen for initial fader values when the mobile client connects
+  //   socket.on("initial_fader_values", (data) => {
+  //     const initialValues = data.map((faderValue) => faderValue.value);
+  //     setFaderValues(initialValues);
+  //   });
+
+  //   // Listen for updated fader values
+  //   socket.on("updated_fader_values", (data) => {
+  //     const updatedValues = data.map((faderValue) => faderValue.value);
+  //     setFaderValues(updatedValues);
+
+  //     const faderIndex = updatedValues.findIndex(
+  //       (value, index) => value !== faderValues[index]
+  //     );
+
+  //     // Log only the fader that changed
+  //     if (faderIndex !== -1) {
+  //       setLastEvent(`Fader${faderIndex + 1}: ${updatedValues[faderIndex]}`);
+  //     }
+  //   });
+
+  //   // Clean up when the component unmounts
+  //   return () => {
+  //     socket.off("initial_fader_values");
+  //     socket.off("updated_fader_values");
+  //   };
+  // }, []);
 
   return (
     <div className="mobile-container">
