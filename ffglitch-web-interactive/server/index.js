@@ -74,6 +74,11 @@ io.on("connection", (socket) => {
   socket.emit("initial_toggle_values", toggleValues);
   socket.emit("initial_pan_values", PansDictionary);
 
+  // Handling broadcast of log messages to all clients
+  socket.on("broadcast_log", (logMessage) => {
+    io.emit("receive_log", logMessage); // Broadcast the log message to all clients
+  });
+
   // Handling messages from the Desktop (faders, pans, chat)
   socket.on("send_message", (data) => {
     const { fader, message, username, chatMessage } = data;
