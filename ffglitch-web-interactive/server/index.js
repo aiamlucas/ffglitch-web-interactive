@@ -95,7 +95,7 @@ io.on("connection", (socket) => {
 
         // Update nb_frames based on fader2 value
         if (fader === "fader1") {
-          nb_frames = Math.round(message * 100);
+          nb_frames = message;
           console.log("nb_frames updated to:", nb_frames);
         } else if (fader === "fader2") {
           x = Math.round(message * 100); // Set x based on fader4 for Desktop
