@@ -49,6 +49,8 @@ export default function AppMobile() {
     // Emit the fader change to the server
     const faderName = `fader${index + 1}`;
     socket.emit("send_message", { fader: faderName, message: value });
+    // Log the fader change to lastEvent
+    setLastEvent(`${faderName}: ${value.toFixed(2)}`);
   };
 
   const handleSmallToggleClick1 = () => {
