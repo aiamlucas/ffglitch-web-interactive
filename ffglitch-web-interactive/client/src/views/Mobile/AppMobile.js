@@ -27,11 +27,11 @@ export default function AppMobile() {
     useDeviceOrientation(); // Use the hook
   const [isTracking, setIsTracking] = useState(false);
   // const [isLargeToggled, setIsLargeToggled] = useState(false); // State for large button
-  const [isSmallToggled1, setIsSmallToggled1] = useState(true); // X-axis toggle (default to enabled)
-  const [isSmallToggled2, setIsSmallToggled2] = useState(true); // Y-axis toggle (default to enabled)
-  const [isSmallToggled3, setIsSmallToggled3] = useState(true); // Additional toggle button
-  const [isSmallToggled4, setIsSmallToggled4] = useState(true); // Additional toggle button
-  const [isClearGlitch, setIsClearGlitch] = useState(false); // State for Clear Glitch button
+  // const [isSmallToggled1, setIsSmallToggled1] = useState(true); // X-axis toggle (default to enabled)
+  // const [isSmallToggled2, setIsSmallToggled2] = useState(true); // Y-axis toggle (default to enabled)
+  // const [isSmallToggled3, setIsSmallToggled3] = useState(true); // Additional toggle button
+  // const [isSmallToggled4, setIsSmallToggled4] = useState(true); // Additional toggle button
+  // const [isClearGlitch, setIsClearGlitch] = useState(false); // State for Clear Glitch button
   const [lastEvent, setLastEvent] = useState(""); // Store the last event
   const [isDragging, setIsDragging] = useState(false); // State for dragging
   const [ballPosition, setBallPosition] = useState({ x: 0, y: 0 }); // Store the current ball position
@@ -44,18 +44,6 @@ export default function AppMobile() {
   const [buttonValues, setButtonValues] = useState(
     Array(6).fill(0) // 4 buttons
   );
-
-  // const handleButtonToggle = (index) => {
-  //   const updatedButtonValues = [...buttonValues];
-  //   updatedButtonValues[index] = buttonValues[index] === 0 ? 1 : 0;
-
-  //   // Emit the toggle event to the server
-  //   const buttonName = `button${index + 1}`;
-  //   socket.emit("send_toggle_value", { toggle: buttonName });
-
-  //   setButtonValues(updatedButtonValues);
-  //   setLastEvent(`Toggled ${buttonName} to ${updatedButtonValues[index]}`);
-  // };
 
   const handleButtonToggle = (index) => {
     const updatedButtonValues = [...buttonValues];
@@ -166,12 +154,12 @@ export default function AppMobile() {
   };
 
   const ballXPercent =
-    isSmallToggled1 && !isDragging
+    buttonValues[1] && !isDragging
       ? mapGyroscopeToScreen(orientation?.gamma, -60, 60)
       : ballPosition.x;
 
   const ballYPercent =
-    isSmallToggled2 && !isDragging
+    buttonValues[2] && !isDragging
       ? mapGyroscopeToScreen(orientation?.beta, -45, 45)
       : ballPosition.y;
 
