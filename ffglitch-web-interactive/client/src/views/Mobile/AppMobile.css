@@ -23,8 +23,8 @@
   position: absolute;
   top: 60px;
   right: 15px;
-  width: 90px; /* Fit the longest message */
-  height: 105px;
+  width: 100px; /* Fit the longest message */
+  height: 125px;
   padding: 0.5rem;
   border: 1px solid black;
   border-radius: 0.5rem;

@@ -94,9 +94,9 @@ export default function AppMobile() {
   };
 
   const handleFaderChange = (index, value) => {
-    const newFaderValues = [...faderValues];
-    newFaderValues[index] = value;
-    setFaderValues(newFaderValues);
+    // const newFaderValues = [...faderValues];
+    // newFaderValues[index] = value;
+    // setFaderValues(newFaderValues);
 
     // Emit the fader change to the server
     const faderName = `fader${index + 1}`;
@@ -120,9 +120,9 @@ export default function AppMobile() {
     socket.emit("send_toggle_value", { toggle: "button1", value: 0 });
   };
 
-  // Update the logs with the ball's position
+  // take this out...
   const updateLogWithPosition = (x, y) => {
-    setLastEvent(`Ball Position - X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}`);
+    // setLastEvent(`Ball Position - X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}`);
   };
 
   // Handle the start of dragging
@@ -179,7 +179,7 @@ export default function AppMobile() {
       // Compare and log only the fader that changed
       updatedValues.forEach((value, index) => {
         if (value !== faderValues[index]) {
-          setLastEvent(`Fader${index + 1}: ${value.toFixed(2)}`);
+          setLastEvent(`Fader${index + 1}: ${value}`);
         }
       });
 
