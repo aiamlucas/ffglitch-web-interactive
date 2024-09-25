@@ -130,18 +130,39 @@ export default function AppMobile() {
     setIsDragging(true);
   };
 
-  // Handle the stop of dragging
   const handleStopDrag = () => {
     setIsDragging(false);
+
+    // Temporarily disable gyroscope tracking
+    setIsTracking(false);
+
     // Reset the ball position to center (0, 0)
-    setBallPosition({ x: 0, y: 0 });
-    updateLogWithPosition(0, 0); // Log reset to center
+    const newPosition = { x: 0, y: 0 };
+    setBallPosition(newPosition);
+
+    // Emit the new position to the server
+    socket.emit("ball_position_update", newPosition);
+
+    // Re-enable gyroscope tracking after a short delay (e.g., 500ms)
+    setTimeout(() => {
+      setIsTracking(true);
+    }, 500);
   };
 
-  // Handle dragging event
+  // // Handle the stop of dragging
+  // const handleStopDrag = () => {
+  //   setIsDragging(false);
+  //   // Reset the ball position to center (0, 0)
+  //   setBallPosition({ x: 0, y: 0 });
+  //   updateLogWithPosition(0, 0); // Log reset to center
+  // };
+
   const handleDrag = (e, data) => {
-    setBallPosition({ x: data.x, y: data.y });
-    // Optionally, send ball position to server or update logs
+    const newPosition = { x: data.x, y: data.y };
+    setBallPosition(newPosition);
+
+    // Emit the new position to the server
+    socket.emit("ball_position_update", newPosition);
   };
 
   // Map gyroscope values to the range between -50% and +50% of the screen width/height
@@ -176,15 +197,27 @@ export default function AppMobile() {
     socket.on("updated_fader_values", (data) => {
       const updatedValues = data.map((faderValue) => faderValue.value);
 
-      // Compare and log only the fader that changed
-      updatedValues.forEach((value, index) => {
-        if (value !== faderValues[index]) {
-          setLastEvent(`Fader${index + 1}: ${value}`);
-        }
-      });
+      setFaderValues((prevFaderValues) => {
+        // Compare and log only the fader that changed
+        updatedValues.forEach((value, index) => {
+          if (value !== prevFaderValues[index]) {
+            // Use a switch statement to log different messages based on the index
+            switch (index) {
+              case 0:
+                setLastEvent(`nb_frames: ${value}`);
+                break;
+              case 1:
+                setLastEvent(`ma_frames: ${value}`);
+                break;
+              default:
+                setLastEvent(`Fader${index + 1}: ${value}`);
+                break;
+            }
+          }
+        });
 
-      // Update the state with the new fader values
-      setFaderValues(updatedValues);
+        return updatedValues;
+      });
     });
 
     // Clean up when the component unmounts
@@ -193,6 +226,35 @@ export default function AppMobile() {
       socket.off("updated_fader_values");
     };
   }, [faderValues]);
+
+  // useEffect(() => {
+  //   // Listen for initial fader values when the mobile client connects
+  //   socket.on("initial_fader_values", (data) => {
+  //     const initialValues = data.map((faderValue) => faderValue.value);
+  //     setFaderValues(initialValues);
+  //   });
+
+  //   // Listen for updated fader values
+  //   socket.on("updated_fader_values", (data) => {
+  //     const updatedValues = data.map((faderValue) => faderValue.value);
+
+  //     // Compare and log only the fader that changed
+  //     updatedValues.forEach((value, index) => {
+  //       if (value !== faderValues[index]) {
+  //         setLastEvent(`Fader${index + 1}: ${value}`);
+  //       }
+  //     });
+
+  //     // Update the state with the new fader values
+  //     setFaderValues(updatedValues);
+  //   });
+
+  //   // Clean up when the component unmounts
+  //   return () => {
+  //     socket.off("initial_fader_values");
+  //     socket.off("updated_fader_values");
+  //   };
+  // }, [faderValues]);
 
   useEffect(() => {
     // Listen for updated button values from the server
@@ -214,6 +276,32 @@ export default function AppMobile() {
 
     return () => {
       socket.off("receive_log");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isTracking && !isDragging) {
+      const x = ballXPercent;
+      const y = ballYPercent;
+
+      const newPosition = { x, y };
+      setBallPosition(newPosition);
+
+      // Emit the new position to the server
+      socket.emit("ball_position_update", newPosition);
+    }
+  }, [ballXPercent, ballYPercent, isTracking, isDragging]);
+
+  useEffect(() => {
+    // Listen for ball position updates from the server
+    socket.on("ball_position_update", (newPosition) => {
+      // Update the ball's position
+      setBallPosition(newPosition);
+    });
+
+    // Clean up when the component unmounts
+    return () => {
+      socket.off("ball_position_update");
     };
   }, []);
 
@@ -250,19 +338,16 @@ export default function AppMobile() {
 
       {/* Small Ball moves based on orientation within the full screen */}
       <Draggable
-        position={isDragging ? ballPosition : null}
-        positionOffset={{ x: "-0.7rem", y: "-0.7rem" }} // Shift the ball slightly
+        position={ballPosition}
         onStart={handleStartDrag}
         onStop={handleStopDrag}
         onDrag={handleDrag}
+        positionOffset={{ x: "-0.7rem", y: "-0.7rem" }}
       >
         <div
           className="small-ball"
           style={{
-            left: !isDragging ? `calc(50% + ${ballXPercent}%)` : undefined,
-            top: !isDragging ? `calc(50% + ${ballYPercent}%)` : undefined,
-            transform: `translate(-50%, -50%)`, // Ensures the center of the ball aligns with the cross
-            position: isDragging ? "absolute" : "fixed",
+            transform: `translate(-50%, -50%)`, // Centers the ball
           }}
         ></div>
       </Draggable>
@@ -300,6 +385,350 @@ export default function AppMobile() {
     </div>
   );
 }
+
+// // client/views/Mobile/AppMobile.js
+
+// import "../Mobile/AppMobile.css";
+// import { useState, useEffect } from "react";
+// import Draggable from "react-draggable"; // Import Draggable library
+// import "@fontsource/roboto"; // Import Roboto font
+// import { useDeviceOrientation } from "../../hooks/useDeviceOrientation"; // Import your hook
+// import FadersGroup from "../../components/FadersGroup/FadersGroup"; // Import FadersGroup
+// import io from "socket.io-client";
+
+// // Establish the socket connection
+// const socket = io.connect("https://localhost:3001", {
+//   secure: true,
+//   rejectUnauthorized: false,
+// });
+
+// // Generate dictionaries for faders
+// const generateItemsDictionary = (numItems, prefix) => {
+//   return Array.from({ length: numItems }, (_, i) => ({
+//     name: `${prefix}${i + 1}`,
+//     value: 0,
+//   }));
+// };
+
+// const FadersDictionary = generateItemsDictionary(2, "fader"); // Two faders
+
+// export default function AppMobile() {
+//   const { orientation, requestAccess, revokeAccess, error } =
+//     useDeviceOrientation(); // Use the hook
+//   const [isTracking, setIsTracking] = useState(false);
+//   const [lastEvent, setLastEvent] = useState(""); // Store the last event
+//   const [isDragging, setIsDragging] = useState(false); // State for dragging
+//   const [ballPosition, setBallPosition] = useState({ x: 0, y: 0 }); // Store the current ball position
+//   const [faderValues, setFaderValues] = useState(
+//     Array(FadersDictionary.length).fill(0)
+//   );
+//   const [buttonValues, setButtonValues] = useState([0, 1, 1, 0, 0, 0]); // Initialize buttonValues
+
+//   const handleButtonToggle = (index) => {
+//     const updatedButtonValues = [...buttonValues];
+//     updatedButtonValues[index] = buttonValues[index] === 0 ? 1 : 0;
+
+//     // Emit the toggle event to the server
+//     const buttonName = `button${index + 1}`;
+//     socket.emit("send_toggle_value", {
+//       toggle: buttonName,
+//       value: updatedButtonValues[index],
+//     });
+
+//     // Send log message to the server based on the button pressed
+//     switch (index) {
+//       case 0:
+//         socket.emit("broadcast_log", "Clear Glitch");
+//         break;
+//       case 1:
+//         socket.emit(
+//           "broadcast_log",
+//           `X-axis: ${updatedButtonValues[1] ? "On" : "Off"}`
+//         );
+//         break;
+//       case 2:
+//         socket.emit(
+//           "broadcast_log",
+//           `Y-axis: ${updatedButtonValues[2] ? "On" : "Off"}`
+//         );
+//         break;
+//       case 3:
+//         socket.emit(
+//           "broadcast_log",
+//           `AMV: ${updatedButtonValues[3] ? "On" : "Off"}`
+//         );
+//         break;
+//       case 4:
+//         socket.emit(
+//           "broadcast_log",
+//           `Keyboard: ${updatedButtonValues[4] ? "On" : "Off"}`
+//         );
+//         break;
+
+//       case 5: // Large circle, control tracking
+//         if (updatedButtonValues[5]) {
+//           requestAccess(); // Start gyroscope tracking
+//           setIsTracking(true);
+//         } else {
+//           revokeAccess(); // Stop gyroscope tracking
+//           setIsTracking(false);
+//         }
+//         break;
+//       default:
+//         break;
+//     }
+
+//     setButtonValues(updatedButtonValues);
+//   };
+
+//   const handleFaderChange = (index, value) => {
+//     // const newFaderValues = [...faderValues];
+//     // newFaderValues[index] = value;
+//     // setFaderValues(newFaderValues);
+
+//     // Emit the fader change to the server
+//     const faderName = `fader${index + 1}`;
+//     socket.emit("send_message", { fader: faderName, message: value });
+//   };
+
+//   const handleClearGlitchStart = () => {
+//     const updatedButtonValues = [...buttonValues];
+//     updatedButtonValues[0] = 1; // Push button (long press) at index 0
+//     setButtonValues(updatedButtonValues);
+
+//     socket.emit("broadcast_log", "Clear Glitch");
+//     socket.emit("send_toggle_value", { toggle: "button1", value: 1 });
+//   };
+
+//   const handleClearGlitchEnd = () => {
+//     const updatedButtonValues = [...buttonValues];
+//     updatedButtonValues[0] = 0; // Reset push button state
+//     setButtonValues(updatedButtonValues);
+
+//     socket.emit("send_toggle_value", { toggle: "button1", value: 0 });
+//   };
+
+//   // take this out...
+//   const updateLogWithPosition = (x, y) => {
+//     // setLastEvent(`Ball Position - X: ${x.toFixed(2)}, Y: ${y.toFixed(2)}`);
+//   };
+
+//   // Handle the start of dragging
+//   const handleStartDrag = () => {
+//     setIsDragging(true);
+//   };
+
+//   // Handle the stop of dragging
+//   const handleStopDrag = () => {
+//     setIsDragging(false);
+//     // Reset the ball position to center (0, 0)
+//     setBallPosition({ x: 0, y: 0 });
+//     updateLogWithPosition(0, 0); // Log reset to center
+//   };
+
+//   // Handle dragging event
+//   const handleDrag = (e, data) => {
+//     setBallPosition({ x: data.x, y: data.y });
+//     // Optionally, send ball position to server or update logs
+//   };
+
+//   // Map gyroscope values to the range between -50% and +50% of the screen width/height
+//   const mapGyroscopeToScreen = (value, minInput, maxInput) => {
+//     if (value === null || isNaN(value)) return 0; // Default to the center
+//     const mappedValue =
+//       ((value - minInput) * (50 - -50)) / (maxInput - minInput) + -50;
+//     return Math.max(-50, Math.min(mappedValue, 50)); // Ensure it stays within bounds
+//   };
+
+//   const ballXPercent =
+//     buttonValues[1] && !isDragging && isTracking
+//       ? mapGyroscopeToScreen(orientation?.gamma, -60, 60)
+//       : ballPosition.x;
+
+//   const ballYPercent =
+//     buttonValues[2] && !isDragging && isTracking
+//       ? mapGyroscopeToScreen(orientation?.beta, -45, 45)
+//       : ballPosition.y;
+
+//   // Format values to have 2 digits after the comma
+//   const formatValue = (value) => (value !== null ? value.toFixed(2) : "0.00");
+
+//   useEffect(() => {
+//     // Listen for initial fader values when the mobile client connects
+//     socket.on("initial_fader_values", (data) => {
+//       const initialValues = data.map((faderValue) => faderValue.value);
+//       setFaderValues(initialValues);
+//     });
+
+//     // Listen for updated fader values
+//     socket.on("updated_fader_values", (data) => {
+//       const updatedValues = data.map((faderValue) => faderValue.value);
+
+//       setFaderValues((prevFaderValues) => {
+//         // Compare and log only the fader that changed
+//         updatedValues.forEach((value, index) => {
+//           if (value !== prevFaderValues[index]) {
+//             // Use a switch statement to log different messages based on the index
+//             switch (index) {
+//               case 0:
+//                 setLastEvent(`nb_frames: ${value}`);
+//                 break;
+//               case 1:
+//                 setLastEvent(`ma_frames: ${value}`);
+//                 break;
+//               default:
+//                 setLastEvent(`Fader${index + 1}: ${value}`);
+//                 break;
+//             }
+//           }
+//         });
+
+//         return updatedValues;
+//       });
+//     });
+
+//     // Clean up when the component unmounts
+//     return () => {
+//       socket.off("initial_fader_values");
+//       socket.off("updated_fader_values");
+//     };
+//   }, [faderValues]);
+
+//   // useEffect(() => {
+//   //   // Listen for initial fader values when the mobile client connects
+//   //   socket.on("initial_fader_values", (data) => {
+//   //     const initialValues = data.map((faderValue) => faderValue.value);
+//   //     setFaderValues(initialValues);
+//   //   });
+
+//   //   // Listen for updated fader values
+//   //   socket.on("updated_fader_values", (data) => {
+//   //     const updatedValues = data.map((faderValue) => faderValue.value);
+
+//   //     // Compare and log only the fader that changed
+//   //     updatedValues.forEach((value, index) => {
+//   //       if (value !== faderValues[index]) {
+//   //         setLastEvent(`Fader${index + 1}: ${value}`);
+//   //       }
+//   //     });
+
+//   //     // Update the state with the new fader values
+//   //     setFaderValues(updatedValues);
+//   //   });
+
+//   //   // Clean up when the component unmounts
+//   //   return () => {
+//   //     socket.off("initial_fader_values");
+//   //     socket.off("updated_fader_values");
+//   //   };
+//   // }, [faderValues]);
+
+//   useEffect(() => {
+//     // Listen for updated button values from the server
+//     socket.on("updated_toggle_values", (data) => {
+//       const updatedButtonValues = Object.values(data);
+//       setButtonValues(updatedButtonValues);
+//     });
+
+//     return () => {
+//       socket.off("updated_toggle_values");
+//     };
+//   }, []);
+
+//   useEffect(() => {
+//     // Listen for the log broadcast from the server
+//     socket.on("receive_log", (logMessage) => {
+//       setLastEvent(logMessage); // Update the log message for all clients
+//     });
+
+//     return () => {
+//       socket.off("receive_log");
+//     };
+//   }, []);
+
+//   return (
+//     <div className="mobile-container">
+//       {/* Draggable Logs */}
+//       <Draggable>
+//         <div className="log-container">
+//           <ul>
+//             <li>ɑ: {formatValue(orientation.alpha)}</li>
+//             <li>β: {formatValue(orientation.beta)}</li>
+//             <li>γ: {formatValue(orientation.gamma)}</li>
+//             <li>X-axis: {ballXPercent.toFixed(2)}</li> {/* Log X-axis */}
+//             <li>Y-axis: {ballYPercent.toFixed(2)}</li> {/* Log Y-axis */}
+//             <li>{lastEvent}</li> {/* Display last event log here */}
+//           </ul>
+//         </div>
+//       </Draggable>
+
+//       {/* Large Circle that acts as a toggle button */}
+//       <div
+//         className={`large-circle ${buttonValues[5] ? "toggled" : ""}`} // Use buttonValues[5] to manage toggled state
+//         onClick={() => handleButtonToggle(5)} // Handle the toggle via buttonValues[5]
+//       >
+//         {/* X and Y axis lines */}
+//         {buttonValues[5] === 1 && (
+//           <>
+//             <div className="x-axis-line"></div>
+//             <div className="y-axis-line"></div>
+//           </>
+//         )}
+//         {buttonValues[5] === 1 && <div className="inner-circle"></div>}
+//       </div>
+
+//       {/* Small Ball moves based on orientation within the full screen */}
+//       <Draggable
+//         position={isDragging ? ballPosition : null}
+//         positionOffset={{ x: "-0.7rem", y: "-0.7rem" }} // Shift the ball slightly
+//         onStart={handleStartDrag}
+//         onStop={handleStopDrag}
+//         onDrag={handleDrag}
+//       >
+//         <div
+//           className="small-ball"
+//           style={{
+//             left: !isDragging ? `calc(50% + ${ballXPercent}%)` : undefined,
+//             top: !isDragging ? `calc(50% + ${ballYPercent}%)` : undefined,
+//             transform: `translate(-50%, -50%)`, // Ensures the center of the ball aligns with the cross
+//             position: isDragging ? "absolute" : "fixed",
+//           }}
+//         ></div>
+//       </Draggable>
+
+//       {/* Faders on the top-left part */}
+//       <div className="faders-container">
+//         <FadersGroup
+//           faders={FadersDictionary}
+//           values={faderValues}
+//           handleChange={handleFaderChange}
+//         />
+//       </div>
+
+//       {/* Bottom buttons: Clear Glitch and four small toggle buttons */}
+//       <div className="bottom-buttons">
+//         {/* Long Push Button */}
+//         <div
+//           className={`clear-glitch-button ${buttonValues[0] ? "pressed" : ""}`} // Apply the "pressed" class when buttonValues[0] is 1
+//           onMouseDown={handleClearGlitchStart}
+//           onMouseUp={handleClearGlitchEnd}
+//           onTouchStart={handleClearGlitchStart}
+//           onTouchEnd={handleClearGlitchEnd}
+//         ></div>
+
+//         {/* Toggle Buttons */}
+//         {buttonValues.slice(1, 5).map((value, index) => (
+//           <div
+//             key={index}
+//             className={`small-toggle-button ${value ? "active" : ""}`}
+//             onClick={() => handleButtonToggle(index + 1)} // Buttons 1 to 4 mapped to indices 1-4
+//             style={{ opacity: value ? 1 : 0.2 }}
+//           ></div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// }
 
 // // client/views/Mobile/AppMobile.js
 
