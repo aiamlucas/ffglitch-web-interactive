@@ -7,13 +7,12 @@ import Draggable from "react-draggable";
 import FadersGroup from "../../components/FadersGroup/FadersGroup";
 import PanGroup from "../../components/PanGroup/PanGroup";
 
-//old hhtp connection
+// hhtp connection
 // const socket = io.connect("http://localhost:3001");
 
-// Change this to https
-const socket = io.connect("https://localhost:3001", {
+const socket = io.connect(`https://${window.location.hostname}:3001`, {
   secure: true,
-  rejectUnauthorized: false, // If you are using self-signed certificates
+  rejectUnauthorized: false,
 });
 
 // Generate dictionaries for faders and pans

@@ -1,9 +1,9 @@
 // //server/index.js
 const express = require("express");
 
-// const https = require("https"); //https
-// const fs = require("fs"); //https
-const http = require("http"); //http
+const https = require("https"); //https
+const fs = require("fs"); //https
+// const http = require("http"); //http
 
 const { Server } = require("socket.io");
 const cors = require("cors");
@@ -16,13 +16,13 @@ const zmqAddress = "tcp://localhost:4646";
 
 // Https server
 // Load the self-signed certificate and private key
-// const server = https.createServer({
-//   key: fs.readFileSync("server.key"), // Path to your private key
-//   cert: fs.readFileSync("server.cert"), // Path to your self-signed certificate
-// });
+const server = https.createServer({
+  key: fs.readFileSync("server.key"), // Path to your private key
+  cert: fs.readFileSync("server.cert"), // Path to your self-signed certificate
+});
 
 // Http server
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
 // for both http and https
 const io = new Server(server, {
@@ -256,7 +256,7 @@ function sendMobileXandY(xValue, yValue) {
 
 // Listen on all available network interfaces
 server.listen(3001, "0.0.0.0", () => {
-  console.log("Server is running on http://0.0.0.0:3001");
+  console.log("Server is running on https://0.0.0.0:3001");
 });
 
 // // //server/index.js
