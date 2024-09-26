@@ -236,33 +236,33 @@ export default function AppMobile() {
     console.log(`Ball dragged to: x=${newPosition.x}, y=${newPosition.y}`);
   };
 
-  // Map gyroscope values to the range between -50% and +50% of the screen width/height
-  const mapGyroscopeToScreen = (value, minInput, maxInput) => {
-    if (value === null || isNaN(value)) return 0; // Default to the center
+  // Function to map gyroscope data to pixel values based on the screen dimensions
+  const mapGyroscopeToPixels = (value, minInput, maxInput, screenSize) => {
+    if (value === null || isNaN(value)) return screenSize / 2; // Default to center of the screen
     const mappedValue =
-      ((value - minInput) * (50 - -50)) / (maxInput - minInput) + -50;
-    return Math.max(-50, Math.min(mappedValue, 50)); // Ensure it stays within bounds
+      ((value - minInput) / (maxInput - minInput)) * screenSize; // Map to pixel range
+    return Math.max(0, Math.min(mappedValue, screenSize)); // Ensure the values are within screen bounds
   };
 
-  // Gyroscope effect
   useEffect(() => {
+    const { clientWidth, clientHeight } = document.documentElement; // Get screen size
+
     if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
-      // Only run this code if DeviceOrientationEvent is supported in the browser
       if (isTracking && !isDragging && !isKeyboardControl && !manualReset) {
         const x = buttonValues[1]
-          ? mapGyroscopeToScreen(orientation?.gamma, -60, 60)
+          ? mapGyroscopeToPixels(orientation?.gamma, -60, 60, clientWidth) // Map to screen width (in pixels)
           : ballPosition.x;
         const y = buttonValues[2]
-          ? mapGyroscopeToScreen(orientation?.beta, -45, 45)
+          ? mapGyroscopeToPixels(orientation?.beta, -45, 45, clientHeight) // Map to screen height (in pixels)
           : ballPosition.y;
 
         const newPosition = { x, y };
         setBallPosition(newPosition);
 
-        // Emit the new position to the server
+        // Emit the new pixel-based position to the server
         socket.emit("ball_position_update", newPosition);
 
-        console.log(`Gyroscope update: x=${x}, y=${y}`);
+        console.log(`Gyroscope update: x=${x}px, y=${y}px`);
       }
     } else {
       console.log("DeviceOrientationEvent is not supported in this browser.");
@@ -278,6 +278,49 @@ export default function AppMobile() {
     ballPosition.x,
     ballPosition.y,
   ]);
+
+  // Map gyroscope values to the range between -50% and +50% of the screen width/height
+  // const mapGyroscopeToScreen = (value, minInput, maxInput) => {
+  //   if (value === null || isNaN(value)) return 0; // Default to the center
+  //   const mappedValue =
+  //     ((value - minInput) * (50 - -50)) / (maxInput - minInput) + -50;
+  //   return Math.max(-50, Math.min(mappedValue, 50)); // Ensure it stays within bounds
+  // };
+
+  // Gyroscope effect
+  // useEffect(() => {
+  //   if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
+  //     // Only run this code if DeviceOrientationEvent is supported in the browser
+  //     if (isTracking && !isDragging && !isKeyboardControl && !manualReset) {
+  //       const x = buttonValues[1]
+  //         ? mapGyroscopeToScreen(orientation?.gamma, -60, 60)
+  //         : ballPosition.x;
+  //       const y = buttonValues[2]
+  //         ? mapGyroscopeToScreen(orientation?.beta, -45, 45)
+  //         : ballPosition.y;
+
+  //       const newPosition = { x, y };
+  //       setBallPosition(newPosition);
+
+  //       // Emit the new position to the server
+  //       socket.emit("ball_position_update", newPosition);
+
+  //       console.log(`Gyroscope update: x=${x}, y=${y}`);
+  //     }
+  //   } else {
+  //     console.log("DeviceOrientationEvent is not supported in this browser.");
+  //   }
+  // }, [
+  //   orientation.gamma,
+  //   orientation.beta,
+  //   isTracking,
+  //   isDragging,
+  //   isKeyboardControl,
+  //   manualReset,
+  //   buttonValues,
+  //   ballPosition.x,
+  //   ballPosition.y,
+  // ]);
 
   // Keyboard control effect
   useEffect(() => {

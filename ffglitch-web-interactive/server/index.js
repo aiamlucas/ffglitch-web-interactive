@@ -168,6 +168,20 @@ io.on("connection", (socket) => {
       }
     }
   });
+
+  // socket.on("ball_position_update", (newPosition) => {
+  //   // Broadcast the new position to all other clients except the sender
+  //   socket.broadcast.emit("ball_position_update", newPosition);
+
+  //   console.log(`Received ball position from ${socket.id}:`, newPosition);
+
+  //   x = newPosition.x; // These should be pixel values
+  //   y = newPosition.y;
+
+  //   // Send the position via ZeroMQ (if required)
+  //   sendDesktopXandY();
+  // });
+
   // Update the ball position and send via ZeroMQ
   socket.on("ball_position_update", (newPosition) => {
     // Broadcast the new position to all other clients except the sender
