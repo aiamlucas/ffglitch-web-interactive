@@ -1,7 +1,10 @@
 // //server/index.js
 const express = require("express");
-const https = require("https");
-const fs = require("fs");
+
+// const https = require("https"); //https
+// const fs = require("fs"); //https
+const http = require("http"); //http
+
 const { Server } = require("socket.io");
 const cors = require("cors");
 const zmq = require("zeromq");
@@ -11,12 +14,17 @@ app.use(cors());
 
 const zmqAddress = "tcp://localhost:4646";
 
+// Https server
 // Load the self-signed certificate and private key
-const server = https.createServer({
-  key: fs.readFileSync("server.key"), // Path to your private key
-  cert: fs.readFileSync("server.cert"), // Path to your self-signed certificate
-});
+// const server = https.createServer({
+//   key: fs.readFileSync("server.key"), // Path to your private key
+//   cert: fs.readFileSync("server.cert"), // Path to your self-signed certificate
+// });
 
+// Http server
+const server = http.createServer(app);
+
+// for both http and https
 const io = new Server(server, {
   cors: {
     origin: "*", // Replace with your client address
@@ -168,8 +176,8 @@ io.on("connection", (socket) => {
     console.log(`Received ball position from ${socket.id}:`, newPosition);
 
     // Scale the x and y values to the range -100 to 100
-    x = Math.round(newPosition.x / 3);
-    y = Math.round(newPosition.y / 3);
+    x = Math.round(newPosition.x / 2);
+    y = Math.round(newPosition.y / 2);
 
     // Ensure the values are clamped within -100 to 100
     x = Math.max(-100, Math.min(100, x));
@@ -236,10 +244,21 @@ function sendMobileXandY(xValue, yValue) {
   console.log("Sent Mobile x and y via ZeroMQ:", msg);
 }
 
-// Listen on HTTPS
-server.listen(3001, () => {
-  console.log("Server is running on https://localhost:3001");
+// // Listen on HTTPS
+// server.listen(3001, () => {
+//   console.log("Server is running on https://localhost:3001");
+// });
+
+// Listen on HTTP (port 3001)
+// server.listen(3001, () => {
+//   console.log("Server is running on http://localhost:3001");
+// });
+
+// Listen on all available network interfaces
+server.listen(3001, "0.0.0.0", () => {
+  console.log("Server is running on http://0.0.0.0:3001");
 });
+
 // // //server/index.js
 // const express = require("express");
 // const https = require("https");

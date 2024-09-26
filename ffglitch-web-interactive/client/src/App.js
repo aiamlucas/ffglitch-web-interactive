@@ -25,7 +25,7 @@ export default function App() {
   }, []);
 
   // return <>{isMobile ? <AppMobile /> : <AppDesktop />}</>;
-  return <>{isMobile ? <AppMobile /> : <AppDesktop />}</>;
+  return <>{isMobile ? <AppMobile /> : <AppMobile />}</>;
 }
 
 // import "./App.css";
