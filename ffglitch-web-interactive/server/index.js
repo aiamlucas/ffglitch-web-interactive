@@ -13,13 +13,13 @@ const zmqAddress = "tcp://localhost:4646";
 
 // Load the self-signed certificate and private key
 const server = https.createServer({
-  key: fs.readFileSync("server.key"), // Path to your private key
-  cert: fs.readFileSync("server.cert"), // Path to your self-signed certificate
+  key: fs.readFileSync("server.key"),
+  cert: fs.readFileSync("server.cert"),
 });
 
 const io = new Server(server, {
   cors: {
-    origin: "*", // Replace with your client address
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -34,7 +34,7 @@ const generateItemsDictionary = (numItems, prefix) => {
 };
 
 const FadersDictionary = generateItemsDictionary(3, "fader");
-// const PansDictionary = generateItemsDictionary(2, "pan");
+// const PansDictionary = generateItemsDictionary(2, "pan"); // Desktop needs pans... and it still in development
 
 const generateToggleValues = (numButtons) => {
   const toggles = {};
@@ -44,7 +44,7 @@ const generateToggleValues = (numButtons) => {
   return toggles;
 };
 
-const toggleValues = generateToggleValues(15); // 15 buttons -// Desktop needs mor buttons... and it still in development
+const toggleValues = generateToggleValues(15); // 15 buttons -// Desktop needs more buttons... and it still in development
 
 let nb_frames = 1;
 let x = 0; // Initialize x axis for Desktop
@@ -72,7 +72,7 @@ io.on("connection", (socket) => {
   // Send the current fader and toggle values to the Desktop client upon connection
   socket.emit("initial_fader_values", FadersDictionary);
   socket.emit("initial_toggle_values", toggleValues);
-  // socket.emit("initial_pan_values", PansDictionary);
+  // socket.emit("initial_pan_values", PansDictionary); // Desktop needs pans... and it still in development
 
   // Handling broadcast of log messages to all clients
   socket.on("broadcast_log", (logMessage) => {
@@ -102,15 +102,16 @@ io.on("connection", (socket) => {
         if (fader === "fader1") {
           nb_frames = message;
           console.log("nb_frames updated to:", nb_frames);
-        } else if (fader === "fader2") {
-          x = Math.round(message * 100); // Set x based on fader4 for Desktop
-          console.log("Desktop x axis updated to:", x);
-          sendDesktopXandY(); // Send x and y values via ZeroMQ
-        } else if (fader === "fader3") {
-          y = Math.round(message * 100); // Set y based on fader5 for Desktop
-          console.log("Desktop y axis updated to:", y);
-          sendDesktopXandY(); // Send x and y values via ZeroMQ
         }
+        // } else if (fader === "fader2") {
+        //   x = Math.round(message * 100);
+        //   console.log("Desktop x axis updated to:", x);
+        //   sendDesktopXandY(); // Send x and y values via ZeroMQ
+        // } else if (fader === "fader3") {
+        //   y = Math.round(message * 100);
+        //   console.log("Desktop y axis updated to:", y);
+        //   sendDesktopXandY(); // Send x and y values via ZeroMQ
+        // }
       }
     } else if (chatMessage && username) {
       console.log(`Received chat message from ${username}:`, chatMessage);
@@ -160,19 +161,6 @@ io.on("connection", (socket) => {
     }
   });
 
-  // socket.on("ball_position_update", (newPosition) => {
-  //   // Broadcast the new position to all other clients except the sender
-  //   socket.broadcast.emit("ball_position_update", newPosition);
-
-  //   console.log(`Received ball position from ${socket.id}:`, newPosition);
-
-  //   x = newPosition.x; // These should be pixel values
-  //   y = newPosition.y;
-
-  //   // Send the position via ZeroMQ (if required)
-  //   sendDesktopXandY();
-  // });
-
   // Update the ball position and send via ZeroMQ
   socket.on("ball_position_update", (newPosition) => {
     // Broadcast the new position to all other clients except the sender
@@ -191,17 +179,6 @@ io.on("connection", (socket) => {
     // Send the position via ZeroMQ
     sendDesktopXandY();
   });
-
-  // socket.on("ball_position_update", (newPosition) => {
-  //   // Broadcast the new position to all other clients except the sender
-  //   socket.broadcast.emit("ball_position_update", newPosition);
-
-  //   console.log(`Received ball position from ${socket.id}:`, newPosition);
-
-  //   // Optionally, send the position via ZeroMQ or handle it further
-  //   // For example:
-  //   // sendMobileBallPosition(newPosition.x, newPosition.y);
-  // });
 
   // Mobile Event: Handle Clear Glitch event
   socket.on("clear_glitch", () => {
@@ -258,24 +235,6 @@ async function sendMobileXandY(xValue, yValue) {
     console.error("Error sending Mobile x and y:", error);
   }
 }
-
-// // Function to send Desktop x and y values via ZeroMQ
-// function sendDesktopXandY() {
-//   const msg = JSON.stringify({
-//     "mv_pan.mv": [x, y], // Send Desktop x and y values as motion vectors
-//   });
-//   zmqSocket.send(msg);
-//   console.log("Sent Desktop x and y via ZeroMQ:", msg);
-// }
-
-// // Function to send Mobile x and y values via ZeroMQ
-// function sendMobileXandY(xValue, yValue) {
-//   const msg = JSON.stringify({
-//     "mv_pan.mv_mobile": [xValue, yValue], // Send Mobile x and y values as motion vectors
-//   });
-//   zmqSocket.send(msg);
-//   console.log("Sent Mobile x and y via ZeroMQ:", msg);
-// }
 
 // Listen on all available network interfaces
 server.listen(3001, "0.0.0.0", () => {

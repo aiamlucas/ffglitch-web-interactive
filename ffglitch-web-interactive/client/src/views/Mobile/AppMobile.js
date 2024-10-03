@@ -49,7 +49,6 @@ export default function AppMobile() {
       value: updatedButtonValues[index],
     });
 
-    // Light Version (without gyroscope)
     switch (index) {
       case 0:
         socket.emit("broadcast_log", "Clear Glitch");
@@ -94,7 +93,7 @@ export default function AppMobile() {
   };
 
   /////////////////////////////////////////////
-  // Gyroscope code  -- still in development
+  // // Extended version (x-axis, y-axis, AMV as toggle buttons) // still in development
 
   // const handleButtonToggle = (index) => {
   //   const updatedButtonValues = [...buttonValues];
@@ -201,9 +200,7 @@ export default function AppMobile() {
     setManualReset(true);
     const newPosition = { x: 0, y: 0 };
     setBallPosition(newPosition);
-    // Emit the new position to the server
     socket.emit("ball_position_update", newPosition);
-    // Clear the manual reset flag after a short delay
     setTimeout(() => {
       setManualReset(false);
     }, 500);
@@ -239,7 +236,6 @@ export default function AppMobile() {
   };
 
   useEffect(() => {
-    // Define the pixel range (-200 to 200)
     const pixelRangeX = 200; // X-axis pixel range from -200 to 200
     const pixelRangeY = 300; // Y-axis pixel range from -300 to 300
 
@@ -282,7 +278,7 @@ export default function AppMobile() {
   ]);
 
   /////////////////////////////////////////////
-  // Gyroscope code - extended version (x-axis, y-axis, AMV as toggle buttons)   // still in development
+  // // Extended version (x-axis, y-axis, AMV as toggle buttons) // still in development
 
   // Function to map gyroscope data to pixel values based on the screen dimensions
   // const mapGyroscopeToPixels = (value, minInput, maxInput, screenSize) => {
@@ -368,8 +364,6 @@ export default function AppMobile() {
       );
 
       setBallPosition(newPosition);
-
-      // Emit the new position to the server
       socket.emit("ball_position_update", newPosition);
     };
 
@@ -489,8 +483,8 @@ export default function AppMobile() {
 
       {/* Large Circle that acts as a toggle button */}
       <div
-        className={`large-circle ${buttonValues[2] ? "toggled" : ""}`} // Corrected className syntax
-        onClick={() => handleButtonToggle(2)} // Handle the toggle via buttonValues[2]
+        className={`large-circle ${buttonValues[2] ? "toggled" : ""}`}
+        onClick={() => handleButtonToggle(2)}
       >
         {/* X and Y axis lines */}
         {buttonValues[2] === 1 && (
@@ -508,7 +502,7 @@ export default function AppMobile() {
         onStart={handleStartDrag}
         onStop={handleStopDrag}
         onDrag={handleDrag}
-        positionOffset={{ x: "-0.7rem", y: "-0.7rem" }}
+        positionOffset={{ x: "0rem", y: "0rem" }} //in case is necessary to correct the position from Draggable
       >
         <div
           className="small-ball"
@@ -531,7 +525,7 @@ export default function AppMobile() {
       <div className="bottom-buttons">
         {/* Long Push Button */}
         <div
-          className={`clear-glitch-button ${buttonValues[0] ? "pressed" : ""}`} // Apply the "pressed" class when buttonValues[0] is 1
+          className={`clear-glitch-button ${buttonValues[0] ? "pressed" : ""}`}
           onMouseDown={handleClearGlitchStart}
           onMouseUp={handleClearGlitchEnd}
           onTouchStart={handleClearGlitchStart}
@@ -543,7 +537,7 @@ export default function AppMobile() {
           <div
             key={index}
             className={`small-toggle-button ${value ? "active" : ""}`}
-            onClick={() => handleButtonToggle(index + 1)} // Buttons 1 to 4 mapped to indices 1-4
+            onClick={() => handleButtonToggle(index + 1)}
             style={{ opacity: value ? 1 : 0.2 }}
           ></div>
         ))}
