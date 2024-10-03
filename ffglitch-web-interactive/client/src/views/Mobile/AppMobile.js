@@ -59,7 +59,7 @@ export default function AppMobile() {
         setIsKeyboardControl(updatedButtonValues[1] === 1);
         socket.emit(
           "broadcast_log",
-          `Keyboard Control: ${updatedButtonValues[1] ? "On" : "Off"}`
+          `Keyboard: ${updatedButtonValues[1] ? "On" : "Off"}`
         );
         break;
 
@@ -471,11 +471,11 @@ export default function AppMobile() {
       <Draggable>
         <div className="log-container">
           <ul>
-            <li>ɑ: {formatValue(orientation.alpha)}</li>
+            {/* <li>ɑ: {formatValue(orientation.alpha)}</li>
             <li>β: {formatValue(orientation.beta)}</li>
-            <li>γ: {formatValue(orientation.gamma)}</li>
-            <li>X-axis: {ballPosition.x.toFixed(2)}</li> {/* Log X-axis */}
-            <li>Y-axis: {ballPosition.y.toFixed(2)}</li> {/* Log Y-axis */}
+            <li>γ: {formatValue(orientation.gamma)}</li> */}
+            <li>X-axis: {ballPosition.x.toFixed(0)}</li> {/* Log X-axis */}
+            <li>Y-axis: {ballPosition.y.toFixed(0)}</li> {/* Log Y-axis */}
             <li>{lastEvent}</li> {/* Display last event log here */}
           </ul>
         </div>
@@ -502,7 +502,7 @@ export default function AppMobile() {
         onStart={handleStartDrag}
         onStop={handleStopDrag}
         onDrag={handleDrag}
-        positionOffset={{ x: "0rem", y: "0rem" }} //in case is necessary to correct the position from Draggable
+        positionOffset={{ x: "0rem", y: "0rem" }} // in case is necessary to correct the position from Draggable
       >
         <div
           className="small-ball"
