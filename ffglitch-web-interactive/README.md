@@ -1,6 +1,6 @@
-# FFGlitch Web Interactive
+# FFglitch Web Interactive
 
-**FFGlitch Web Interactive** is a web-based platform designed for real-time interactive control via mobile devices and desktop systems. This project utilizes FFGlitch, a fork of FFmpeg for glitching, to allow users to manipulate the encoded data at the bitstream level within image/video codec. The frontend is built with React, while the backend uses Express, with real-time communication facilitated by Socket.IO and ZeroMQ.
+**FFglitch Web Interactive** is a web-based platform designed for real-time interactive control via mobile devices and desktop systems. This project utilizes FFglitch, a fork of FFmpeg for glitching, to allow users to manipulate the encoded data at the bitstream level within image/video codec. The frontend is built with React, while the backend uses Express, with real-time communication facilitated by Socket.IO and ZeroMQ.
 
 ## Features
 
@@ -155,9 +155,9 @@ Open a second terminal and run the following command to capture and apply glitch
 ## Contributions
 
 Special thanks to **Ramiro Polla** for his contributions to the project.  
-The **FFGlitch** community for providing inspiration and tools for glitching images.
+The **FFglitch** community for providing inspiration and tools for glitching images.
 
-Learn more about **FFGlitch** and its usage at:
+Learn more about **FFglitch** and its usage at:
 
 - `https://ffglitch.org/`
 - `https://github.com/ramiropolla/ffglitch-scripts/tree/main/tutorial`
