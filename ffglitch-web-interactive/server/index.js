@@ -156,12 +156,12 @@ io.on("connection", (socket) => {
     console.log(`Received ball position from ${socket.id}:`, newPosition);
 
     // Scale the x and y values to the range -100 to 100
-    x = Math.round(newPosition.x / 2);
-    y = Math.round(newPosition.y / 2);
+    x = Math.round(newPosition.x);
+    y = Math.round(newPosition.y);
 
     // Ensure the values are clamped within -100 to 100
-    x = Math.max(-100, Math.min(100, x));
-    y = Math.max(-100, Math.min(100, y));
+    x = Math.max(-100, Math.min(200, x));
+    y = Math.max(-100, Math.min(200, y));
 
     // Send the position via ZeroMQ
     sendDesktopXandY();
