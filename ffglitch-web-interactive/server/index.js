@@ -155,11 +155,9 @@ io.on("connection", (socket) => {
 
     console.log(`Received ball position from ${socket.id}:`, newPosition);
 
-    // Scale the x and y values to the range -100 to 100
     x = Math.round(newPosition.x);
     y = Math.round(newPosition.y);
 
-    // Ensure the values are clamped within -100 to 100
     x = Math.max(-200, Math.min(200, x));
     y = Math.max(-200, Math.min(200, y));
 
