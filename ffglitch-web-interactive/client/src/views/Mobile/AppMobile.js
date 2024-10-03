@@ -35,7 +35,8 @@ export default function AppMobile() {
   const [faderValues, setFaderValues] = useState(
     Array(FadersDictionary.length).fill(0)
   );
-  const [buttonValues, setButtonValues] = useState([0, 1, 1, 0, 0, 0]);
+  // const [buttonValues, setButtonValues] = useState([0, 1, 1, 0, 0, 0]); // for extended version of the app
+  const [buttonValues, setButtonValues] = useState([0, 0, 0]);
 
   const handleButtonToggle = (index) => {
     const updatedButtonValues = [...buttonValues];
@@ -48,7 +49,7 @@ export default function AppMobile() {
       value: updatedButtonValues[index],
     });
 
-    // Light Version (withouth gyroscope)
+    // Light Version (without gyroscope)
     switch (index) {
       case 0:
         socket.emit("broadcast_log", "Clear Glitch");
@@ -62,6 +63,28 @@ export default function AppMobile() {
           `Keyboard Control: ${updatedButtonValues[1] ? "On" : "Off"}`
         );
         break;
+
+      case 2: // Large circle, control tracking
+        if (
+          typeof window !== "undefined" &&
+          "DeviceOrientationEvent" in window
+        ) {
+          if (updatedButtonValues[2]) {
+            // Request permission for Device Orientation
+            requestAccess(); // Request permission from the user
+            setIsTracking(true);
+            console.log("Gyroscope tracking started");
+          } else {
+            revokeAccess(); // Stop gyroscope tracking
+            setIsTracking(false);
+            console.log("Gyroscope tracking stopped");
+          }
+        } else {
+          console.log(
+            "DeviceOrientationEvent is not supported in this browser."
+          );
+        }
+        break;
       default:
         break;
     }
@@ -71,7 +94,7 @@ export default function AppMobile() {
   };
 
   /////////////////////////////////////////////
-  // // Gyroscope code
+  // Gyroscope code  -- still in development
 
   // const handleButtonToggle = (index) => {
   //   const updatedButtonValues = [...buttonValues];
@@ -197,10 +220,71 @@ export default function AppMobile() {
     console.log(`Ball dragged to: x=${newPosition.x}, y=${newPosition.y}`);
   };
 
-  /////////////////////////////////////////////
-  // Gyroscope code
+  const mapGyroscopeToPixels = (
+    value,
+    minInput,
+    maxInput,
+    minOutput,
+    maxOutput
+  ) => {
+    if (value === null || isNaN(value)) return 0; // Default to the center (0)
 
-  // // Function to map gyroscope data to pixel values based on the screen dimensions
+    // Map the gyroscope value to the pixel range (-200 to 200)
+    const mappedValue =
+      ((value - minInput) / (maxInput - minInput)) * (maxOutput - minOutput) +
+      minOutput;
+
+    // Clamp the value to stay within the range (-200 to 200)
+    return Math.max(minOutput, Math.min(mappedValue, maxOutput));
+  };
+
+  useEffect(() => {
+    // Define the pixel range (-200 to 200)
+    const pixelRangeX = 200; // X-axis pixel range from -200 to 200
+    const pixelRangeY = 300; // Y-axis pixel range from -300 to 300
+
+    if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
+      if (isTracking && !isDragging && !isKeyboardControl && !manualReset) {
+        // Map gamma (X-axis) to pixel range (-200 to 200)
+        const ballX = mapGyroscopeToPixels(
+          orientation?.gamma,
+          -90,
+          90,
+          -pixelRangeX,
+          pixelRangeX
+        );
+
+        // Map beta (Y-axis) to pixel range (-200 to 200)
+        const ballY = mapGyroscopeToPixels(
+          orientation?.beta,
+          -45,
+          45,
+          -pixelRangeY,
+          pixelRangeY
+        );
+
+        const newPosition = { x: ballX, y: ballY };
+
+        // Update the ball position and emit the position to the server
+        setBallPosition(newPosition);
+        socket.emit("ball_position_update", newPosition);
+      }
+    }
+  }, [
+    orientation.gamma,
+    orientation.beta,
+    isTracking,
+    isDragging,
+    isKeyboardControl,
+    manualReset,
+    ballPosition.x,
+    ballPosition.y,
+  ]);
+
+  /////////////////////////////////////////////
+  // Gyroscope code - extended version (x-axis, y-axis, AMV as toggle buttons)   // still in development
+
+  // Function to map gyroscope data to pixel values based on the screen dimensions
   // const mapGyroscopeToPixels = (value, minInput, maxInput, screenSize) => {
   //   if (value === null || isNaN(value)) return screenSize / 2; // Default to center of the screen
   //   const mappedValue =
@@ -405,17 +489,17 @@ export default function AppMobile() {
 
       {/* Large Circle that acts as a toggle button */}
       <div
-        className={`large-circle ${buttonValues[5] ? "toggled" : ""}`} // Use buttonValues[5] to manage toggled state
-        onClick={() => handleButtonToggle(5)} // Handle the toggle via buttonValues[5]
+        className={`large-circle ${buttonValues[2] ? "toggled" : ""}`} // Corrected className syntax
+        onClick={() => handleButtonToggle(2)} // Handle the toggle via buttonValues[2]
       >
         {/* X and Y axis lines */}
-        {buttonValues[5] === 1 && (
+        {buttonValues[2] === 1 && (
           <>
             <div className="x-axis-line"></div>
             <div className="y-axis-line"></div>
           </>
         )}
-        {buttonValues[5] === 1 && <div className="inner-circle"></div>}
+        {buttonValues[2] === 1 && <div className="inner-circle"></div>}
       </div>
 
       {/* Small Ball moves based on orientation within the full screen */}
@@ -454,8 +538,8 @@ export default function AppMobile() {
           onTouchEnd={handleClearGlitchEnd}
         ></div>
 
-        {/* Toggle Buttons */}
-        {buttonValues.slice(1, 5).map((value, index) => (
+        {/* Toggle Buttons // for extende version change to: buttonValues.slice(1, 5).map... */}
+        {buttonValues.slice(1, 2).map((value, index) => (
           <div
             key={index}
             className={`small-toggle-button ${value ? "active" : ""}`}

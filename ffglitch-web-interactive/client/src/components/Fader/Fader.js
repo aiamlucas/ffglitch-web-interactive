@@ -9,7 +9,7 @@ const Fader = ({ fader, value, onChange, onToggle }) => {
       <input
         type="range"
         min={1}
-        max={100}
+        max={200}
         step={1}
         value={value}
         className="fader-range"
