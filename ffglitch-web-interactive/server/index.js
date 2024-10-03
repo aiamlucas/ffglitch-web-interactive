@@ -160,8 +160,8 @@ io.on("connection", (socket) => {
     y = Math.round(newPosition.y);
 
     // Ensure the values are clamped within -100 to 100
-    x = Math.max(-100, Math.min(200, x));
-    y = Math.max(-100, Math.min(200, y));
+    x = Math.max(-200, Math.min(200, x));
+    y = Math.max(-200, Math.min(200, y));
 
     // Send the position via ZeroMQ
     sendDesktopXandY();
