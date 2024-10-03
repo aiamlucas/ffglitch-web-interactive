@@ -103,19 +103,7 @@ io.on("connection", (socket) => {
           nb_frames = message;
           console.log("nb_frames updated to:", nb_frames);
         }
-        // } else if (fader === "fader2") {
-        //   x = Math.round(message * 100);
-        //   console.log("Desktop x axis updated to:", x);
-        //   sendDesktopXandY(); // Send x and y values via ZeroMQ
-        // } else if (fader === "fader3") {
-        //   y = Math.round(message * 100);
-        //   console.log("Desktop y axis updated to:", y);
-        //   sendDesktopXandY(); // Send x and y values via ZeroMQ
-        // }
       }
-    } else if (chatMessage && username) {
-      console.log(`Received chat message from ${username}:`, chatMessage);
-      io.emit("receive_message", { username, chatMessage });
     } else {
       const panIndex = PansDictionary.findIndex(
         (param) => param.name === fader
@@ -146,7 +134,6 @@ io.on("connection", (socket) => {
       // Broadcast the updated toggle values to all connected clients
       io.emit("updated_toggle_values", toggleValues);
 
-      // Example for sending a Clear Glitch message when a toggle is activated (like button4)
       if (toggle === "button1") {
         const msg = JSON.stringify({
           "cleaner.mb_type": nb_frames,
