@@ -1,5 +1,4 @@
 // client/views/Mobile/AppMobile.js
-
 import "../Mobile/AppMobile.css";
 import { useState, useEffect } from "react";
 import Draggable from "react-draggable";
@@ -25,18 +24,18 @@ const generateItemsDictionary = (numItems, prefix) => {
 const FadersDictionary = generateItemsDictionary(1, "fader");
 
 export default function AppMobile() {
-  const [isKeyboardControl, setIsKeyboardControl] = useState(false);
   const { orientation, requestAccess, revokeAccess, error } =
     useDeviceOrientation();
   const [isTracking, setIsTracking] = useState(false);
-  const [lastEvent, setLastEvent] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const [manualReset, setManualReset] = useState(false);
+  const [isKeyboardControl, setIsKeyboardControl] = useState(false);
+  const [lastEvent, setLastEvent] = useState("");
   const [ballPosition, setBallPosition] = useState({ x: 0, y: 0 });
   const [faderValues, setFaderValues] = useState(
     Array(FadersDictionary.length).fill(0)
   );
   const [buttonValues, setButtonValues] = useState([0, 1, 1, 0, 0, 0]);
-  const [manualReset, setManualReset] = useState(false);
 
   const handleButtonToggle = (index) => {
     const updatedButtonValues = [...buttonValues];
@@ -70,8 +69,9 @@ export default function AppMobile() {
     setButtonValues(updatedButtonValues);
     console.log(`Button ${index + 1} toggled to ${updatedButtonValues[index]}`);
   };
+
   /////////////////////////////////////////////
-  // // handle that includes gyroscope
+  // // Gyroscope code
 
   // const handleButtonToggle = (index) => {
   //   const updatedButtonValues = [...buttonValues];
@@ -141,6 +141,7 @@ export default function AppMobile() {
   //   setButtonValues(updatedButtonValues);
   //   console.log(`Button ${index + 1} toggled to ${updatedButtonValues[index]}`);
   // };
+  /////////////////////////////////////////////
 
   const handleFaderChange = (index, value) => {
     // Emit the fader change to the server
@@ -167,7 +168,6 @@ export default function AppMobile() {
     console.log("Clear Glitch button released");
   };
 
-  // Handle the start of dragging
   const handleStartDrag = () => {
     setIsDragging(true);
     console.log("Drag started");
@@ -175,17 +175,11 @@ export default function AppMobile() {
 
   const handleStopDrag = () => {
     setIsDragging(false);
-
-    // Indicate that the ball has been manually reset
     setManualReset(true);
-
-    // Reset the ball position to center (0, 0)
     const newPosition = { x: 0, y: 0 };
     setBallPosition(newPosition);
-
     // Emit the new position to the server
     socket.emit("ball_position_update", newPosition);
-
     // Clear the manual reset flag after a short delay
     setTimeout(() => {
       setManualReset(false);
@@ -200,80 +194,39 @@ export default function AppMobile() {
 
     // Emit the new position to the server
     socket.emit("ball_position_update", newPosition);
-
     console.log(`Ball dragged to: x=${newPosition.x}, y=${newPosition.y}`);
   };
 
-  // Function to map gyroscope data to pixel values based on the screen dimensions
-  const mapGyroscopeToPixels = (value, minInput, maxInput, screenSize) => {
-    if (value === null || isNaN(value)) return screenSize / 2; // Default to center of the screen
-    const mappedValue =
-      ((value - minInput) / (maxInput - minInput)) * screenSize; // Map to pixel range
-    return Math.max(0, Math.min(mappedValue, screenSize)); // Ensure the values are within screen bounds
-  };
+  /////////////////////////////////////////////
+  // Gyroscope code
 
-  useEffect(() => {
-    const { clientWidth, clientHeight } = document.documentElement; // Get screen size
-
-    if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
-      if (isTracking && !isDragging && !isKeyboardControl && !manualReset) {
-        const x = buttonValues[1]
-          ? mapGyroscopeToPixels(orientation?.gamma, -60, 60, clientWidth) // Map to screen width (in pixels)
-          : ballPosition.x;
-        const y = buttonValues[2]
-          ? mapGyroscopeToPixels(orientation?.beta, -45, 45, clientHeight) // Map to screen height (in pixels)
-          : ballPosition.y;
-
-        const newPosition = { x, y };
-        setBallPosition(newPosition);
-
-        // Emit the new pixel-based position to the server
-        socket.emit("ball_position_update", newPosition);
-
-        console.log(`Gyroscope update: x=${x}px, y=${y}px`);
-      }
-    } else {
-      console.log("DeviceOrientationEvent is not supported in this browser.");
-    }
-  }, [
-    orientation.gamma,
-    orientation.beta,
-    isTracking,
-    isDragging,
-    isKeyboardControl,
-    manualReset,
-    buttonValues,
-    ballPosition.x,
-    ballPosition.y,
-  ]);
-
-  // Map gyroscope values to the range between -50% and +50% of the screen width/height
-  // const mapGyroscopeToScreen = (value, minInput, maxInput) => {
-  //   if (value === null || isNaN(value)) return 0; // Default to the center
+  // // Function to map gyroscope data to pixel values based on the screen dimensions
+  // const mapGyroscopeToPixels = (value, minInput, maxInput, screenSize) => {
+  //   if (value === null || isNaN(value)) return screenSize / 2; // Default to center of the screen
   //   const mappedValue =
-  //     ((value - minInput) * (50 - -50)) / (maxInput - minInput) + -50;
-  //   return Math.max(-50, Math.min(mappedValue, 50)); // Ensure it stays within bounds
+  //     ((value - minInput) / (maxInput - minInput)) * screenSize; // Map to pixel range
+  //   return Math.max(0, Math.min(mappedValue, screenSize)); // Ensure the values are within screen bounds
   // };
 
-  // Gyroscope effect
   // useEffect(() => {
+  //   const { clientWidth, clientHeight } = document.documentElement; // Get screen size
+
   //   if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
-  //     // Only run this code if DeviceOrientationEvent is supported in the browser
   //     if (isTracking && !isDragging && !isKeyboardControl && !manualReset) {
   //       const x = buttonValues[1]
-  //         ? mapGyroscopeToScreen(orientation?.gamma, -60, 60)
+  //         ? mapGyroscopeToPixels(orientation?.gamma, -60, 60, clientWidth) // Map to screen width (in pixels)
   //         : ballPosition.x;
   //       const y = buttonValues[2]
-  //         ? mapGyroscopeToScreen(orientation?.beta, -45, 45)
+  //         ? mapGyroscopeToPixels(orientation?.beta, -45, 45, clientHeight) // Map to screen height (in pixels)
   //         : ballPosition.y;
 
   //       const newPosition = { x, y };
   //       setBallPosition(newPosition);
 
-  //       // Emit the new position to the server
+  //       // Emit the new pixel-based position to the server
   //       socket.emit("ball_position_update", newPosition);
 
-  //       console.log(`Gyroscope update: x=${x}, y=${y}`);
+  //       console.log(`Gyroscope update: x=${x}px, y=${y}px`);
   //     }
   //   } else {
   //     console.log("DeviceOrientationEvent is not supported in this browser.");
@@ -289,6 +242,7 @@ export default function AppMobile() {
   //   ballPosition.x,
   //   ballPosition.y,
   // ]);
+  /////////////////////////////////////////////
 
   // Keyboard control effect
   useEffect(() => {
@@ -317,7 +271,6 @@ export default function AppMobile() {
           return;
       }
 
-      // Prevent default scrolling behavior
       event.preventDefault();
 
       // Update the ball position
