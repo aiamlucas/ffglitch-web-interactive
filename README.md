@@ -155,7 +155,9 @@ Open a second terminal and run the following command to capture and apply glitch
 ## Contributions
 
 Special thanks to **Ramiro Polla** for his contributions to the project.  
-The **FFGlitch** community for providing inspiration and tools for glitch image processing. Learn more about **FFGlitch** and its usage at:
+The **FFGlitch** community for providing inspiration and tools for glitching images.
+
+Learn more about **FFGlitch** and its usage at:
 
 - `https://ffglitch.org/`
 - `https://github.com/ramiropolla/ffglitch-scripts/tree/main/tutorial`
