@@ -209,20 +209,6 @@ async function sendDesktopXandY() {
   }
 }
 
-// Function to send Mobile x and y values via ZeroMQ
-async function sendMobileXandY(xValue, yValue) {
-  const msg = JSON.stringify({
-    "mv_pan.mv_mobile": [xValue, yValue], // Send Mobile x and y values as motion vectors
-  });
-
-  try {
-    await zmqSocket.send(msg); // Ensure sending completes before the next operation
-    console.log("Sent Mobile x and y via ZeroMQ:", msg);
-  } catch (error) {
-    console.error("Error sending Mobile x and y:", error);
-  }
-}
-
 // Listen on all available network interfaces
 server.listen(3001, "0.0.0.0", () => {
   console.log("Server is running on https://0.0.0.0:3001");
