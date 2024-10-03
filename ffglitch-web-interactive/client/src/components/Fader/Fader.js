@@ -8,8 +8,8 @@ const Fader = ({ fader, value, onChange, onToggle }) => {
       </div>
       <input
         type="range"
-        min={0}
-        max={50}
+        min={1}
+        max={100}
         step={1}
         value={value}
         className="fader-range"
