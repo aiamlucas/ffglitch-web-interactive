@@ -97,13 +97,23 @@ To start the client:
 
 This will launch the React application at `http://localhost:3000`. You can open this in your mobile device or desktop browser.
 
+### 4. Configure HTTPS for Client
+
+To enable HTTPS for the React development server, create a `.env` file in the `client/` directory with the following content:
+
+```
+HTTPS=true
+SSL_CRT_FILE=../server/server.cert
+SSL_KEY_FILE=../server/server.key
+```
+
 ---
 
-### 4. Running the Video Glitch
+### 5. Running the Video Glitch
 
 To enable the glitch effects on the video stream, you need to run two separate processes in two different terminals:
 
-#### 4.1 Start the ZeroMQ Server
+#### 5.1 Start the ZeroMQ Server
 
 Open a terminal and navigate to the `ffglitch-scripts/` directory:
 
@@ -113,7 +123,7 @@ Start the ZeroMQ server:
 ./qjs path-to/ffglitch-scripts/zmq_server.js
 ```
 
-#### 4.2 Start the Video Stream with Glitch Effects
+#### 5.2 Start the Video Stream with Glitch Effects
 
 Open a second terminal and run the following command to capture and apply glitch effects to your video stream:
 
