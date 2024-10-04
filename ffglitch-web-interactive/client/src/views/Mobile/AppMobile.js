@@ -24,7 +24,9 @@ const generateItemsDictionary = (numItems, prefix) => {
 const FadersDictionary = generateItemsDictionary(1, "fader");
 
 export default function AppMobile() {
-  const { orientation, requestAccess, revokeAccess, error } =
+  // const { orientation, requestAccess, revokeAccess, error } =
+  //   useDeviceOrientation();
+  const { orientation, requestAccess, revokeAccess, error, hasGyroscopeData } =
     useDeviceOrientation();
   const [isTracking, setIsTracking] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -39,9 +41,52 @@ export default function AppMobile() {
   // const [buttonValues, setButtonValues] = useState([0, 1, 1, 0, 0, 0]); // for extended version of the app
   const [buttonValues, setButtonValues] = useState([0, 0, 0]);
 
-  const handleButtonToggle = (index) => {
+  const handleButtonToggle = async (index) => {
     const updatedButtonValues = [...buttonValues];
-    updatedButtonValues[index] = buttonValues[index] === 0 ? 1 : 0;
+
+    if (index === 2) {
+      // Check if DeviceOrientationEvent is supported and if the device has gyroscope data
+      if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
+        if (!hasGyroscopeData) {
+          try {
+            // Request permission for Device Orientation and wait for data
+            const permissionGranted = await requestAccess();
+            if (permissionGranted) {
+              if (hasGyroscopeData) {
+                setIsTracking(true);
+                setIsGyroscopeActive(true); // Set gyroscope as active
+                updatedButtonValues[2] = 1; // Set the button to "on"
+                socket.emit("gyroscope_state_change", true);
+                console.log("Gyroscope tracking started");
+              } else {
+                console.log("Gyroscope data not available, preventing toggle.");
+                return;
+              }
+            } else {
+              console.log("Gyroscope permission denied.");
+              return;
+            }
+          } catch (err) {
+            console.log("Gyroscope access error:", err);
+            return;
+          }
+        } else {
+          // Gyroscope is active, allow toggling it off
+          revokeAccess();
+          setIsTracking(false);
+          setIsGyroscopeActive(false); // Set gyroscope as inactive
+          updatedButtonValues[2] = 0; // Set the button to "off"
+          socket.emit("gyroscope_state_change", false);
+          console.log("Gyroscope tracking stopped");
+        }
+      } else {
+        console.log("DeviceOrientationEvent is not supported on this device.");
+        return; // Prevent toggling
+      }
+    } else {
+      // Standard toggle behavior for other buttons
+      updatedButtonValues[index] = updatedButtonValues[index] === 0 ? 1 : 0;
+    }
 
     // Emit the toggle event to the server
     const buttonName = `button${index + 1}`;
@@ -50,54 +95,69 @@ export default function AppMobile() {
       value: updatedButtonValues[index],
     });
 
-    switch (index) {
-      case 0:
-        socket.emit("broadcast_log", "Clear");
-        break;
-
-      case 1:
-        // Set isKeyboardControl here
-        setIsKeyboardControl(updatedButtonValues[1] === 1);
-        socket.emit(
-          "broadcast_log",
-          `Keyboard: ${updatedButtonValues[1] ? "On" : "Off"}`
-        );
-        break;
-
-      case 2: // Large circle, control tracking
-        if (
-          typeof window !== "undefined" &&
-          "DeviceOrientationEvent" in window
-        ) {
-          if (updatedButtonValues[2]) {
-            // Request permission for Device Orientation
-            requestAccess(); // Request permission from the user
-            setIsTracking(true);
-            setIsGyroscopeActive(true); // Set gyroscope as active (for the css animation)
-
-            socket.emit("gyroscope_state_change", true);
-            console.log("Gyroscope tracking started");
-          } else {
-            revokeAccess(); // Stop gyroscope tracking
-            setIsTracking(false);
-            setIsGyroscopeActive(false); // Set gyroscope as inactive (for the css animation)
-
-            socket.emit("gyroscope_state_change", false);
-            console.log("Gyroscope tracking stopped");
-          }
-        } else {
-          console.log(
-            "DeviceOrientationEvent is not supported in this browser."
-          );
-        }
-        break;
-      default:
-        break;
-    }
-
     setButtonValues(updatedButtonValues);
     console.log(`Button ${index + 1} toggled to ${updatedButtonValues[index]}`);
   };
+
+  // const handleButtonToggle = (index) => {
+  //   const updatedButtonValues = [...buttonValues];
+  //   updatedButtonValues[index] = buttonValues[index] === 0 ? 1 : 0;
+
+  //   // Emit the toggle event to the server
+  //   const buttonName = `button${index + 1}`;
+  //   socket.emit("send_toggle_value", {
+  //     toggle: buttonName,
+  //     value: updatedButtonValues[index],
+  //   });
+
+  //   switch (index) {
+  //     case 0:
+  //       socket.emit("broadcast_log", "Clear");
+  //       break;
+
+  //     case 1:
+  //       // Set isKeyboardControl here
+  //       setIsKeyboardControl(updatedButtonValues[1] === 1);
+  //       socket.emit(
+  //         "broadcast_log",
+  //         `Keyboard: ${updatedButtonValues[1] ? "On" : "Off"}`
+  //       );
+  //       break;
+
+  //     case 2: // Large circle, control tracking
+  //       if (
+  //         typeof window !== "undefined" &&
+  //         "DeviceOrientationEvent" in window
+  //       ) {
+  //         if (updatedButtonValues[2]) {
+  //           // Request permission for Device Orientation
+  //           requestAccess(); // Request permission from the user
+  //           setIsTracking(true);
+  //           setIsGyroscopeActive(true); // Set gyroscope as active (for the css animation)
+
+  //           socket.emit("gyroscope_state_change", true);
+  //           console.log("Gyroscope tracking started");
+  //         } else {
+  //           revokeAccess(); // Stop gyroscope tracking
+  //           setIsTracking(false);
+  //           setIsGyroscopeActive(false); // Set gyroscope as inactive (for the css animation)
+
+  //           socket.emit("gyroscope_state_change", false);
+  //           console.log("Gyroscope tracking stopped");
+  //         }
+  //       } else {
+  //         console.log(
+  //           "DeviceOrientationEvent is not supported in this browser."
+  //         );
+  //       }
+  //       break;
+  //     default:
+  //       break;
+  //   }
+
+  //   setButtonValues(updatedButtonValues);
+  //   console.log(`Button ${index + 1} toggled to ${updatedButtonValues[index]}`);
+  // };
 
   /////////////////////////////////////////////
   // // Extended version (x-axis, y-axis, AMV as toggle buttons) // still in development
@@ -506,13 +566,12 @@ export default function AppMobile() {
         className={`large-circle ${buttonValues[2] ? "toggled" : ""}`}
         onClick={() => handleButtonToggle(2)}
       >
-        {/* X and Y axis lines */}
-        {buttonValues[2] === 1 && (
-          <>
-            <div className="x-axis-line"></div>
-            <div className="y-axis-line"></div>
-          </>
-        )}
+        {/* X and Y axis lines*/}
+
+        <div className="x-axis-line"></div>
+        <div className="y-axis-line"></div>
+
+        {/* Inner circle  - Only visible when toggled */}
         {buttonValues[2] === 1 && <div className="inner-circle"></div>}
       </div>
 
