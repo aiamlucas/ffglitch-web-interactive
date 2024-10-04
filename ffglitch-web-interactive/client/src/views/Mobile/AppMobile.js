@@ -51,7 +51,7 @@ export default function AppMobile() {
 
     switch (index) {
       case 0:
-        socket.emit("broadcast_log", "Clear Glitch");
+        socket.emit("broadcast_log", "Clear");
         break;
 
       case 1:
@@ -176,7 +176,7 @@ export default function AppMobile() {
     updatedButtonValues[0] = 1; // Push button (long press) at index 0
     setButtonValues(updatedButtonValues);
 
-    socket.emit("broadcast_log", "Clear Glitch");
+    socket.emit("broadcast_log", "Clear");
     socket.emit("send_toggle_value", { toggle: "button1", value: 1 });
     console.log("Clear Glitch button pressed");
   };
@@ -533,7 +533,7 @@ export default function AppMobile() {
         ></div>
 
         {/* Toggle Buttons // for extende version change to: buttonValues.slice(1, 5).map... */}
-        {buttonValues.slice(1, 2).map((value, index) => (
+        {buttonValues.slice(1, 1).map((value, index) => (
           <div
             key={index}
             className={`small-toggle-button ${value ? "active" : ""}`}

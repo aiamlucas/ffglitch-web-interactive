@@ -46,7 +46,7 @@ const generateToggleValues = (numButtons) => {
 
 const toggleValues = generateToggleValues(15); // 15 buttons -// Desktop needs more buttons... and it still in development
 
-let nb_frames = 1;
+let nb_frames = 50;
 let x = 0; // Initialize x axis for Desktop
 let y = 0; // Initialize y axis for Desktop
 let mobileX = 0; // Mobile x axis
