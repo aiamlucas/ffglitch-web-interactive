@@ -38,67 +38,225 @@ export default function AppMobile() {
     Array(FadersDictionary.length).fill(0)
   );
   // const [buttonValues, setButtonValues] = useState([0, 1, 1, 0, 0, 0]); // for extended version of the app
-  const [buttonValues, setButtonValues] = useState([0, 0, 0]);
+  const [buttonValues, setButtonValues] = useState([0, 0, 0, 0]);
 
-  const handleButtonToggle = (index) => {
+  // const handleButtonToggle = (index, isPressed) => {
+  //   const updatedButtonValues = [...buttonValues];
+
+  //   if (index === 3) {
+  //     // Handle the second button as a push button for gyroscope
+  //     if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
+  //       if (isPressed) {
+  //         requestAccess(); // Request permission for Device Orientation
+  //         setIsTracking(true);
+  //         setIsGyroscopeActive(true); // Activate gyroscope and inner circle
+  //         socket.emit("gyroscope_state_change", true);
+  //         console.log("Gyroscope tracking started");
+  //       } else {
+  //         revokeAccess(); // Stop gyroscope tracking when released
+  //         setIsTracking(false);
+  //         setIsGyroscopeActive(false); // Deactivate gyroscope and inner circle
+  //         socket.emit("gyroscope_state_change", false);
+  //         console.log("Gyroscope tracking stopped");
+  //       }
+  //     } else {
+  //       console.log("DeviceOrientationEvent is not supported on this device.");
+  //     }
+  //   } else {
+  //     // Handle other button toggles (like Clear, Keyboard, etc.)
+  //     updatedButtonValues[index] = updatedButtonValues[index] === 0 ? 1 : 0;
+  //     const buttonName = `button${index + 1}`;
+  //     socket.emit("send_toggle_value", {
+  //       toggle: buttonName,
+  //       value: updatedButtonValues[index],
+  //     });
+
+  //     switch (index) {
+  //       case 0:
+  //         socket.emit("broadcast_log", "Clear");
+  //         break;
+  //       case 1:
+  //         setIsKeyboardControl(updatedButtonValues[1] === 1);
+  //         socket.emit(
+  //           "broadcast_log",
+  //           `Keyboard: ${updatedButtonValues[1] ? "On" : "Off"}`
+  //         );
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //   }
+
+  //   setButtonValues(updatedButtonValues);
+  //   console.log(`Button ${index + 1} toggled to ${updatedButtonValues[index]}`);
+  // };
+
+  const handleButtonToggle = (index, isPressed) => {
     const updatedButtonValues = [...buttonValues];
-    updatedButtonValues[index] = buttonValues[index] === 0 ? 1 : 0;
 
-    // Emit the toggle event to the server
-    const buttonName = `button${index + 1}`;
-    socket.emit("send_toggle_value", {
-      toggle: buttonName,
-      value: updatedButtonValues[index],
-    });
-
-    switch (index) {
-      case 0:
-        socket.emit("broadcast_log", "Clear");
-        break;
-
-      case 1:
-        // Set isKeyboardControl here
-        setIsKeyboardControl(updatedButtonValues[1] === 1);
-        socket.emit(
-          "broadcast_log",
-          `Keyboard: ${updatedButtonValues[1] ? "On" : "Off"}`
-        );
-        break;
-
-      case 2: // Large circle, control tracking
-        if (
-          typeof window !== "undefined" &&
-          "DeviceOrientationEvent" in window
-        ) {
-          if (updatedButtonValues[2]) {
-            // Request permission for Device Orientation
-            requestAccess(); // Request permission from the user
-            setIsTracking(true);
-            setIsGyroscopeActive(true); // Set gyroscope as active (for the css animation)
-
-            socket.emit("gyroscope_state_change", true);
-            console.log("Gyroscope tracking started");
-          } else {
-            revokeAccess(); // Stop gyroscope tracking
-            setIsTracking(false);
-            setIsGyroscopeActive(false); // Set gyroscope as inactive (for the css animation)
-
-            socket.emit("gyroscope_state_change", false);
-            console.log("Gyroscope tracking stopped");
-          }
+    if (index === 3) {
+      // Handle the second button as a push button for gyroscope
+      if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
+        if (isPressed) {
+          requestAccess(); // Request permission for Device Orientation
+          setIsTracking(true);
+          setIsGyroscopeActive(true); // Activate gyroscope and inner circle
+          socket.emit("gyroscope_state_change", true);
+          console.log("Gyroscope tracking started");
         } else {
-          console.log(
-            "DeviceOrientationEvent is not supported in this browser."
-          );
+          revokeAccess(); // Stop gyroscope tracking when released
+          setIsTracking(false);
+          setIsGyroscopeActive(false); // Deactivate gyroscope and inner circle
+          socket.emit("gyroscope_state_change", false);
+          console.log("Gyroscope tracking stopped");
         }
-        break;
-      default:
-        break;
+      } else {
+        console.log("DeviceOrientationEvent is not supported on this device.");
+      }
+    } else {
+      // Handle other button toggles (like Clear, Keyboard, etc.)
+      updatedButtonValues[index] = updatedButtonValues[index] === 0 ? 1 : 0;
+      const buttonName = `button${index + 1}`;
+      socket.emit("send_toggle_value", {
+        toggle: buttonName,
+        value: updatedButtonValues[index],
+      });
+
+      switch (index) {
+        case 0:
+          socket.emit("broadcast_log", "Clear");
+          break;
+        case 1:
+          setIsKeyboardControl(updatedButtonValues[1] === 1);
+          socket.emit(
+            "broadcast_log",
+            `Keyboard: ${updatedButtonValues[1] ? "On" : "Off"}`
+          );
+          break;
+        default:
+          break;
+      }
     }
 
     setButtonValues(updatedButtonValues);
     console.log(`Button ${index + 1} toggled to ${updatedButtonValues[index]}`);
   };
+
+  // const handleButtonToggle = (index) => {
+  //   const updatedButtonValues = [...buttonValues];
+  //   updatedButtonValues[index] = buttonValues[index] === 0 ? 1 : 0;
+
+  //   // Emit the toggle event to the server
+  //   const buttonName = `button${index + 1}`;
+  //   socket.emit("send_toggle_value", {
+  //     toggle: buttonName,
+  //     value: updatedButtonValues[index],
+  //   });
+
+  //   switch (index) {
+  //     case 0:
+  //       socket.emit("broadcast_log", "Clear");
+  //       break;
+
+  //     case 1:
+  //       // Set isKeyboardControl here
+  //       setIsKeyboardControl(updatedButtonValues[1] === 1);
+  //       socket.emit(
+  //         "broadcast_log",
+  //         `Keyboard: ${updatedButtonValues[1] ? "On" : "Off"}`
+  //       );
+  //       break;
+
+  //     case 2: // Large circle, control tracking
+  //       if (
+  //         typeof window !== "undefined" &&
+  //         "DeviceOrientationEvent" in window
+  //       ) {
+  //         if (updatedButtonValues[2]) {
+  //           // Request permission for Device Orientation
+  //           requestAccess(); // Request permission from the user
+  //           setIsTracking(true);
+  //           setIsGyroscopeActive(true); // Set gyroscope as active (for the css animation)
+
+  //           socket.emit("gyroscope_state_change", true);
+  //           console.log("Gyroscope tracking started");
+  //         } else {
+  //           revokeAccess(); // Stop gyroscope tracking
+  //           setIsTracking(false);
+  //           setIsGyroscopeActive(false); // Set gyroscope as inactive (for the css animation)
+
+  //           socket.emit("gyroscope_state_change", false);
+  //           console.log("Gyroscope tracking stopped");
+  //         }
+  //       } else {
+  //         console.log(
+  //           "DeviceOrientationEvent is not supported in this browser."
+  //         );
+  //       }
+  //       break;
+  //     default:
+  //       break;
+  //   }
+
+  //   setButtonValues(updatedButtonValues);
+  //   console.log(`Button ${index + 1} toggled to ${updatedButtonValues[index]}`);
+  // };
+
+  // const handleButtonToggle = (index, isPressed) => {
+  //   const updatedButtonValues = [...buttonValues];
+
+  //   // Handle the large circle (index 2) as a push button
+  //   if (index === 2) {
+  //     if (typeof window !== "undefined" && "DeviceOrientationEvent" in window) {
+  //       if (isPressed) {
+  //         requestAccess(); // Request permission for Device Orientation
+  //         setIsTracking(true);
+  //         setIsGyroscopeActive(true); // Set gyroscope as active (CSS animation)
+  //         socket.emit("gyroscope_state_change", true);
+  //         console.log("Gyroscope tracking started");
+  //       } else {
+  //         revokeAccess(); // Stop gyroscope tracking when button is released
+  //         setIsTracking(false);
+  //         setIsGyroscopeActive(false); // Set gyroscope as inactive
+  //         socket.emit("gyroscope_state_change", false);
+  //         console.log("Gyroscope tracking stopped");
+  //       }
+  //     } else {
+  //       console.log("DeviceOrientationEvent is not supported in this browser.");
+  //     }
+  //   } else {
+  //     // Handle regular toggle for other buttons
+  //     updatedButtonValues[index] = updatedButtonValues[index] === 0 ? 1 : 0;
+
+  //     // Emit the toggle event to the server
+  //     const buttonName = `button${index + 1}`;
+  //     socket.emit("send_toggle_value", {
+  //       toggle: buttonName,
+  //       value: updatedButtonValues[index],
+  //     });
+
+  //     switch (index) {
+  //       case 0:
+  //         socket.emit("broadcast_log", "Clear");
+  //         break;
+
+  //       case 1:
+  //         // Set isKeyboardControl here
+  //         setIsKeyboardControl(updatedButtonValues[1] === 1);
+  //         socket.emit(
+  //           "broadcast_log",
+  //           `Keyboard: ${updatedButtonValues[1] ? "On" : "Off"}`
+  //         );
+  //         break;
+
+  //       default:
+  //         break;
+  //     }
+  //   }
+
+  //   setButtonValues(updatedButtonValues);
+  //   console.log(`Button ${index + 1} toggled to ${updatedButtonValues[index]}`);
+  // };
 
   /////////////////////////////////////////////
   // // Extended version (x-axis, y-axis, AMV as toggle buttons) // still in development
@@ -186,12 +344,29 @@ export default function AppMobile() {
 
     socket.emit("broadcast_log", "Clear");
     socket.emit("send_toggle_value", { toggle: "button1", value: 1 });
+
+    // Emit event to the server to trigger the Clear message on all clients
+    socket.emit("show_clear_log", true); // Notify the server that Clear was pressed
     console.log("Clear Glitch button pressed");
-    setShowClearLog(true);
-    setTimeout(() => {
-      setShowClearLog(false); // Hide "Clear" after 2 seconds
-    }, 2000);
   };
+
+  // const handleClearGlitchStart = () => {
+  //   const updatedButtonValues = [...buttonValues];
+  //   updatedButtonValues[0] = 1; // Push button (long press) at index 0
+  //   setButtonValues(updatedButtonValues);
+
+  //   socket.emit("broadcast_log", "Clear");
+
+  //   socket.emit("send_toggle_value", { toggle: "button1", value: 1 });
+
+  //   socket.emit("show_clear_log", true); // Emit event to the server for all clients
+
+  //   console.log("Clear Glitch button pressed");
+  //   setShowClearLog(true);
+  //   setTimeout(() => {
+  //     setShowClearLog(false); // Hide "Clear" after 2 seconds
+  //   }, 2000);
+  // };
 
   const handleClearGlitchEnd = () => {
     const updatedButtonValues = [...buttonValues];
@@ -485,6 +660,23 @@ export default function AppMobile() {
     };
   }, []);
 
+  // Listen for the "Clear" log broadcast from the server
+  useEffect(() => {
+    socket.on("receive_clear_log", (showClearLog) => {
+      setShowClearLog(showClearLog); // Update the Clear log state for all clients
+      // Automatically hide the "Clear" message after 2 seconds for all clients
+      if (showClearLog) {
+        setTimeout(() => {
+          setShowClearLog(false); // Hide "Clear" after 2 seconds
+        }, 2000);
+      }
+    });
+
+    return () => {
+      socket.off("receive_clear_log");
+    };
+  }, []);
+
   // Format values to have 2 digits after the decimal
   const formatValue = (value) => (value !== null ? value.toFixed(2) : "0.00");
 
@@ -495,33 +687,30 @@ export default function AppMobile() {
       <Draggable>
         <div className="log-container">
           <ul>
-            {/* <li>ɑ: {formatValue(orientation.alpha)}</li>
-            <li>β: {formatValue(orientation.beta)}</li>
-            <li>γ: {formatValue(orientation.gamma)}</li> */}
-            <li>X-axis: {ballPosition.x.toFixed(0)}</li> {/* Log X-axis */}
-            <li>Y-axis: {ballPosition.y.toFixed(0)}</li> {/* Log Y-axis */}
+            {/* Log X and Y axis */}
+            <li>X-axis: {ballPosition.x.toFixed(0)}</li>
+            <li>Y-axis: {ballPosition.y.toFixed(0)}</li>
             <li>Gyroscope: {isGyroscopeActive ? "On" : "Off"}</li>
-            {/* <li>{lastEvent}</li> Display last event log here */}
+            {/* Conditional Clear log */}
             {showClearLog && <li>Clear</li>}
           </ul>
         </div>
       </Draggable>
 
-      {/* Large Circle that acts as a toggle button */}
+      {/* Large Circle that acts as a push button */}
       <div
-        className={`large-circle ${buttonValues[2] ? "toggled" : ""}`}
-        onClick={() => handleButtonToggle(2)}
+        className={`large-circle ${isGyroscopeActive ? "toggled" : ""}`}
+        onMouseDown={() => handleButtonToggle(2, true)} // Press down
+        onMouseUp={() => handleButtonToggle(2, false)} // Release
+        onTouchStart={() => handleButtonToggle(2, true)} // Touch start (for mobile)
+        onTouchEnd={() => handleButtonToggle(2, false)} // Touch end (for mobile)
       >
-        {/* X and Y axis lines*/}
-
         <div className="x-axis-line"></div>
         <div className="y-axis-line"></div>
-
-        {/* Inner circle  - Only visible when toggled */}
-        {buttonValues[2] === 1 && <div className="inner-circle"></div>}
+        {isGyroscopeActive && <div className="inner-circle"></div>}
       </div>
 
-      {/* Small Ball moves based on orientation within the full screen */}
+      {/* Small Ball moves based on orientation */}
       <Draggable
         position={ballPosition}
         onStart={handleStartDrag}
@@ -537,18 +726,9 @@ export default function AppMobile() {
         ></div>
       </Draggable>
 
-      {/* Faders on the top-left part */}
-      {/* <div className="faders-container">
-        <FadersGroup
-          faders={FadersDictionary}
-          values={faderValues}
-          handleChange={handleFaderChange}
-        />
-      </div> */}
-
-      {/* Bottom buttons: Clear Glitch and four small toggle buttons */}
+      {/* Bottom buttons: Clear Glitch and Gyroscope Toggle Button */}
       <div className="bottom-buttons">
-        {/* Long Push Button */}
+        {/* Long Push Button for Clear */}
         <div
           className={`clear-glitch-button ${buttonValues[0] ? "pressed" : ""}`}
           onMouseDown={handleClearGlitchStart}
@@ -559,16 +739,103 @@ export default function AppMobile() {
           Clear
         </div>
 
-        {/* Toggle Buttons // for extende version change to: buttonValues.slice(1, 5).map... */}
-        {buttonValues.slice(1, 1).map((value, index) => (
-          <div
-            key={index}
-            className={`small-toggle-button ${value ? "active" : ""}`}
-            onClick={() => handleButtonToggle(index + 1)}
-            style={{ opacity: value ? 1 : 0.2 }}
-          ></div>
-        ))}
+        {/* New Large Button for Gyroscope Toggle */}
+        <div
+          className={`clear-glitch-button ${
+            isGyroscopeActive ? "pressed" : ""
+          }`} // Large button like Clear button
+          onMouseDown={() => handleButtonToggle(3, true)} // Press down to activate gyroscope
+          onMouseUp={() => handleButtonToggle(3, false)} // Release to deactivate gyroscope
+          onTouchStart={() => handleButtonToggle(3, true)} // Mobile touch start
+          onTouchEnd={() => handleButtonToggle(3, false)} // Mobile touch end
+        >
+          Gyroscope
+        </div>
       </div>
     </div>
   );
 }
+
+//  // Render the component
+//  return (
+//   <div className="mobile-container">
+//     {/* Draggable Logs */}
+//     <Draggable>
+//       <div className="log-container">
+//         <ul>
+//           {/* <li>ɑ: {formatValue(orientation.alpha)}</li>
+//           <li>β: {formatValue(orientation.beta)}</li>
+//           <li>γ: {formatValue(orientation.gamma)}</li> */}
+//           <li>X-axis: {ballPosition.x.toFixed(0)}</li> {/* Log X-axis */}
+//           <li>Y-axis: {ballPosition.y.toFixed(0)}</li> {/* Log Y-axis */}
+//           <li>Gyroscope: {isGyroscopeActive ? "On" : "Off"}</li>
+//           {/* <li>{lastEvent}</li> Display last event log here */}
+//           {showClearLog && <li>Clear</li>}
+//         </ul>
+//       </div>
+//     </Draggable>
+
+//     {/* Large Circle that acts as a push button */}
+//     <div
+//       className={`large-circle ${isGyroscopeActive ? "toggled" : ""}`}
+//       onMouseDown={() => handleButtonToggle(2, true)} // Press down
+//       onMouseUp={() => handleButtonToggle(2, false)} // Release
+//       onTouchStart={() => handleButtonToggle(2, true)} // Touch start (for mobile)
+//       onTouchEnd={() => handleButtonToggle(2, false)} // Touch end (for mobile)
+//     >
+//       <div className="x-axis-line"></div>
+//       <div className="y-axis-line"></div>
+//       {isGyroscopeActive && <div className="inner-circle"></div>}
+//     </div>
+
+//     {/* Small Ball moves based on orientation within the full screen */}
+//     <Draggable
+//       position={ballPosition}
+//       onStart={handleStartDrag}
+//       onStop={handleStopDrag}
+//       onDrag={handleDrag}
+//       positionOffset={{ x: "0rem", y: "0rem" }} // in case is necessary to correct the position from Draggable
+//     >
+//       <div
+//         className="small-ball"
+//         style={{
+//           transform: `translate(-50%, -50%)`, // Centers the ball
+//         }}
+//       ></div>
+//     </Draggable>
+
+//     {/* Faders on the top-left part */}
+//     {/* <div className="faders-container">
+//       <FadersGroup
+//         faders={FadersDictionary}
+//         values={faderValues}
+//         handleChange={handleFaderChange}
+//       />
+//     </div> */}
+
+//     {/* Bottom buttons: Clear Glitch and four small toggle buttons */}
+//     <div className="bottom-buttons">
+//       {/* Long Push Button */}
+//       <div
+//         className={`clear-glitch-button ${buttonValues[0] ? "pressed" : ""}`}
+//         onMouseDown={handleClearGlitchStart}
+//         onMouseUp={handleClearGlitchEnd}
+//         onTouchStart={handleClearGlitchStart}
+//         onTouchEnd={handleClearGlitchEnd}
+//       >
+//         Clear
+//       </div>
+
+//       {/* Toggle Buttons // for extende version change to: buttonValues.slice(1, 5).map... */}
+//       {buttonValues.slice(1, 1).map((value, index) => (
+//         <div
+//           key={index}
+//           className={`small-toggle-button ${value ? "active" : ""}`}
+//           onClick={() => handleButtonToggle(index + 1)}
+//           style={{ opacity: value ? 1 : 0.2 }}
+//         ></div>
+//       ))}
+//     </div>
+//   </div>
+// );
+// }

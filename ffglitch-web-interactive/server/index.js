@@ -86,6 +86,10 @@ io.on("connection", (socket) => {
     io.emit("receive_log", logMessage); // Broadcast the log message to all clients
   });
 
+  socket.on("show_clear_log", (showClearLog) => {
+    io.emit("receive_clear_log", showClearLog); // Broadcast the event to all clients
+  });
+
   // Handling messages from the Desktop (faders, pans, chat)
   socket.on("send_message", (data) => {
     const { fader, message, username, chatMessage } = data;
@@ -207,12 +211,30 @@ async function sendDesktopXandY() {
   });
 
   try {
-    await zmqSocket.send(msg); // Use async/await to ensure send finishes before proceeding
+    await zmqSocket.send(msg); // Try to send the message
     console.log("Sent Desktop x and y via ZeroMQ:", msg);
   } catch (error) {
-    console.error("Error sending Desktop x and y:", error);
+    if (error.code === "EBUSY") {
+      console.warn("Socket is busy, skipping this message.");
+    } else {
+      console.error("Error sending Desktop x and y:", error); // Handle other errors
+    }
   }
 }
+
+// // Function to send Desktop x and y values via ZeroMQ
+// async function sendDesktopXandY() {
+//   const msg = JSON.stringify({
+//     "mv_pan.mv": [x, y], // Send Desktop x and y values as motion vectors
+//   });
+
+//   try {
+//     await zmqSocket.send(msg); // Use async/await to ensure send finishes before proceeding
+//     console.log("Sent Desktop x and y via ZeroMQ:", msg);
+//   } catch (error) {
+//     console.error("Error sending Desktop x and y:", error);
+//   }
+// }
 
 // Listen on all available network interfaces
 server.listen(3001, "0.0.0.0", () => {
