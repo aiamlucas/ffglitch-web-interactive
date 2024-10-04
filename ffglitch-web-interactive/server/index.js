@@ -74,6 +74,13 @@ io.on("connection", (socket) => {
   socket.emit("initial_toggle_values", toggleValues);
   // socket.emit("initial_pan_values", PansDictionary); // Desktop needs pans... and it still in development
 
+  // Gyroscope State: Listen for gyroscope state changes from a client
+  socket.on("gyroscope_state_change", (state) => {
+    console.log(`Gyroscope state changed to: ${state}`);
+    // Broadcast the new gyroscope state to all clients
+    io.emit("gyroscope_state_update", state);
+  });
+
   // Handling broadcast of log messages to all clients
   socket.on("broadcast_log", (logMessage) => {
     io.emit("receive_log", logMessage); // Broadcast the log message to all clients

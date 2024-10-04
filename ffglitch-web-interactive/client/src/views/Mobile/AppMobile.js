@@ -28,6 +28,7 @@ export default function AppMobile() {
     useDeviceOrientation();
   const [isTracking, setIsTracking] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isGyroscopeActive, setIsGyroscopeActive] = useState(false); // Add this state
   const [manualReset, setManualReset] = useState(false);
   const [isKeyboardControl, setIsKeyboardControl] = useState(false);
   const [lastEvent, setLastEvent] = useState("");
@@ -72,10 +73,16 @@ export default function AppMobile() {
             // Request permission for Device Orientation
             requestAccess(); // Request permission from the user
             setIsTracking(true);
+            setIsGyroscopeActive(true); // Set gyroscope as active (for the css animation)
+
+            socket.emit("gyroscope_state_change", true);
             console.log("Gyroscope tracking started");
           } else {
             revokeAccess(); // Stop gyroscope tracking
             setIsTracking(false);
+            setIsGyroscopeActive(false); // Set gyroscope as inactive (for the css animation)
+
+            socket.emit("gyroscope_state_change", false);
             console.log("Gyroscope tracking stopped");
           }
         } else {
@@ -461,6 +468,18 @@ export default function AppMobile() {
     };
   }, []);
 
+  // Listen for gyroscope state updates from the server
+  useEffect(() => {
+    socket.on("gyroscope_state_update", (state) => {
+      setIsGyroscopeActive(state);
+      console.log(`Gyroscope is now ${state ? "On" : "Off"}`);
+    });
+
+    return () => {
+      socket.off("gyroscope_state_update");
+    };
+  }, []);
+
   // Format values to have 2 digits after the decimal
   const formatValue = (value) => (value !== null ? value.toFixed(2) : "0.00");
 
@@ -476,6 +495,7 @@ export default function AppMobile() {
             <li>γ: {formatValue(orientation.gamma)}</li> */}
             <li>X-axis: {ballPosition.x.toFixed(0)}</li> {/* Log X-axis */}
             <li>Y-axis: {ballPosition.y.toFixed(0)}</li> {/* Log Y-axis */}
+            <li>Gyroscope: {isGyroscopeActive ? "On" : "Off"}</li>
             <li>{lastEvent}</li> {/* Display last event log here */}
           </ul>
         </div>
@@ -530,7 +550,9 @@ export default function AppMobile() {
           onMouseUp={handleClearGlitchEnd}
           onTouchStart={handleClearGlitchStart}
           onTouchEnd={handleClearGlitchEnd}
-        ></div>
+        >
+          Clear
+        </div>
 
         {/* Toggle Buttons // for extende version change to: buttonValues.slice(1, 5).map... */}
         {buttonValues.slice(1, 1).map((value, index) => (

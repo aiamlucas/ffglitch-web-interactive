@@ -1,3 +1,4 @@
+/* AppMobile.css */
 /* Reset default margin and padding */
 * {
   margin: 0;
@@ -238,4 +239,22 @@ body {
 /* Hide track outline */
 .mobile-container .fader-range:focus {
   outline: none;
+}
+
+@keyframes blink-red {
+  0% {
+    background-color: red;
+    opacity: 1;
+  }
+  50% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: red;
+    opacity: 1;
+  }
+}
+
+.blink-red {
+  animation: blink-red 0.1s linear infinite;
 }
