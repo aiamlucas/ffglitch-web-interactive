@@ -31,6 +31,7 @@ export default function AppMobile() {
   const [isGyroscopeActive, setIsGyroscopeActive] = useState(false); // Add this state
   const [manualReset, setManualReset] = useState(false);
   const [isKeyboardControl, setIsKeyboardControl] = useState(false);
+  const [showClearLog, setShowClearLog] = useState(false);
   const [lastEvent, setLastEvent] = useState("");
   const [ballPosition, setBallPosition] = useState({ x: 0, y: 0 });
   const [faderValues, setFaderValues] = useState(
@@ -186,6 +187,10 @@ export default function AppMobile() {
     socket.emit("broadcast_log", "Clear");
     socket.emit("send_toggle_value", { toggle: "button1", value: 1 });
     console.log("Clear Glitch button pressed");
+    setShowClearLog(true);
+    setTimeout(() => {
+      setShowClearLog(false); // Hide "Clear" after 2 seconds
+    }, 2000);
   };
 
   const handleClearGlitchEnd = () => {
@@ -496,7 +501,8 @@ export default function AppMobile() {
             <li>X-axis: {ballPosition.x.toFixed(0)}</li> {/* Log X-axis */}
             <li>Y-axis: {ballPosition.y.toFixed(0)}</li> {/* Log Y-axis */}
             <li>Gyroscope: {isGyroscopeActive ? "On" : "Off"}</li>
-            <li>{lastEvent}</li> {/* Display last event log here */}
+            {/* <li>{lastEvent}</li> Display last event log here */}
+            {showClearLog && <li>Clear</li>}
           </ul>
         </div>
       </Draggable>
