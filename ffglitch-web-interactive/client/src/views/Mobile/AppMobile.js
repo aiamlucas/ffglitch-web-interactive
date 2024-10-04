@@ -513,13 +513,13 @@ export default function AppMobile() {
       </Draggable>
 
       {/* Faders on the top-left part */}
-      <div className="faders-container">
+      {/* <div className="faders-container">
         <FadersGroup
           faders={FadersDictionary}
           values={faderValues}
           handleChange={handleFaderChange}
         />
-      </div>
+      </div> */}
 
       {/* Bottom buttons: Clear Glitch and four small toggle buttons */}
       <div className="bottom-buttons">
