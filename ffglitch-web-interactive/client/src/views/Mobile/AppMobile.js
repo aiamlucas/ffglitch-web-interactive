@@ -109,6 +109,9 @@ export default function AppMobile() {
           setIsGyroscopeActive(false); // Deactivate gyroscope and inner circle
           socket.emit("gyroscope_state_change", false);
           console.log("Gyroscope tracking stopped");
+          const newPosition = { x: 0, y: 0 };
+          setBallPosition(newPosition);
+          socket.emit("ball_position_update", newPosition);
         }
       } else {
         console.log("DeviceOrientationEvent is not supported on this device.");
