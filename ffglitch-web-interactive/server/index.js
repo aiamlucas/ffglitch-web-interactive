@@ -134,28 +134,62 @@ io.on("connection", (socket) => {
     }
   });
 
+  // // Handling toggle values (Desktop and Mobile)
+  // socket.on("send_toggle_value", (data) => {
+  //   const { toggle } = data;
+
+  //   if (toggleValues.hasOwnProperty(toggle)) {
+  //     toggleValues[toggle] = toggleValues[toggle] === 0 ? 1 : 0;
+  //     console.log("Toggle value changed:", toggle, toggleValues[toggle]);
+
+  //     // Broadcast the updated toggle values to all connected clients
+  //     io.emit("updated_toggle_values", toggleValues);
+
+  //     if (toggle === "button1") {
+  //       const msg = JSON.stringify({
+  //         "cleaner.mb_type": nb_frames,
+  //         "cleaner.reset_mb_type": 1,
+  //         "cleaner.pict_type": nb_frames,
+  //         "cleaner.reset_pict_type": 1,
+  //       });
+  //       // console.log(msg);
+  //       zmqSocket.send(msg);
+  //       console.log("Sent Clear Glitch message via ZeroMQ:", msg);
+  //     }
+  //   }
+  // });
+
   // Handling toggle values (Desktop and Mobile)
   socket.on("send_toggle_value", (data) => {
-    const { toggle } = data;
+    const { toggle, value } = data;
 
-    if (toggleValues.hasOwnProperty(toggle)) {
-      toggleValues[toggle] = toggleValues[toggle] === 0 ? 1 : 0;
-      console.log("Toggle value changed:", toggle, toggleValues[toggle]);
+    if (toggle === "button1") {
+      // Broadcast Clear Glitch to all clients
+      console.log("Clear Glitch button pressed");
 
-      // Broadcast the updated toggle values to all connected clients
+      // Broadcast the button press (active state)
+      io.emit("updated_toggle_values", { [toggle]: 1 });
+
+      // Send the ZeroMQ message
+      const msg = JSON.stringify({
+        "cleaner.mb_type": nb_frames,
+        "cleaner.reset_mb_type": 1,
+        "cleaner.pict_type": nb_frames,
+        "cleaner.reset_pict_type": 1,
+      });
+      zmqSocket.send(msg);
+      console.log("Sent Clear Glitch message via ZeroMQ:", msg);
+
+      // Automatically reset the button state after 200ms for all clients
+      setTimeout(() => {
+        io.emit("updated_toggle_values", { [toggle]: 0 });
+        console.log("Clear Glitch button reset");
+      }, 200);
+    } else {
+      // Handle other buttons as toggles
+      toggleValues[toggle] = value;
+      console.log("Toggle value changed:", toggle, value);
       io.emit("updated_toggle_values", toggleValues);
-
-      if (toggle === "button1") {
-        const msg = JSON.stringify({
-          "cleaner.mb_type": nb_frames,
-          "cleaner.reset_mb_type": 1,
-          "cleaner.pict_type": nb_frames,
-          "cleaner.reset_pict_type": 1,
-        });
-        console.log(msg);
-        zmqSocket.send(msg);
-        console.log("Sent Clear Glitch message via ZeroMQ:", msg);
-      }
     }
   });
 
@@ -176,20 +210,20 @@ io.on("connection", (socket) => {
     sendDesktopXandY();
   });
 
-  // Mobile Event: Handle Clear Glitch event
-  socket.on("clear_glitch", () => {
-    console.log("Received Clear Glitch from Mobile");
+  // // Mobile Event: Handle Clear Glitch event
+  // socket.on("clear_glitch", () => {
+  //   console.log("Received Clear Glitch from Mobile");
 
-    const msg = JSON.stringify({
-      "cleaner.mb_type": nb_frames,
-      "cleaner.reset_mb_type": 1,
-      "cleaner.pict_type": nb_frames,
-      "cleaner.reset_pict_type": 1,
-    });
+  //   const msg = JSON.stringify({
+  //     "cleaner.mb_type": nb_frames,
+  //     "cleaner.reset_mb_type": 1,
+  //     "cleaner.pict_type": nb_frames,
+  //     "cleaner.reset_pict_type": 1,
+  //   });
 
-    zmqSocket.send(msg);
-    console.log("Sent Clear Glitch message via ZeroMQ from Mobile:", msg);
-  });
+  //   zmqSocket.send(msg);
+  //   console.log("Sent Clear Glitch message via ZeroMQ from Mobile:", msg);
+  // });
 
   // Mobile Event: Handle x/y coordinates from mobile
   socket.on("send_coordinates", (data) => {

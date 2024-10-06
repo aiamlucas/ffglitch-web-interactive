@@ -179,6 +179,27 @@ body {
   opacity: 1;
 }
 
+/* Gyroscope button */
+.mobile-container .gyroscope-button {
+  background-color: #e0ff2e;
+  border-radius: 0.5rem;
+  width: 7rem;
+  height: 3rem;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  cursor: pointer;
+  opacity: 0.2;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.mobile-container .gyroscope-button.pressed {
+  background-color: #d4ff00;
+  opacity: 1;
+}
+
 /* Fader container for upper-left positioning */
 .mobile-container .faders-container {
   position: absolute;

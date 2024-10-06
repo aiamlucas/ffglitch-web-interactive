@@ -1,9 +1,28 @@
-/* views/Mobile/AppMobile.css */
+/* AppMobile.css */
+/* Reset default margin and padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Ensures padding and border don't affect element width/height */
+}
+
+/* Ensure that the body and html elements take up the full viewport */
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* Prevents any scrolling or overflow */
+}
 
 /* Make the entire background #002FA7 */
 .mobile-container {
   height: 100vh;
   width: 100vw;
+
+  margin: 0; /* Remove any accidental margins */
+  padding: 0; /* Remove any padding */
+  overflow: hidden; /* Prevent any overflow */
+
   background-color: #002fa7;
   display: flex;
   justify-content: center;
@@ -19,12 +38,12 @@
 }
 
 /* Draggable Log Container */
-.log-container {
+.mobile-container .log-container {
   position: absolute;
   top: 60px;
   right: 15px;
-  width: 100px; /* Fit the longest message */
-  height: 125px;
+  width: 130px; /* Fit the longest message */
+  height: 95px;
   padding: 0.5rem;
   border: 1px solid black;
   border-radius: 0.5rem;
@@ -36,7 +55,7 @@
   overflow: hidden; /* Prevent overflow of text */
 }
 
-.log-container ul {
+.mobile-container .log-container ul {
   list-style-type: none; /* Remove bullet points */
   padding: 0;
   margin: 0;
@@ -44,23 +63,25 @@
 }
 
 /* Large Circle */
-.large-circle {
+.mobile-container .large-circle {
   position: relative;
-  width: 15rem;
-  height: 15rem;
-  border: 2px solid #000;
+  /* width: 15rem; */
+  /* height: 15rem; */
+  width: 14rem; /* Reduced to 12rem */
+  height: 14rem;
+  border: 1.5px solid #000;
   border-radius: 50%;
   background-color: transparent;
   z-index: 1;
   transition: all 2s ease; /* 2 second transition for toggling */
 }
 
-.large-circle.toggled {
+.mobile-container .large-circle.toggled {
   border-color: #000; /* Stay black */
 }
 
 /* Inner Circle */
-.inner-circle {
+.mobile-container .inner-circle {
   position: absolute;
   width: 6rem;
   height: 6rem;
@@ -72,14 +93,14 @@
 }
 
 /* X and Y Axis Lines */
-.x-axis-line,
-.y-axis-line {
+.mobile-container .x-axis-line,
+.mobile-container .y-axis-line {
   position: absolute;
   background-color: rgba(0, 0, 0, 0.2); /* Reduced opacity */
   z-index: 1;
 }
 
-.x-axis-line {
+.mobile-container .x-axis-line {
   width: 150%; /* Middle-ground length */
   height: 2px;
   top: 50%;
@@ -87,7 +108,7 @@
   transform: translateY(-50%);
 }
 
-.y-axis-line {
+.mobile-container .y-axis-line {
   height: 150%; /* Middle-ground length */
   width: 2px;
   left: 50%;
@@ -96,10 +117,12 @@
 }
 
 /* Small Ball */
-.small-ball {
+.mobile-container .small-ball {
   position: absolute;
-  width: 1.5rem;
-  height: 1.5rem;
+  /* width: 1.5rem; */
+  /* height: 1.5rem; */
+  width: 1.7rem;
+  height: 1.7rem;
   border-radius: 50%;
   background-color: red;
   z-index: 2;
@@ -107,7 +130,7 @@
 }
 
 /* Bottom buttons */
-.bottom-buttons {
+.mobile-container .bottom-buttons {
   position: absolute;
   bottom: 8rem;
   display: flex;
@@ -115,7 +138,7 @@
   gap: 0.5rem;
 }
 
-.small-toggle-button {
+.mobile-container .small-toggle-button {
   background-color: #e0ff2e;
   border-radius: 0.5rem;
   width: 3rem;
@@ -130,13 +153,13 @@
   transition: background-color 0.2s, opacity 0.2s;
 }
 
-.small-toggle-button.active {
+.mobile-container .small-toggle-button.active {
   background-color: #d4ff00;
   opacity: 1;
 }
 
 /* Clear Glitch button */
-.clear-glitch-button {
+.mobile-container .clear-glitch-button {
   background-color: #e0ff2e;
   border-radius: 0.5rem;
   width: 7rem;
@@ -151,13 +174,13 @@
   transition: background-color 0.2s, opacity 0.2s;
 }
 
-.clear-glitch-button.pressed {
+.mobile-container .clear-glitch-button.pressed {
   background-color: #d4ff00;
   opacity: 1;
 }
 
 /* Fader container for upper-left positioning */
-.faders-container {
+.mobile-container .faders-container {
   position: absolute;
   top: 4rem; /* 20px -> 1.25rem (16px = 1rem) */
   left: 2rem; /* 20px -> 1.25rem */
@@ -167,7 +190,7 @@
 }
 
 /* Fader container styles */
-.fader-range {
+.mobile-container .fader-range {
   -webkit-appearance: none;
   width: 100%;
   height: 0.125rem; /* 2px -> 0.125rem */
@@ -179,7 +202,7 @@
 }
 
 /* Style the thumb (the draggable part) */
-.fader-range::-webkit-slider-thumb {
+.mobile-container .fader-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 0.5rem; /* 8px -> 0.5rem */
@@ -188,7 +211,7 @@
   cursor: pointer;
 }
 
-.fader-range::-moz-range-thumb {
+.mobile-container .fader-range::-moz-range-thumb {
   width: 0.5rem; /* 8px -> 0.5rem */
   height: 1.125rem; /* 18px -> 1.125rem */
   background: black;
@@ -196,7 +219,7 @@
 }
 
 /* For WebKit browsers */
-.fader-range::-webkit-slider-runnable-track {
+.mobile-container .fader-range::-webkit-slider-runnable-track {
   width: 100%;
   height: 0.125rem; /* 2px -> 0.125rem */
   cursor: pointer;
@@ -205,7 +228,7 @@
 }
 
 /* For Firefox */
-.fader-range::-moz-range-track {
+.mobile-container .fader-range::-moz-range-track {
   width: 100%;
   height: 0.125rem; /* 2px -> 0.125rem */
   cursor: pointer;
@@ -214,6 +237,6 @@
 }
 
 /* Hide track outline */
-.fader-range:focus {
+.mobile-container .fader-range:focus {
   outline: none;
 }

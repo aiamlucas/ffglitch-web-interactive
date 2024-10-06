@@ -340,18 +340,18 @@ export default function AppMobile() {
     socket.emit("send_message", { fader: faderName, message: value });
   };
 
-  const handleClearGlitchStart = () => {
-    const updatedButtonValues = [...buttonValues];
-    updatedButtonValues[0] = 1; // Push button (long press) at index 0
-    setButtonValues(updatedButtonValues);
+  // const handleClearGlitchStart = () => {
+  //   const updatedButtonValues = [...buttonValues];
+  //   updatedButtonValues[0] = 1; // Push button (long press) at index 0
+  //   setButtonValues(updatedButtonValues);
 
-    socket.emit("broadcast_log", "Clear");
-    socket.emit("send_toggle_value", { toggle: "button1", value: 1 });
+  //   socket.emit("broadcast_log", "Clear");
+  //   socket.emit("send_toggle_value", { toggle: "button1", value: 1 });
 
-    // Emit event to the server to trigger the Clear message on all clients
-    socket.emit("show_clear_log", true); // Notify the server that Clear was pressed
-    console.log("Clear Glitch button pressed");
-  };
+  //   // Emit event to the server to trigger the Clear message on all clients
+  //   socket.emit("show_clear_log", true); // Notify the server that Clear was pressed
+  //   console.log("Clear Glitch button pressed");
+  // };
 
   // const handleClearGlitchStart = () => {
   //   const updatedButtonValues = [...buttonValues];
@@ -359,25 +359,41 @@ export default function AppMobile() {
   //   setButtonValues(updatedButtonValues);
 
   //   socket.emit("broadcast_log", "Clear");
-
   //   socket.emit("send_toggle_value", { toggle: "button1", value: 1 });
 
-  //   socket.emit("show_clear_log", true); // Emit event to the server for all clients
-
+  //   // Emit event to the server to trigger the Clear message on all clients
+  //   socket.emit("show_clear_log", true); // Notify the server that Clear was pressed
   //   console.log("Clear Glitch button pressed");
-  //   setShowClearLog(true);
-  //   setTimeout(() => {
-  //     setShowClearLog(false); // Hide "Clear" after 2 seconds
-  //   }, 2000);
   // };
 
-  const handleClearGlitchEnd = () => {
-    const updatedButtonValues = [...buttonValues];
-    updatedButtonValues[0] = 0; // Reset push button state
-    setButtonValues(updatedButtonValues);
+  // const handleClearGlitchEnd = () => {
+  //   const updatedButtonValues = [...buttonValues];
+  //   updatedButtonValues[0] = 0; // Reset push button state
+  //   setButtonValues(updatedButtonValues);
 
-    socket.emit("send_toggle_value", { toggle: "button1", value: 0 });
-    console.log("Clear Glitch button released");
+  //   socket.emit("send_toggle_value", { toggle: "button1", value: 0 });
+  //   console.log("Clear Glitch button released");
+  // };
+
+  // const handleClearGlitchPress = () => {
+  //   const updatedButtonValues = [...buttonValues];
+  //   const newValue = updatedButtonValues[0] === 0 ? 1 : 0; // Toggle state
+  //   updatedButtonValues[0] = newValue;
+  //   setButtonValues(updatedButtonValues);
+
+  //   // Emit the updated state to the server
+  //   socket.emit("send_toggle_value", { toggle: "button1", value: newValue });
+
+  //   // Show visual feedback
+  //   setTimeout(() => {
+  //     updatedButtonValues[0] = 0; // Reset button state visually after short delay
+  //     setButtonValues(updatedButtonValues);
+  //   }, 200);
+  // };
+
+  const handleClearGlitchPress = () => {
+    // Emit the button press to the server
+    socket.emit("send_toggle_value", { toggle: "button1", value: 1 });
   };
 
   const handleStartDrag = () => {
@@ -732,7 +748,7 @@ export default function AppMobile() {
       {/* Bottom buttons: Clear Glitch and Gyroscope Toggle Button */}
       <div className="bottom-buttons">
         {/* Long Push Button for Clear */}
-        <div
+        {/* <div
           className={`clear-glitch-button ${buttonValues[0] ? "pressed" : ""}`}
           onMouseDown={handleClearGlitchStart}
           onMouseUp={handleClearGlitchEnd}
@@ -740,13 +756,17 @@ export default function AppMobile() {
           onTouchEnd={handleClearGlitchEnd}
         >
           Clear
+        </div> */}
+        <div
+          className={`clear-glitch-button ${buttonValues[0] ? "pressed" : ""}`}
+          onClick={handleClearGlitchPress} // Trigger the function on click
+        >
+          Clear
         </div>
 
         {/* New Large Button for Gyroscope Toggle */}
         <div
-          className={`clear-glitch-button ${
-            isGyroscopeActive ? "pressed" : ""
-          }`} // Large button like Clear button
+          className={`gyroscope-button ${isGyroscopeActive ? "pressed" : ""}`} // Large button like Clear button
           onMouseDown={() => handleButtonToggle(3, true)} // Press down to activate gyroscope
           onMouseUp={() => handleButtonToggle(3, false)} // Release to deactivate gyroscope
           onTouchStart={() => handleButtonToggle(3, true)} // Mobile touch start
