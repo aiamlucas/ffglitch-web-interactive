@@ -38,8 +38,6 @@
 ### Ffglitch
 
 - **ffglitch**: a multimedia bitstream editor, based on the open-source project FFmpeg.
-- **ffgac**: For capturing and streaming video input.
-- **fflive**: is a multimedia player that integrates FFglitch
 
 ## Installation and Setup
 
@@ -164,7 +162,7 @@ Open a second terminal and run the following command to capture and apply glitch
 
 ## Contributions
 
-Special thanks to **Ramiro Polla** for his contributions to the project.  
+**Ramiro Polla**  
 The **FFglitch** community for providing inspiration and tools for glitching images.
 
 Learn more about **FFglitch** and its usage at:
